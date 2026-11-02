@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -38,32 +39,32 @@ namespace ZooWorld.Tests
             _objects.Clear();
         }
 
-        [Test, Category("AC07")]
+        [Test, Description("HudView пишет оба счётчика в формате задания")]
         public void HudViewWritesBothCountersInTheTaskFormat()
         {
-            Text text = CreateText(null, "Counters");
+            TMP_Text text = CreateText(null, "Counters");
             HudView view = CreateHudView(text);
             view.SetCounters(2, 3);
             Assert.That(text.text, Is.EqualTo("Dead prey: 2\nDead predators: 3"));
         }
 
-        [Test, Category("AC07")]
+        [Test, Description("HudView стартует с нулевого текста-превью")]
         public void HudViewStartsFromZeroedPreviewText()
         {
-            Text text = CreateText(null, "Counters");
+            TMP_Text text = CreateText(null, "Counters");
             text.text = "Dead prey: 9\nDead predators: 9";
             HudView view = CreateHudView(text);
             view.SetCounters(0, 0);
             Assert.That(text.text, Is.EqualTo("Dead prey: 0\nDead predators: 0"));
         }
 
-        [UnityTest, Category("AC07")]
+        [UnityTest, Description("Tasty-метка появляется под едоком при виде сверху и скрывается")]
         public IEnumerator TastyLabelAppearsBelowTheEaterInTopDownViewThenHides()
         {
-            TastyLabelPool pool = CreatePool(out Text _);
+            TastyLabelPool pool = CreatePool(out TMP_Text _);
             var captured = new Vector3(2f, 0.5f, 3f);
             pool.Show(captured);
-            Text label = SingleActiveLabel(pool);
+            TMP_Text label = SingleActiveLabel(pool);
             Assert.That(label.text, Is.EqualTo("Tasty!"));
             var group = label.GetComponent<CanvasGroup>();
             Assert.That(group, Is.Not.Null);
@@ -110,17 +111,17 @@ namespace ZooWorld.Tests
             Assert.That(ActiveLabels(pool), Is.Empty, "The label must hide after the 1.5 s popup duration.");
         }
 
-        [UnityTest, Category("AC03"), Category("AC07")]
+        [UnityTest, Description("Пул отбирает слот по кругу, когда все метки заняты")]
         public IEnumerator TastyLabelPoolStealsTheRoundRobinSlotWhenAllLabelsAreBusy()
         {
-            TastyLabelPool pool = CreatePool(out Text _, poolSize: 2);
+            TastyLabelPool pool = CreatePool(out TMP_Text _, poolSize: 2);
             pool.Show(new Vector3(0f, 0.5f, 0f));
             pool.Show(new Vector3(1f, 0.5f, 0f));
             pool.Show(new Vector3(9f, 0.5f, 9f));
-            List<Text> active = ActiveLabels(pool);
+            List<TMP_Text> active = ActiveLabels(pool);
             Assert.That(active.Count, Is.EqualTo(2));
             var positions = new List<Vector3>();
-            foreach (Text label in active)
+            foreach (TMP_Text label in active)
             {
                 positions.Add(label.transform.position);
             }
@@ -130,10 +131,10 @@ namespace ZooWorld.Tests
             yield return null;
         }
 
-        [UnityTest, Category("AC07"), Category("AC09")]
+        [UnityTest, Description("Пул переиспользует метку после её скрытия")]
         public IEnumerator TastyLabelPoolReusesALabelAfterItHides()
         {
-            TastyLabelPool pool = CreatePool(out Text _);
+            TastyLabelPool pool = CreatePool(out TMP_Text _);
             pool.Show(new Vector3(0f, 0.5f, 0f));
             float elapsed = 0f;
             while (elapsed < 1.8f)
@@ -144,11 +145,11 @@ namespace ZooWorld.Tests
 
             Assert.That(ActiveLabels(pool), Is.Empty);
             pool.Show(new Vector3(5f, 0.5f, 5f));
-            Text label = SingleActiveLabel(pool);
+            TMP_Text label = SingleActiveLabel(pool);
             Assert.That(label.transform.position, Is.EqualTo(new Vector3(5f, 0.5f, 4f)));
         }
 
-        private HudView CreateHudView(Text counterText)
+        private HudView CreateHudView(TMP_Text counterText)
         {
             var go = Track(new GameObject("HUD"));
             go.SetActive(false);
@@ -158,7 +159,7 @@ namespace ZooWorld.Tests
             return view;
         }
 
-        private TastyLabelPool CreatePool(out Text template, int poolSize = 4)
+        private TastyLabelPool CreatePool(out TMP_Text template, int poolSize = 4)
         {
             var canvasGo = Track(new GameObject("Tasty canvas"));
             canvasGo.SetActive(false);
@@ -177,7 +178,7 @@ namespace ZooWorld.Tests
             return pool;
         }
 
-        private Text CreateText(Transform parent, string name)
+        private TMP_Text CreateText(Transform parent, string name)
         {
             var go = Track(new GameObject(name));
             if (parent != null)
@@ -185,20 +186,20 @@ namespace ZooWorld.Tests
                 go.transform.SetParent(parent, false);
             }
 
-            return go.AddComponent<Text>();
+            return go.AddComponent<TextMeshProUGUI>();
         }
 
-        private static Text SingleActiveLabel(TastyLabelPool pool)
+        private static TMP_Text SingleActiveLabel(TastyLabelPool pool)
         {
-            List<Text> active = ActiveLabels(pool);
+            List<TMP_Text> active = ActiveLabels(pool);
             Assert.That(active.Count, Is.EqualTo(1), "Exactly one pooled label must be active.");
             return active[0];
         }
 
-        private static List<Text> ActiveLabels(TastyLabelPool pool)
+        private static List<TMP_Text> ActiveLabels(TastyLabelPool pool)
         {
-            var active = new List<Text>();
-            foreach (Text label in pool.GetComponentsInChildren<Text>())
+            var active = new List<TMP_Text>();
+            foreach (TMP_Text label in pool.GetComponentsInChildren<TMP_Text>())
             {
                 if (label.gameObject.activeSelf)
                 {

@@ -21,7 +21,7 @@ namespace ZooWorld.Tests
         [TearDown]
         public void TearDown() => Object.DestroyImmediate(_root);
 
-        [Test, Category("AC03"), Category("AC04")]
+        [Test, Description("Смерть засчитывается один раз за активацию")]
         public void DeathSucceedsOnlyOnceForAnActivation()
         {
             Assert.That(_animal.TryDie(), Is.False);
@@ -33,7 +33,7 @@ namespace ZooWorld.Tests
             Assert.That(_animal.ActivationId, Is.EqualTo(41));
         }
 
-        [Test, Category("AC09")]
+        [Test, Description("Возврат очищает идентичность, следующая активация жива")]
         public void ReleaseClearsIdentityAndNextActivationIsAlive()
         {
             _animal.Activate(41);
@@ -48,7 +48,7 @@ namespace ZooWorld.Tests
             Assert.That(_animal.TryDie(), Is.True);
         }
 
-        [Test, Category("AC10")]
+        [Test, Description("Очистка — не переход в смерть")]
         public void CleanupIsNotADeathTransition()
         {
             _animal.Activate(41);
@@ -57,7 +57,8 @@ namespace ZooWorld.Tests
             Assert.That(_animal.TryDie(), Is.False);
         }
 
-        [TestCase(0), TestCase(-1), Category("AC09")]
+        [TestCase(0), TestCase(-1)]
+        [Description("Неположительные ID активаций отклоняются")]
         public void NonPositiveActivationIdsAreRejected(long id)
         {
             Assert.Throws<ArgumentOutOfRangeException>(() => _animal.Activate(id));
@@ -65,7 +66,7 @@ namespace ZooWorld.Tests
             Assert.That(_animal.ActivationId, Is.Zero);
         }
 
-        [Test, Category("AC09")]
+        [Test, Description("Живая или мёртвая активация не перезаписывается до возврата")]
         public void LiveOrDeadActivationCannotBeOverwrittenBeforeRelease()
         {
             _animal.Activate(41);

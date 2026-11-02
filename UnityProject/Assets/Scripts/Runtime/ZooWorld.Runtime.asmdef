@@ -1,6 +1,11 @@
 {
   "name": "ZooWorld.Runtime",
   "rootNamespace": "ZooWorld",
-  "references": ["VContainer", "VContainer.Unity", "Unity.ugui"],
+  "references": [
+    "VContainer",
+    "VContainer.Unity",
+    "Unity.ugui",
+    "Unity.TextMeshPro"
+  ],
   "autoReferenced": true
 }

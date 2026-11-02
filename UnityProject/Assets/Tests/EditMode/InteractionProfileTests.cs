@@ -24,7 +24,7 @@ namespace ZooWorld.Tests
             _assets.Clear();
         }
 
-        [Test, Category("AC03"), Category("AC04")]
+        [Test, Description("Начальные профили дают разрешения задания")]
         public void InitialProfilesProduceTaskPermissions()
         {
             InteractionCategory preyCategory = Category("prey");
@@ -37,7 +37,7 @@ namespace ZooWorld.Tests
             Assert.That(predator.CanConsume(predator), Is.True);
         }
 
-        [Test, Category("AC03"), Category("AC04")]
+        [Test, Description("Сохранённые ассеты воспроизводят разрешения задания")]
         public void SavedInitialAssetsReproduceTaskPermissions()
         {
             var frog = AssetDatabase.LoadAssetAtPath<InteractionProfile>(
@@ -56,7 +56,7 @@ namespace ZooWorld.Tests
             Assert.That(predator.CanConsume(predator), Is.True);
         }
 
-        [Test, Category("AC09")]
+        [Test, Description("Снимок переживает поздние изменения исходных ассетов")]
         public void SnapshotSurvivesLaterChangesToSourceAssets()
         {
             InteractionCategory preyCategory = Category("prey");
@@ -72,7 +72,7 @@ namespace ZooWorld.Tests
             Assert.That(snapshot.CanConsume(new InteractionData("changed", Array.Empty<string>())), Is.False);
         }
 
-        [Test, Category("AC08")]
+        [Test, Description("Отсутствующая категория сообщает имя профиля")]
         public void MissingCategoryReportsProfileName()
         {
             InteractionProfile profile = Profile(null);
@@ -80,14 +80,15 @@ namespace ZooWorld.Tests
             Assert.That(error.Message, Does.Contain("Fixture Profile"));
         }
 
-        [TestCase(null), TestCase(""), TestCase(" "), Category("AC08")]
+        [TestCase(null), TestCase(""), TestCase(" ")]
+        [Description("Пустые ID категорий диагностируются")]
         public void EmptyCategoryIdsAreDiagnosed(string id)
         {
             InteractionProfile profile = Profile(Category(id));
             Assert.Throws<InvalidOperationException>(() => profile.CreateSnapshot());
         }
 
-        [Test, Category("AC08")]
+        [Test, Description("Null/невалидная съедобная запись диагностируется с индексом")]
         public void NullOrInvalidEdibleEntryIsDiagnosedWithIndex()
         {
             InteractionCategory category = Category("valid");

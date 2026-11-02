@@ -8,6 +8,8 @@ namespace ZooWorld.Movement
     {
         private const float MinPlanarSpeedSqr = 0.0025f;
         private const float InwardDotThreshold = 0.5f;
+        private const float MinAirborneSeconds = 0.1f;
+        private const float MaxLandingVelocityY = 0.1f;
 
         private readonly IAnimalMotor _motor;
         private readonly float _verticalSpeed;
@@ -44,7 +46,7 @@ namespace ZooWorld.Movement
                 {
                     _leftGround = true;
                 }
-                else if (_leftGround || (_launchElapsed >= 0.1f && _motor.Velocity.y <= 0.1f))
+                else if (_leftGround || (_launchElapsed >= MinAirborneSeconds && _motor.Velocity.y <= MaxLandingVelocityY))
                 {
                     _launched = false;
                     _leftGround = false;

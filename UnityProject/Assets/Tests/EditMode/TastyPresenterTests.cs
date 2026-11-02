@@ -55,7 +55,7 @@ namespace ZooWorld.Tests
             _objects.Clear();
         }
 
-        [Test, Category("AC03"), Category("AC07")]
+        [Test, Description("Поедание показывает Tasty один раз в позиции едока")]
         public void ConsumptionShowsTastyOnceAtTheCapturedEaterPosition()
         {
             Animal snake = Activate(PredatorDefinition("snake"));
@@ -66,7 +66,7 @@ namespace ZooWorld.Tests
             Assert.That(_view.Shows, Is.EqualTo(new[] { new Vector3(2f, 0.5f, 3f) }));
         }
 
-        [Test, Category("AC04"), Category("AC07")]
+        [Test, Description("Контакт двух хищников показывает ровно один Tasty")]
         public void MutualPredatorContactShowsExactlyOneTasty()
         {
             Animal first = Activate(PredatorDefinition("snake-a"));
@@ -77,7 +77,7 @@ namespace ZooWorld.Tests
             Assert.That(_view.Shows.Count, Is.EqualTo(1));
         }
 
-        [Test, Category("AC02"), Category("AC07")]
+        [Test, Description("Несмертельный контакт не показывает Tasty")]
         public void NonLethalContactShowsNoTasty()
         {
             Animal first = Activate(PreyDefinition("frog-a"));
@@ -87,7 +87,7 @@ namespace ZooWorld.Tests
             Assert.That(_view.Shows, Is.Empty);
         }
 
-        [Test, Category("AC11")]
+        [Test, Description("Поедания после Dispose не доходят до view")]
         public void ConsumptionsAfterDisposeDoNotReachTheView()
         {
             _presenter.Start();
@@ -98,7 +98,7 @@ namespace ZooWorld.Tests
             Assert.That(_view.Shows, Is.Empty);
         }
 
-        [Test, Category("AC11")]
+        [Test, Description("Новый presenter не удваивает показы")]
         public void ReplacementPresenterDoesNotMultiplyShows()
         {
             _presenter.Start();
@@ -112,7 +112,7 @@ namespace ZooWorld.Tests
             replacement.Dispose();
         }
 
-        [Test, Category("AC11")]
+        [Test, Description("Повторный Start не подписывается дважды")]
         public void RepeatedStartDoesNotDoubleSubscribe()
         {
             _presenter.Start();

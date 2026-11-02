@@ -62,7 +62,7 @@ namespace ZooWorld.Tests
             _objects.Clear();
         }
 
-        [Test, Category("AC03")]
+        [Test, Description("Хищник съедает добычу: Died, затем Consumed, затем возврат в пул")]
         public void PredatorConsumesPreyPublishesDiedThenConsumedThenReleases()
         {
             Animal snake = Activate(3, PredatorDefinition("snake"));
@@ -90,7 +90,7 @@ namespace ZooWorld.Tests
             Assert.That(_changes, Is.EqualTo(1));
         }
 
-        [Test, Category("AC03")]
+        [Test, Description("Бросающий подписчик событий не мешает возврату жертвы")]
         public void ThrowingEventSubscriberDoesNotPreventVictimRelease()
         {
             Animal snake = Activate(3, PredatorDefinition("snake"));
@@ -106,7 +106,7 @@ namespace ZooWorld.Tests
             Assert.That(_stats.PreyDeaths, Is.EqualTo(1));
         }
 
-        [Test, Category("AC03")]
+        [Test, Description("Consumed фиксирует мировую позицию едока в момент поедания")]
         public void ConsumedCapturesTheEatersWorldPositionAtConsumptionTime()
         {
             Animal snake = Activate(3, PredatorDefinition("snake"));
@@ -116,7 +116,7 @@ namespace ZooWorld.Tests
             Assert.That(Vector3.Distance(_consumed[0].Position, new Vector3(3, 0.5f, -4)), Is.LessThan(0.001f));
         }
 
-        [Test, Category("AC03")]
+        [Test, Description("Дубли и обратные репорты дают одну смерть и пару событий")]
         public void DuplicateAndSwappedReportsProduceASingleDeathAndEventPair()
         {
             Animal snake = Activate(3, PredatorDefinition("snake"));
@@ -132,7 +132,7 @@ namespace ZooWorld.Tests
             Assert.That(frog.IsAlive, Is.False);
         }
 
-        [Test, Category("AC04")]
+        [Test, Description("Пара хищников выбирает ту же жертву для обоих порядков контакта")]
         public void PredatorPairSelectsTheSameVictimForBothContactOrders()
         {
             Animal firstForward = Activate(11, PredatorDefinition("alpha"));
@@ -150,7 +150,7 @@ namespace ZooWorld.Tests
             Assert.That(_stats.PreyDeaths, Is.EqualTo(0));
         }
 
-        [Test, Category("AC04")]
+        [Test, Description("Пара хищников оставляет выжившего и стопит события после смерти")]
         public void PredatorPairKeepsOneSurvivorAndStopsPublishingAfterDeath()
         {
             Animal first = Activate(11, PredatorDefinition("alpha"));
@@ -166,7 +166,7 @@ namespace ZooWorld.Tests
             Assert.That(_stats.PredatorDeaths, Is.EqualTo(1));
         }
 
-        [Test, Category("AC04")]
+        [Test, Description("Один и тот же seed выбирает ту же жертву для пары")]
         public void SameSeedAlwaysSelectsTheSameVictimForAPair()
         {
             var another = Resolver(7);
@@ -181,7 +181,7 @@ namespace ZooWorld.Tests
             Assert.That(second, Is.EqualTo(first));
         }
 
-        [Test, Category("AC03")]
+        [Test, Description("Несъедобный контакт ничего не публикует")]
         public void NeitherConsumableContactPublishesNothing()
         {
             Animal first = Activate(3, PreyDefinition("prey-a"));
@@ -193,7 +193,7 @@ namespace ZooWorld.Tests
             Assert.That(_changes, Is.EqualTo(0));
         }
 
-        [Test, Category("AC03")]
+        [Test, Description("Добыча съедается независимо от порядка аргументов контакта")]
         public void PreyIsConsumedRegardlessOfContactArgumentOrder()
         {
             Animal frog = Activate(3, PreyDefinition("frog"));
@@ -204,7 +204,7 @@ namespace ZooWorld.Tests
             Assert.That(_consumed[0].EaterActivationId, Is.EqualTo(5));
         }
 
-        [Test, Category("AC03")]
+        [Test, Description("Контакт с самим собой отклоняется")]
         public void SelfContactIsRejected()
         {
             Animal animal = Activate(3, PredatorDefinition("snake"));
@@ -214,7 +214,7 @@ namespace ZooWorld.Tests
             Assert.That(_died, Is.Empty);
         }
 
-        [Test, Category("AC03"), Category("AC09")]
+        [Test, Description("Устаревшие ID активаций отклоняются")]
         public void StaleActivationIdsAreRejected()
         {
             Animal snake = Activate(3, PredatorDefinition("snake"));
@@ -225,7 +225,7 @@ namespace ZooWorld.Tests
             Assert.That(_died, Is.Empty);
         }
 
-        [Test, Category("AC03"), Category("AC09")]
+        [Test, Description("Мёртвые, возвращённые или неактивированные участники отклоняются")]
         public void DeadReleasedOrUnactivatedParticipantsAreRejected()
         {
             Animal snake = Activate(3, PredatorDefinition("snake"));
@@ -246,7 +246,7 @@ namespace ZooWorld.Tests
             Assert.That(_died, Is.Empty);
         }
 
-        [Test, Category("AC09")]
+        [Test, Description("Животное без данных взаимодействия отклоняется")]
         public void AnimalWithoutInteractionDataIsRejected()
         {
             var root = new GameObject("No interaction");
@@ -260,7 +260,7 @@ namespace ZooWorld.Tests
             Assert.That(_died, Is.Empty);
         }
 
-        [Test, Category("AC03")]
+        [Test, Description("Резолвер отклоняет null-контакты и невалидные аргументы конструктора")]
         public void ResolverRejectsNullContactsAndInvalidConstructorArguments()
         {
             Assert.DoesNotThrow(() => _resolver.Resolve(null));
@@ -272,7 +272,7 @@ namespace ZooWorld.Tests
                 _container.Resolve<IAnimalInteractionPolicy>(), _factory, null));
         }
 
-        [Test, Category("AC03")]
+        [Test, Description("Resolve считает каждый не-null репорт контакта")]
         public void ResolveCountsEveryNonNullContactReport()
         {
             Animal snake = Activate(3, PredatorDefinition("snake"));
@@ -287,7 +287,7 @@ namespace ZooWorld.Tests
             Assert.That(_resolver.ContactsReceived, Is.EqualTo(2));
         }
 
-        [Test, Category("AC03")]
+        [Test, Description("Контакт требует обоих участников")]
         public void ContactRequiresBothActors()
         {
             Assert.Throws<ArgumentNullException>(() => new AnimalContact(null, 1, Activate(3, PreyDefinition("frog")), 3,
@@ -296,7 +296,7 @@ namespace ZooWorld.Tests
                 Vector3.zero, Vector3.zero));
         }
 
-        [Test, Category("AC11")]
+        [Test, Description("GameStats отписывается при Dispose")]
         public void GameStatsUnsubscribesOnDispose()
         {
             var stats = new GameStats(_events);

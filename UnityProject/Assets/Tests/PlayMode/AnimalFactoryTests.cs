@@ -68,7 +68,7 @@ namespace ZooWorld.Tests
             yield return null;
         }
 
-        [UnityTest, Category("AC09"), Category("AC11")]
+        [UnityTest, Description("Переиспользование сбрасывает ID, позу и скорости без повторной инъекции")]
         public IEnumerator ReuseResetsIdentityPoseAndVelocitiesWithoutReinjection()
         {
             Animal first = Rent(Vector3.zero, Vector3.right);
@@ -108,7 +108,7 @@ namespace ZooWorld.Tests
             yield return null;
         }
 
-        [UnityTest, Category("AC09"), Category("AC10")]
+        [UnityTest, Description("Дубль и устаревший возврат не снимают текущую активацию")]
         public IEnumerator DuplicateAndStaleReleaseCannotRemoveCurrentActivation()
         {
             Animal animal = Rent(Vector3.zero, Vector3.right);
@@ -124,7 +124,7 @@ namespace ZooWorld.Tests
             yield return null;
         }
 
-        [UnityTest, Category("AC09")]
+        [UnityTest, Description("Переиспользованный prefab берёт новый профиль и стопит тики после смерти")]
         public IEnumerator ReusedPrefabUsesNewMovementProfileAndStopsTickingAfterDeath()
         {
             Animal animal = Rent(Vector3.zero, Vector3.right);
@@ -152,7 +152,7 @@ namespace ZooWorld.Tests
             Assert.That(final.GetComponent<PoolTestMotor>().Velocity, Is.EqualTo(Vector3.zero));
         }
 
-        [UnityTest, Category("AC11")]
+        [UnityTest, Description("Dispose уничтожает активные и пассивные экземпляры и отклоняет выдачу")]
         public IEnumerator DisposeDestroysActiveAndInactiveInstancesAndRejectsNewRent()
         {
             Animal active = Rent(Vector3.zero, Vector3.right);
@@ -168,7 +168,7 @@ namespace ZooWorld.Tests
             Assert.Throws<ObjectDisposedException>(() => _factory.Rent(_definition, Vector3.zero, Vector3.right));
         }
 
-        [UnityTest, Category("AC09")]
+        [UnityTest, Description("Пауза прыжка при повторной выдаче стартует с полного интервала")]
         public IEnumerator RecycledJumpWaitStartsFromFullIntervalInsteadOfPreviousRemainder()
         {
             var jump = Asset<JumpMovementProfile>();
@@ -197,7 +197,7 @@ namespace ZooWorld.Tests
             Assert.That(velocity.z, Is.GreaterThan(0));
         }
 
-        [UnityTest, Category("AC09")]
+        [UnityTest, Description("Животные с общим профилем имеют независимые таймеры и направления")]
         public IEnumerator SharedProfileAnimalsHaveIndependentJumpTimersAndDirections()
         {
             var jump = Asset<JumpMovementProfile>();
@@ -221,7 +221,7 @@ namespace ZooWorld.Tests
             Assert.That(second.GetComponent<PoolTestMotor>().Velocity.z, Is.GreaterThan(0));
         }
 
-        [UnityTest, Category("AC09")]
+        [UnityTest, Description("Снимок взаимодействия неизменяем и пересобирается при повторной выдаче")]
         public IEnumerator InteractionSnapshotIsImmutableAndRebuiltOnReuse()
         {
             Animal animal = Rent(Vector3.zero, Vector3.right);
@@ -237,7 +237,7 @@ namespace ZooWorld.Tests
             yield return null;
         }
 
-        [UnityTest, Category("AC11")]
+        [UnityTest, Description("Разрушение контейнера уничтожает фабрику и её экземпляры")]
         public IEnumerator ContainerDisposalOwnsFactoryAndDestroysItsInstances()
         {
             Animal active = Rent(Vector3.zero, Vector3.right);
@@ -251,7 +251,7 @@ namespace ZooWorld.Tests
             Assert.Throws<ObjectDisposedException>(() => _factory.Rent(_definition, Vector3.zero, Vector3.right));
         }
 
-        [UnityTest, Category("AC09")]
+        [UnityTest, Description("Выданное животное смотрит по начальному направлению")]
         public IEnumerator RentFacesInitialDirection()
         {
             Animal animal = Rent(Vector3.zero, Vector3.right);
@@ -264,7 +264,7 @@ namespace ZooWorld.Tests
             yield return null;
         }
 
-        [UnityTest, Category("AC09")]
+        [UnityTest, Description("Пулы prefab'ов изолированы по каждому ассету")]
         public IEnumerator PrefabPoolsAreIsolatedPerPrefabAsset()
         {
             var secondPrefab = AssetDatabase.LoadAssetAtPath<Animal>(
@@ -289,7 +289,7 @@ namespace ZooWorld.Tests
             yield return null;
         }
 
-        [UnityTest, Category("AC09"), Category("AC10")]
+        [UnityTest, Description("Возврат внешне уничтоженного животного корректно чистит счётчик")]
         public IEnumerator ReleaseOfExternallyDestroyedActiveAnimalStillCleansActiveCount()
         {
             Animal animal = Rent(Vector3.zero, Vector3.right);
@@ -300,7 +300,7 @@ namespace ZooWorld.Tests
             yield return null;
         }
 
-        [UnityTest, Category("AC09")]
+        [UnityTest, Description("Возврат утилизирует стратегию активации, новая выдача создаёт новую")]
         public IEnumerator ReleaseDisposesPerActivationStrategyAndFreshRentCreatesNewOne()
         {
             var recording = Asset<RecordingMovementProfile>();
@@ -318,7 +318,7 @@ namespace ZooWorld.Tests
             Assert.That(recording.LastStrategy.Disposed, Is.False);
         }
 
-        [UnityTest, Category("AC09")]
+        [UnityTest, Description("Невалидная выдача не течёт счётчиком, чужие фабрики не возвращают животных")]
         public IEnumerator InvalidRentDoesNotLeakActiveCountAndOtherFactoriesCannotReleaseAnimals()
         {
             Assert.Throws<ArgumentException>(() => _factory.Rent(_definition, Vector3.zero, Vector3.zero));
@@ -338,7 +338,7 @@ namespace ZooWorld.Tests
             yield return null;
         }
 
-        [UnityTest, Category("AC11")]
+        [UnityTest, Description("Разрушение скоупа уничтожает активных и pooled животных")]
         public IEnumerator GameScopeDisposalDestroysActiveAndPooledAnimals()
         {
             var root = new GameObject("Factory Scope Fixture");
@@ -364,7 +364,7 @@ namespace ZooWorld.Tests
             Assert.Throws<ObjectDisposedException>(() => factory.Rent(_definition, Vector3.zero, Vector3.right));
         }
 
-        [UnityTest, Category("AC09")]
+        [UnityTest, Description("Неудачная активация возвращает экземпляр без утечки счётчика")]
         public IEnumerator FailedActivationReturnsInstanceWithoutReinjectionOrActiveCountLeak()
         {
             Vector3 previousGravity = UnityEngine.Physics.gravity;

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,8 +9,9 @@ namespace ZooWorld.UI
     public sealed class TastyLabelPool : MonoBehaviour, ITastyView
     {
         private const string LabelText = "Tasty!";
+        private const float FadeSteepness = 2f;
 
-        [SerializeField] private Text _labelTemplate;
+        [SerializeField] private TMP_Text _labelTemplate;
         [SerializeField] private int _poolSize = 4;
         [SerializeField] private float _duration = 1.5f;
         [SerializeField] private Vector3 _belowOffset = new Vector3(0f, 0f, -1f);
@@ -29,7 +31,7 @@ namespace ZooWorld.UI
 
             for (var i = 0; i < _poolSize; i++)
             {
-                Text label = Instantiate(_labelTemplate, transform);
+                TMP_Text label = Instantiate(_labelTemplate, transform);
                 label.text = LabelText;
                 label.gameObject.SetActive(false);
                 CanvasGroup group = label.GetComponent<CanvasGroup>();
@@ -74,7 +76,7 @@ namespace ZooWorld.UI
                 elapsed += Time.deltaTime;
                 float t = Mathf.Clamp01(elapsed / _duration);
                 entry.Label.transform.position = entry.BasePosition + _drift * t;
-                entry.Group.alpha = Mathf.Clamp01(2f * (1f - t));
+                entry.Group.alpha = Mathf.Clamp01(FadeSteepness * (1f - t));
             }
 
             entry.Label.gameObject.SetActive(false);
@@ -83,12 +85,12 @@ namespace ZooWorld.UI
 
         private sealed class Entry
         {
-            public readonly Text Label;
+            public readonly TMP_Text Label;
             public readonly CanvasGroup Group;
             public Coroutine Routine;
             public Vector3 BasePosition;
 
-            public Entry(Text label, CanvasGroup group)
+            public Entry(TMP_Text label, CanvasGroup group)
             {
                 Label = label;
                 Group = group;

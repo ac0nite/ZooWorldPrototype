@@ -82,7 +82,7 @@ namespace ZooWorld.Tests
             yield return null;
         }
 
-        [UnityTest, Category("AC01")]
+        [UnityTest, Description("Спавнер с задержкой 1-2 с выдаёт живых животных внутри арены")]
         public IEnumerator ScheduledSpawnsRentLiveAnimalsInsideTheArena()
         {
             SimulationSettings settings = Settings(min: 0.5f, max: 0.5f, cap: 10);
@@ -111,7 +111,7 @@ namespace ZooWorld.Tests
             }
         }
 
-        [UnityTest, Category("AC10")]
+        [UnityTest, Description("При 100 активных спавн пропускается и возобновляется после освобождения места")]
         public IEnumerator LiveCapSkipsSpawnAtOneHundredActiveAndResumesAfterRelease()
         {
             SimulationSettings settings = Settings(min: 0.5f, max: 0.5f, cap: 100);
@@ -137,7 +137,7 @@ namespace ZooWorld.Tests
             yield return null;
         }
 
-        [UnityTest, Category("AC01"), Category("AC11")]
+        [UnityTest, Description("Спавнер тикает через entry point скоупа и останавливается при его разрушении")]
         public IEnumerator SpawnerTicksThroughScopeEntryPointAndStopsOnDisposal()
         {
             SimulationSettings settings = Settings(min: 0.15f, max: 0.15f, cap: 100);
@@ -181,7 +181,7 @@ namespace ZooWorld.Tests
                 "Scope cleanup must not count spawned animals as deaths.");
         }
 
-        [UnityTest, Category("AC11")]
+        [UnityTest, Description("Скоуп с одной из пары каталог/настройки не конфигурирует симуляцию")]
         public IEnumerator ScopeWithOnlyOneOfCatalogOrSettingsFailsToConfigure()
         {
             for (var caseIndex = 0; caseIndex < 2; caseIndex++)

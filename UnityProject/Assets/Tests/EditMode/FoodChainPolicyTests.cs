@@ -18,7 +18,7 @@ namespace ZooWorld.Tests
         [TestCase(true, true, 1u, InteractionDecision.BConsumesA)]
         [TestCase(true, true, 2u, InteractionDecision.AConsumesB)]
         [TestCase(true, true, 3u, InteractionDecision.BConsumesA)]
-        [Category("AC03"), Category("AC04")]
+        [Description("Разрешения и явный tieBreak определяют решение")]
         public void PermissionsAndExplicitTieBreakDetermineDecision(bool aEatsB, bool bEatsA,
             uint tieBreak, InteractionDecision expected)
         {
@@ -27,7 +27,8 @@ namespace ZooWorld.Tests
             Assert.That(_policy.Evaluate(a, b, tieBreak), Is.EqualTo(expected));
         }
 
-        [TestCase(0u), TestCase(1u), Category("AC03")]
+        [TestCase(0u), TestCase(1u)]
+        [Description("Начальные разрешения добыча/хищник работают в обоих порядках")]
         public void InitialPreyAndPredatorPermissionsWorkInBothArgumentOrders(uint tieBreak)
         {
             var prey = new InteractionData("prey", Array.Empty<string>());
@@ -41,7 +42,7 @@ namespace ZooWorld.Tests
         [TestCase(1u, InteractionDecision.BConsumesA)]
         [TestCase(2u, InteractionDecision.AConsumesB)]
         [TestCase(3u, InteractionDecision.BConsumesA)]
-        [Category("AC04")]
+        [Description("Два хищника имеют ровно одного едока, повторная оценка стабильна")]
         public void TwoPredatorsHaveExactlyOneConsumerAndRepeatedEvaluationIsStable(uint tieBreak,
             InteractionDecision expected)
         {
@@ -52,7 +53,7 @@ namespace ZooWorld.Tests
             Assert.That(_policy.Evaluate(second, first, tieBreak), Is.EqualTo(expected));
         }
 
-        [Test, Category("AC08")]
+        [Test, Description("Третья пищевая категория требует только новых данных")]
         public void ThirdFoodCategoryRequiresOnlyNewData()
         {
             var insect = new InteractionData("insect", Array.Empty<string>());
@@ -61,7 +62,7 @@ namespace ZooWorld.Tests
             Assert.That(_policy.Evaluate(insect, frog, 0), Is.EqualTo(InteractionDecision.BConsumesA));
         }
 
-        [Test, Category("AC09")]
+        [Test, Description("Снимок защитно копирует съедобные категории")]
         public void SnapshotDefensivelyCopiesEdibleCategories()
         {
             var source = new[] { "prey" };
@@ -71,7 +72,8 @@ namespace ZooWorld.Tests
             Assert.That(predator.CanConsume(new InteractionData("predator", Array.Empty<string>())), Is.False);
         }
 
-        [TestCase(null), TestCase(""), TestCase(" "), Category("AC08")]
+        [TestCase(null), TestCase(""), TestCase(" ")]
+        [Description("Пустые ID категорий отклоняются")]
         public void EmptyCategoryIdsAreRejected(string id)
         {
             Assert.Throws<ArgumentException>(() => new InteractionData(id, Array.Empty<string>()));

@@ -7,6 +7,7 @@ namespace ZooWorld.Core
 {
     public sealed class MovementContext
     {
+        private const float MinDirectionSqrMagnitude = 0.000001f;
         public IAnimalMotor Motor { get; }
         public Vector3 InitialDirection { get; }
         public float Gravity { get; }
@@ -29,7 +30,7 @@ namespace ZooWorld.Core
         {
             direction.y = 0;
             if (float.IsNaN(direction.x) || float.IsInfinity(direction.x) ||
-                float.IsNaN(direction.z) || float.IsInfinity(direction.z) || direction.sqrMagnitude < 0.000001f)
+                float.IsNaN(direction.z) || float.IsInfinity(direction.z) || direction.sqrMagnitude < MinDirectionSqrMagnitude)
             {
                 throw new ArgumentException("Movement requires a finite non-zero planar direction.", nameof(direction));
             }

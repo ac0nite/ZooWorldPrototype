@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
+using TMPro;
 using UnityEngine;
 using UnityEngine.TestTools;
 using UnityEngine.UI;
@@ -44,7 +45,7 @@ namespace ZooWorld.Tests
             yield return null;
         }
 
-        [UnityTest, Category("AC11")]
+        [UnityTest, Description("Entry point запускает тики и останавливается после разрушения скоупа")]
         public IEnumerator EntryPointStartsTicksAndStopsAfterScopeDisposal()
         {
             GameLifetimeScope scope = CreateScope();
@@ -78,7 +79,7 @@ namespace ZooWorld.Tests
             Assert.That(probe.Ticks, Is.EqualTo(ticks));
         }
 
-        [UnityTest, Category("AC11")]
+        [UnityTest, Description("Скоуп резолвит политику взаимодействий как scoped-синглтон")]
         public IEnumerator GameScopeResolvesTheRealPolicyAsAScopedSingleton()
         {
             GameLifetimeScope scope = CreateScope();
@@ -91,7 +92,7 @@ namespace ZooWorld.Tests
             Assert.That(replacement, Is.Not.SameAs(policy));
         }
 
-        [Test, Category("AC06"), Category("AC11")]
+        [Test, Description("Скоуп создаёт границы арены из сериализованной камеры")]
         public void GameScopeRegistersArenaBoundsFromSerializedCamera()
         {
             _instance = new GameObject("Bounds camera");
@@ -110,7 +111,7 @@ namespace ZooWorld.Tests
             Assert.That(factory.Bounds, Is.SameAs(bounds));
         }
 
-        [UnityTest, Category("AC11")]
+        [UnityTest, Description("Фабрика инжектит зависимости в prefab один раз до Enable и Start")]
         public IEnumerator PrefabIsInjectedOnceBeforeEnableAndStart()
         {
             GameLifetimeScope scope = CreateScope();
@@ -129,10 +130,10 @@ namespace ZooWorld.Tests
             Assert.That(prefab.gameObject.activeSelf, Is.True);
         }
 
-        [UnityTest, Category("AC07"), Category("AC11")]
+        [UnityTest, Description("Скоуп подключает HUD и Tasty-views из сериализованных ссылок")]
         public IEnumerator GameScopeWiresHudAndTastyViewsFromSerializedReferences()
         {
-            GameLifetimeScope scope = WireUiScope(out Text counterText, out TastyLabelPool tastyLabels);
+            GameLifetimeScope scope = WireUiScope(out TMP_Text counterText, out TastyLabelPool tastyLabels);
             yield return null;
 
             Assert.That(counterText.text, Is.EqualTo("Dead prey: 0\nDead predators: 0"),
@@ -142,8 +143,8 @@ namespace ZooWorld.Tests
             DriveUiConsumption(resolver);
 
             Assert.That(counterText.text, Is.EqualTo("Dead prey: 1\nDead predators: 0"));
-            Text active = null;
-            foreach (Text label in tastyLabels.GetComponentsInChildren<Text>())
+            TMP_Text active = null;
+            foreach (TMP_Text label in tastyLabels.GetComponentsInChildren<TMP_Text>())
             {
                 if (label.gameObject.activeSelf)
                 {
@@ -157,10 +158,10 @@ namespace ZooWorld.Tests
             Assert.That(active.text, Is.EqualTo("Tasty!"));
         }
 
-        [UnityTest, Category("AC11")]
+        [UnityTest, Description("Разрушенный скоуп отрезает views от поздних событий")]
         public IEnumerator DestroyedScopeCutsViewUpdatesFromLateEvents()
         {
-            GameLifetimeScope scope = WireUiScope(out Text counterText, out TastyLabelPool tastyLabels);
+            GameLifetimeScope scope = WireUiScope(out TMP_Text counterText, out TastyLabelPool tastyLabels);
             yield return null;
 
             var resolver = scope.Container.Resolve<ZooWorld.Systems.AnimalInteractionResolver>();
@@ -178,13 +179,13 @@ namespace ZooWorld.Tests
                 "Disposed presenters must not show Tasty labels for late events.");
         }
 
-        private GameLifetimeScope WireUiScope(out Text counterText, out TastyLabelPool tastyLabels)
+        private GameLifetimeScope WireUiScope(out TMP_Text counterText, out TastyLabelPool tastyLabels)
         {
             _instance = new GameObject("UI fixture");
             _instance.SetActive(false);
             var counterGo = new GameObject("Counters");
             counterGo.transform.SetParent(_instance.transform, false);
-            counterText = counterGo.AddComponent<Text>();
+            counterText = counterGo.AddComponent<TextMeshProUGUI>();
             var hudGo = new GameObject("Hud view");
             hudGo.transform.SetParent(_instance.transform, false);
             var hudView = hudGo.AddComponent<HudView>();
@@ -197,7 +198,7 @@ namespace ZooWorld.Tests
             canvas.renderMode = RenderMode.WorldSpace;
             var templateGo = new GameObject("Tasty template");
             templateGo.transform.SetParent(canvasGo.transform, false);
-            Text template = templateGo.AddComponent<Text>();
+            TMP_Text template = templateGo.AddComponent<TextMeshProUGUI>();
             tastyLabels = canvasGo.AddComponent<TastyLabelPool>();
             var tastySerialized = new UnityEditor.SerializedObject(tastyLabels);
             tastySerialized.FindProperty("_labelTemplate").objectReferenceValue = template;
@@ -228,7 +229,7 @@ namespace ZooWorld.Tests
         private static int ActiveUiLabels(TastyLabelPool pool)
         {
             var count = 0;
-            foreach (Text label in pool.GetComponentsInChildren<Text>())
+            foreach (TMP_Text label in pool.GetComponentsInChildren<TMP_Text>())
             {
                 if (label.gameObject.activeSelf)
                 {

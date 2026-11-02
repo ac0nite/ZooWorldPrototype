@@ -10,7 +10,6 @@ using Object = UnityEngine.Object;
 
 namespace ZooWorld.Tests
 {
-    [Category("AC08")]
     public sealed class AnimalCatalogTests
     {
         private readonly List<Object> _objects = new List<Object>();
@@ -38,7 +37,7 @@ namespace ZooWorld.Tests
             _objects.Clear();
         }
 
-        [Test]
+        [Test, Description("Валидный каталог допускает общие профили и вид с нулевым весом")]
         public void ValidCatalogAllowsSharedProfilesAndZeroWeightEntry()
         {
             SetReference(_second, "_interactionProfile", _first.InteractionProfile);
@@ -48,27 +47,28 @@ namespace ZooWorld.Tests
         }
 
         [TestCase(""), TestCase(" ")]
+        [Description("Пустой ID вида диагностируется")]
         public void EmptySpeciesIdIsDiagnosed(string id)
         {
             SetString(_second, "_id", id);
             AssertInvalid("second");
         }
 
-        [Test]
+        [Test, Description("Дублирующийся ID вида диагностируется")]
         public void DuplicateSpeciesIdIsDiagnosed()
         {
             SetString(_second, "_id", "first");
             AssertInvalid("first");
         }
 
-        [Test]
+        [Test, Description("Null-запись сообщает свой индекс")]
         public void NullEntryReportsItsIndex()
         {
             SetArray(_catalog, "_definitions", _first, null);
             AssertInvalid("1");
         }
 
-        [Test]
+        [Test, Description("Пустой каталог отклоняется")]
         public void EmptyCatalogIsRejected()
         {
             SetArray(_catalog, "_definitions");
@@ -76,13 +76,14 @@ namespace ZooWorld.Tests
         }
 
         [TestCase(-1f), TestCase(float.NaN), TestCase(float.PositiveInfinity)]
+        [Description("Невалидный вес сообщает вид")]
         public void InvalidWeightReportsSpecies(float weight)
         {
             SetFloat(_second, "_spawnWeight", weight);
             AssertInvalid("second");
         }
 
-        [Test]
+        [Test, Description("Нулевой суммарный вес отклоняется")]
         public void ZeroTotalWeightIsRejected()
         {
             SetFloat(_first, "_spawnWeight", 0);
@@ -91,27 +92,28 @@ namespace ZooWorld.Tests
         }
 
         [TestCase("_prefab"), TestCase("_movementProfile"), TestCase("_interactionProfile")]
+        [Description("Отсутствующая ссылка сообщает вид")]
         public void MissingReferenceReportsSpecies(string field)
         {
             SetReference(_second, field, null);
             AssertInvalid("second");
         }
 
-        [Test]
+        [Test, Description("Невалидные настройки движения сообщают профиль")]
         public void InvalidMovementSettingsReportProfile()
         {
             SetFloat(_second.MovementProfile, "_speed", 0);
             AssertInvalid(_second.MovementProfile.name);
         }
 
-        [Test]
+        [Test, Description("Отсутствующая категория взаимодействия сообщает профиль")]
         public void MissingInteractionCategoryReportsProfile()
         {
             SetReference(_second.InteractionProfile, "_category", null);
             AssertInvalid(_second.InteractionProfile.name);
         }
 
-        [Test]
+        [Test, Description("Разные ассеты категорий с одним ID отклоняются")]
         public void DifferentCategoryAssetsWithSameIdAreRejected()
         {
             InteractionCategory duplicate = Category("first-category");
@@ -119,7 +121,7 @@ namespace ZooWorld.Tests
             AssertInvalid("first-category");
         }
 
-        [Test]
+        [Test, Description("Дубль ID среди съедобных категорий отклоняется")]
         public void DuplicateIdInEdibleOnlyCategoriesIsRejected()
         {
             SetArray(_first.InteractionProfile, "_edibleCategories", Category("edible-only"));
@@ -127,14 +129,14 @@ namespace ZooWorld.Tests
             AssertInvalid("edible-only");
         }
 
-        [Test]
+        [Test, Description("Дубль ID между своей и съедобной категорией отклоняется")]
         public void DuplicateIdBetweenOwnAndEdibleCategoryIsRejected()
         {
             SetArray(_second.InteractionProfile, "_edibleCategories", Category("first-category"));
             AssertInvalid("first-category");
         }
 
-        [Test]
+        [Test, Description("Один ассет категории допускается в профилях и списках съедобного")]
         public void SameCategoryAssetCanBeReferencedAcrossProfilesAndEdibleLists()
         {
             InteractionCategory shared = Category("shared");
@@ -146,13 +148,14 @@ namespace ZooWorld.Tests
         }
 
         [TestCase(""), TestCase(" ")]
+        [Description("Пустой ID съедобной категории отклоняется")]
         public void EmptyEdibleCategoryIdIsRejected(string id)
         {
             SetArray(_second.InteractionProfile, "_edibleCategories", Category(id));
             AssertInvalid(_second.InteractionProfile.name);
         }
 
-        [Test]
+        [Test, Description("Null съедобной категории отклоняется")]
         public void NullEdibleCategoryIsRejected()
         {
             SetArray(_second.InteractionProfile, "_edibleCategories", new Object[] { null });
@@ -161,13 +164,14 @@ namespace ZooWorld.Tests
 
         [TestCase(typeof(Rigidbody)), TestCase(typeof(BoxCollider)), TestCase(typeof(CatalogTestMotor))]
         [TestCase(typeof(AnimalContactRelay))]
+        [Description("Отсутствующий компонент prefab'а сообщает вид")]
         public void MissingPrefabComponentReportsSpecies(Type componentType)
         {
             Object.DestroyImmediate(_second.Prefab.GetComponent(componentType));
             AssertInvalid("second");
         }
 
-        [Test]
+        [Test, Description("Коллайдер только на детях не удовлетворяет требованиям prefab'а")]
         public void ChildOnlyColliderDoesNotSatisfyPrefabRequirements()
         {
             Object.DestroyImmediate(_second.Prefab.GetComponent<Collider>());
@@ -178,7 +182,7 @@ namespace ZooWorld.Tests
             AssertInvalid("second");
         }
 
-        [Test]
+        [Test, Description("Новые определения получают различные GUID ID")]
         public void NewDefinitionsReceiveDistinctGuidIds()
         {
             var first = Asset<AnimalDefinition>("Generated First");
@@ -189,7 +193,7 @@ namespace ZooWorld.Tests
             Assert.That(secondId, Is.Not.EqualTo(firstId));
         }
 
-        [Test]
+        [Test, Description("Сериализованный ID вида перекрывает сгенерированный")]
         public void SerializedSpeciesIdOverridesGeneratedDefault()
         {
             string serialized = EditorJsonUtility.ToJson(_first);
@@ -198,7 +202,7 @@ namespace ZooWorld.Tests
             Assert.That(restored.Id, Is.EqualTo("first"));
         }
 
-        [Test]
+        [Test, Description("Валидация сохраняет существующие ID видов")]
         public void ValidationPreservesExistingSpeciesIds()
         {
             _catalog.Validate();
@@ -207,7 +211,7 @@ namespace ZooWorld.Tests
             Assert.That(_second.Id, Is.EqualTo("second"));
         }
 
-        [Test]
+        [Test, Description("Валидация не чинит дублирующиеся ID")]
         public void ValidationDoesNotRepairDuplicateIds()
         {
             SetString(_second, "_id", "first");
@@ -215,7 +219,7 @@ namespace ZooWorld.Tests
             Assert.That(_second.Id, Is.EqualTo("first"));
         }
 
-        [Test]
+        [Test, Description("Большие конечные веса не переполняют проверку суммы")]
         public void LargeFiniteWeightsDoNotOverflowValidationTotal()
         {
             SetFloat(_first, "_spawnWeight", float.MaxValue);
@@ -223,7 +227,7 @@ namespace ZooWorld.Tests
             Assert.DoesNotThrow(() => _catalog.Validate());
         }
 
-        [Test]
+        [Test, Description("Диагностика дублирующейся категории называет оба профиля")]
         public void DuplicateCategoryDiagnosticIdentifiesBothProfiles()
         {
             SetArray(_first.InteractionProfile, "_edibleCategories", Category("duplicate"));

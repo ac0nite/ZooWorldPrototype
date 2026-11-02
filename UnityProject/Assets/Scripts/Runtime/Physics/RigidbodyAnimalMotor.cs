@@ -5,6 +5,9 @@ namespace ZooWorld.Physics
     [RequireComponent(typeof(Rigidbody), typeof(Collider))]
     public sealed class RigidbodyAnimalMotor : MonoBehaviour, IAnimalMotor
     {
+        private const float MaxGroundedVerticalSpeed = 0.1f;
+        private const float GroundProbeExtraDistance = 0.05f;
+        private const float MinGroundNormalY = 0.5f;
         private Rigidbody _body;
         private Collider _collider;
 
@@ -19,15 +22,15 @@ namespace ZooWorld.Physics
         {
             get
             {
-                if (Velocity.y > 0.1f)
+                if (Velocity.y > MaxGroundedVerticalSpeed)
                 {
                     return false;
                 }
 
                 Bounds bounds = _collider.bounds;
                 return gameObject.scene.GetPhysicsScene().Raycast(bounds.center, Vector3.down,
-                    out RaycastHit hit, bounds.extents.y + 0.05f, UnityEngine.Physics.DefaultRaycastLayers,
-                    QueryTriggerInteraction.Ignore) && hit.normal.y > 0.5f && hit.rigidbody == null;
+                    out RaycastHit hit, bounds.extents.y + GroundProbeExtraDistance, UnityEngine.Physics.DefaultRaycastLayers,
+                    QueryTriggerInteraction.Ignore) && hit.normal.y > MinGroundNormalY && hit.rigidbody == null;
             }
         }
 

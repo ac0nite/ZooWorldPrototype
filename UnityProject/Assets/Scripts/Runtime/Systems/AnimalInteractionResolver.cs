@@ -15,6 +15,9 @@ namespace ZooWorld.Systems
 
         public long ContactsReceived { get; private set; }
 
+        private const uint FnvOffsetBasis = 2166136261u;
+        private const uint FnvPrime = 16777619u;
+
         [Inject]
         public AnimalInteractionResolver(IAnimalInteractionPolicy policy, AnimalFactory factory,
             AnimalEventBus events) : this(policy, factory, events, 0)
@@ -96,11 +99,11 @@ namespace ZooWorld.Systems
         {
             unchecked
             {
-                uint hash = 2166136261u ^ seed;
-                hash = (hash ^ (uint)firstActivationId) * 16777619u;
-                hash = (hash ^ (uint)(firstActivationId >> 32)) * 16777619u;
-                hash = (hash ^ (uint)secondActivationId) * 16777619u;
-                hash = (hash ^ (uint)(secondActivationId >> 32)) * 16777619u;
+                uint hash = FnvOffsetBasis ^ seed;
+                hash = (hash ^ (uint)firstActivationId) * FnvPrime;
+                hash = (hash ^ (uint)(firstActivationId >> 32)) * FnvPrime;
+                hash = (hash ^ (uint)secondActivationId) * FnvPrime;
+                hash = (hash ^ (uint)(secondActivationId >> 32)) * FnvPrime;
                 return hash;
             }
         }

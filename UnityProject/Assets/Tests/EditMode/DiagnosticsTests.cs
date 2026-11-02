@@ -5,7 +5,7 @@ namespace ZooWorld.Tests
 {
     public sealed class DiagnosticsTests
     {
-        [Test]
+        [Test, Description("Парсер prefill читает только корректные положительные значения")]
         public void ParsePrefillTargetReadsOnlyWellFormedPositiveValues()
         {
             Assert.That(SimulationDiagnostics.ParsePrefillTarget(null), Is.EqualTo(0));

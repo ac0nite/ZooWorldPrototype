@@ -5,7 +5,7 @@ namespace ZooWorld.Tests
 {
     public sealed class CompositionTests
     {
-        [Test, Category("AC11")]
+        [Test, Description("Scoped-синглтон общий внутри контейнера и разный между контейнерами")]
         public void ScopeSingletonIsSharedWithinContainerButNotAcrossContainers()
         {
             var firstBuilder = new ContainerBuilder();

@@ -59,14 +59,14 @@ namespace ZooWorld.Tests
             _objects.Clear();
         }
 
-        [Test, Category("AC07")]
+        [Test, Description("Start отправляет текущие счётчики во view")]
         public void StartPushesCurrentCountersToTheView()
         {
             _presenter.Start();
             Assert.That(_view.Calls, Is.EqualTo(new[] { (0, 0) }));
         }
 
-        [Test, Category("AC07")]
+        [Test, Description("Start отправляет счётчики, накопленные до подписки")]
         public void StartPushesCountersAccumulatedBeforeSubscription()
         {
             DrivePreyConsumption();
@@ -74,7 +74,7 @@ namespace ZooWorld.Tests
             Assert.That(_view.Calls, Is.EqualTo(new[] { (1, 0) }));
         }
 
-        [Test, Category("AC07")]
+        [Test, Description("Смерть добычи даёт ровно одно обновление view")]
         public void PreyDeathProducesExactlyOneViewUpdate()
         {
             _presenter.Start();
@@ -82,7 +82,7 @@ namespace ZooWorld.Tests
             Assert.That(_view.Calls, Is.EqualTo(new[] { (0, 0), (1, 0) }));
         }
 
-        [Test, Category("AC04"), Category("AC07")]
+        [Test, Description("Смерть хищника обновляет только счётчик хищников")]
         public void PredatorDeathUpdatesOnlyThePredatorCounter()
         {
             _presenter.Start();
@@ -92,7 +92,7 @@ namespace ZooWorld.Tests
             Assert.That(_view.Calls, Is.EqualTo(new[] { (0, 0), (0, 1) }));
         }
 
-        [Test, Category("AC11")]
+        [Test, Description("Изменения после Dispose не доходят до view")]
         public void ChangesAfterDisposeDoNotReachTheView()
         {
             _presenter.Start();
@@ -102,7 +102,7 @@ namespace ZooWorld.Tests
             Assert.That(_stats.PreyDeaths, Is.EqualTo(1), "The model still counts; only the view is cut off.");
         }
 
-        [Test, Category("AC11")]
+        [Test, Description("Новый presenter не удваивает обновления")]
         public void ReplacementPresenterDoesNotMultiplyUpdates()
         {
             _presenter.Start();
@@ -114,7 +114,7 @@ namespace ZooWorld.Tests
             replacement.Dispose();
         }
 
-        [Test, Category("AC11")]
+        [Test, Description("Повторный Start не подписывается дважды")]
         public void RepeatedStartDoesNotDoubleSubscribe()
         {
             _presenter.Start();

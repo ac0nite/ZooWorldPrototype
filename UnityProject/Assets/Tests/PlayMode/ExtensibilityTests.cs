@@ -112,7 +112,7 @@ namespace ZooWorld.Tests
             }
         }
 
-        [Test, Category("AC08")]
+        [Test, Description("Демо-каталог добавляет виды только ассетами, shipped-каталог не меняется")]
         public void DemoCatalogAddsSpeciesThroughAssetsOnly()
         {
             Assert.DoesNotThrow(() => _demoCatalog.Validate());
@@ -143,7 +143,7 @@ namespace ZooWorld.Tests
             Assert.That(turtleMovement.Speed, Is.EqualTo(TurtleSpeed));
         }
 
-        [Test, Category("AC05"), Category("AC08")]
+        [Test, Description("Новый вид спавнится фабрикой и прыгает по своему профилю")]
         public void NewSpeciesRentsThroughFactoryAndJumpsWithItsConfiguredProfile()
         {
             Animal hare = Rent(_hare, new Vector3(0, HareRestHeight, 0), Vector3.right);
@@ -172,7 +172,7 @@ namespace ZooWorld.Tests
             Assert.That(hare.IsAlive, Is.True);
         }
 
-        [Test, Category("AC03"), Category("AC08")]
+        [Test, Description("Новый вид гибнет от хищника по неизменным правилам")]
         public void NewSpeciesDiesToPredatorThroughUnchangedInteractionRules()
         {
             Animal snake = Rent(_snake, new Vector3(-1, 0.5f, 0), Vector3.right);
@@ -197,7 +197,7 @@ namespace ZooWorld.Tests
             Assert.That(hare.gameObject.activeSelf, Is.False);
         }
 
-        [Test, Category("AC02"), Category("AC08")]
+        [Test, Description("Новый вид отскакивает от добычи по неизменным правилам")]
         public void NewSpeciesBouncesOffPreyThroughUnchangedInteractionRules()
         {
             Animal first = Rent(_hare, new Vector3(-1, HareRestHeight, 0), Vector3.right);
@@ -230,7 +230,7 @@ namespace ZooWorld.Tests
             Assert.That(_stats.PreyDeaths + _stats.PredatorDeaths, Is.EqualTo(0));
         }
 
-        [Test, Category("AC05"), Category("AC08")]
+        [Test, Description("Линейный demo-вид движется со своей настроенной скоростью")]
         public void NewLinearSpeciesMovesAtItsConfiguredSpeed()
         {
             Animal turtle = Rent(_turtle, new Vector3(0, TurtleRestHeight, 0), Vector3.right);
@@ -240,7 +240,7 @@ namespace ZooWorld.Tests
             Assert.That(turtle.IsAlive, Is.True);
         }
 
-        [Test, Category("AC02"), Category("AC08")]
+        [Test, Description("Пара черепах физически отскакивает при контакте")]
         public void NewLinearSpeciesPairBouncesOnContact()
         {
             Animal first = Rent(_turtle, new Vector3(-1, TurtleRestHeight, 0), Vector3.right);
@@ -271,7 +271,7 @@ namespace ZooWorld.Tests
             Assert.That(_stats.PreyDeaths + _stats.PredatorDeaths, Is.EqualTo(0));
         }
 
-        [Test, Category("AC02"), Category("AC05"), Category("AC08")]
+        [Test, Description("Лягушка перепрыгивает стену, блокирующую наземные виды")]
         public void FrogClearsObstacleWallThatBlocksGroundSpecies()
         {
             Wall(new Vector3(-1, 0.275f, 0));
@@ -286,7 +286,7 @@ namespace ZooWorld.Tests
             Assert.That(frog.IsAlive, Is.True);
         }
 
-        [Test, Category("AC02"), Category("AC05"), Category("AC08")]
+        [Test, Description("Змея не может пересечь стену-препятствие")]
         public void SnakeCannotCrossTheObstacleWall()
         {
             Wall(new Vector3(-1.5f, 0.275f, 0));
@@ -297,7 +297,7 @@ namespace ZooWorld.Tests
             Assert.That(snake.IsAlive, Is.True);
         }
 
-        [Test, Category("AC02"), Category("AC05"), Category("AC08")]
+        [Test, Description("Заяц не может перепрыгнуть стену-препятствие")]
         public void HareCannotCrossTheObstacleWall()
         {
             Wall(new Vector3(-1.5f, 0.275f, 0));
@@ -308,7 +308,7 @@ namespace ZooWorld.Tests
             Assert.That(hare.IsAlive, Is.True);
         }
 
-        [Test, Category("AC02"), Category("AC05"), Category("AC08")]
+        [Test, Description("Черепаха не может пересечь стену-препятствие")]
         public void TurtleCannotCrossTheObstacleWall()
         {
             Wall(new Vector3(-1.5f, 0.275f, 0));

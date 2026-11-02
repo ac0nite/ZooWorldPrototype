@@ -28,7 +28,7 @@ namespace ZooWorld.Tests
             _profiles.Clear();
         }
 
-        [Test, Category("AC05")]
+        [Test, Description("Линейная стартует с заданной скоростью, сохраняя вертикальную")]
         public void LinearStartsAtConfiguredPlanarSpeedAndPreservesVerticalVelocity()
         {
             var motor = new Motor { Velocity = new Vector3(0, -2, 0) };
@@ -37,7 +37,7 @@ namespace ZooWorld.Tests
             AssertVector(motor.Velocity, new Vector3(3, -2, 0));
         }
 
-        [Test, Category("AC06")]
+        [Test, Description("Разворот до первого тика откладывает движение и меняет направление")]
         public void LinearSteeringBeforeFirstTickDefersMotionAndReplacesInitialDirection()
         {
             var motor = new Motor();
@@ -48,7 +48,7 @@ namespace ZooWorld.Tests
             AssertVector(motor.Velocity, new Vector3(0, 0, -3));
         }
 
-        [Test, Category("AC02")]
+        [Test, Description("Линейная сохраняет отскок в холде, затем восстанавливает скорость")]
         public void LinearPreservesReboundDuringHoldThenRestoresConfiguredSpeed()
         {
             var motor = new Motor();
@@ -70,7 +70,7 @@ namespace ZooWorld.Tests
             AssertVector(motor.Velocity, reboundDirection * 3);
         }
 
-        [Test, Category("AC02"), Category("AC06")]
+        [Test, Description("Разворот перенаправляет отскок внутрь без потери скорости")]
         public void LinearSteeringRedirectsReboundInwardWithoutErasingItsSpeed()
         {
             var motor = new Motor();
@@ -84,7 +84,7 @@ namespace ZooWorld.Tests
             Assert.That(planar.magnitude, Is.EqualTo(new Vector3(2, 0, 0.5f).magnitude).Within(Tolerance));
         }
 
-        [Test, Category("AC06")]
+        [Test, Description("Разворот при движении внутрь не трогает физическую скорость")]
         public void LinearSteeringWhileMovingInwardLeavesPhysicalVelocityUntouched()
         {
             var motor = new Motor();
@@ -96,7 +96,7 @@ namespace ZooWorld.Tests
             Assert.That(motor.Velocity.x, Is.GreaterThan(0));
         }
 
-        [Test, Category("AC09")]
+        [Test, Description("Общий линейный профиль даёт независимые направление и старт")]
         public void SharedLinearProfileCreatesIndependentDirectionAndStartState()
         {
             var profile = Profile<LinearMovementProfile>();
@@ -114,7 +114,7 @@ namespace ZooWorld.Tests
             Assert.That(EditorJsonUtility.ToJson(profile), Is.EqualTo(serializedBefore));
         }
 
-        [Test, Category("AC05")]
+        [Test, Description("Прыжок ждёт, затем стартует с независимо вычисленной баллистикой")]
         public void JumpWaitsThenLaunchesWithIndependentlyCalculatedBallisticVelocity()
         {
             var motor = new Motor();
@@ -129,7 +129,7 @@ namespace ZooWorld.Tests
             AssertVector(motor.Velocity, new Vector3(2, 4, 0));
         }
 
-        [Test, Category("AC09")]
+        [Test, Description("Общий профиль прыжка даёт независимые таймеры, направления и фазу")]
         public void SharedJumpProfileHasIndependentTimersDirectionsAndPhase()
         {
             var profile = Profile<JumpMovementProfile>();
@@ -163,7 +163,7 @@ namespace ZooWorld.Tests
             Assert.That(EditorJsonUtility.ToJson(profile), Is.EqualTo(serializedBefore));
         }
 
-        [Test, Category("AC05")]
+        [Test, Description("Прыжок не стартует в воздухе, пауза перезапускается после приземления")]
         public void JumpDoesNotLaunchInAirAndWaitRestartsAfterObservedLanding()
         {
             var motor = new Motor { IsGrounded = false };
@@ -194,7 +194,7 @@ namespace ZooWorld.Tests
             AssertVector(motor.Velocity, new Vector3(2, 4, 0));
         }
 
-        [Test, Category("AC06")]
+        [Test, Description("Разворот до прыжка меняет направление только этой активации")]
         public void SteeringBeforeJumpChangesOnlyThisActivationsLaunchDirection()
         {
             var motor = new Motor();
@@ -209,7 +209,7 @@ namespace ZooWorld.Tests
             AssertVector(motor.Velocity, new Vector3(0, 4, -2));
         }
 
-        [Test, Category("AC09")]
+        [Test, Description("Новая стратегия на моторе не наследует старые таймеры и состояние")]
         public void FreshStrategyOnSameMotorDoesNotInheritOldTimerDirectionOrStoppedState()
         {
             var motor = new Motor();
@@ -240,7 +240,8 @@ namespace ZooWorld.Tests
             AssertVector(motor.Velocity, new Vector3(-3, 0, 0));
         }
 
-        [TestCase(false), TestCase(true), Category("AC09")]
+        [TestCase(false), TestCase(true)]
+        [Description("Disposed-стратегии останавливают движение и игнорируют вызовы")]
         public void DisposedStrategiesStopMotionAndIgnoreFurtherCalls(bool jumping)
         {
             var motor = new Motor();
@@ -262,7 +263,8 @@ namespace ZooWorld.Tests
         }
 
         [TestCase("_speed", 0f), TestCase("_speed", -1f), TestCase("_speed", float.NaN)]
-        [TestCase("_speed", float.PositiveInfinity), Category("AC08")]
+        [TestCase("_speed", float.PositiveInfinity)]
+        [Description("Линейная стратегия отклоняет невалидные параметры")]
         public void LinearRejectsInvalidParameters(string field, float value)
         {
             var profile = Profile<LinearMovementProfile>();
@@ -272,7 +274,8 @@ namespace ZooWorld.Tests
 
         [TestCase("_distance", 0f), TestCase("_height", -1f), TestCase("_waitInterval", 0f)]
         [TestCase("_distance", float.NaN), TestCase("_height", float.PositiveInfinity)]
-        [TestCase("_waitInterval", float.NaN), Category("AC08")]
+        [TestCase("_waitInterval", float.NaN)]
+        [Description("Стратегия прыжка отклоняет невалидные параметры")]
         public void JumpRejectsInvalidParameters(string field, float value)
         {
             var profile = Profile<JumpMovementProfile>();
@@ -281,7 +284,7 @@ namespace ZooWorld.Tests
             Assert.That(error.Message, Does.Contain(field));
         }
 
-        [Test, Category("AC08")]
+        [Test, Description("Контекст отклоняет нулевой мотор, гравитацию и непланарное направление")]
         public void ContextRejectsMissingMotorInvalidGravityAndNonPlanarDirection()
         {
             Assert.Throws<ArgumentNullException>(() => new MovementContext(null, Vector3.right, 8));

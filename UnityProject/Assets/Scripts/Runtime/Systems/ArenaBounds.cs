@@ -5,12 +5,13 @@ namespace ZooWorld.Systems
 {
     public sealed class ArenaBounds
     {
+        private const float OutsideEpsilon = 0.00001f;
         private readonly Camera _camera;
         private readonly Plane _ground;
 
         public ArenaBounds(Camera camera, float groundHeight = 0)
         {
-            _camera = camera != null ? camera : throw new ArgumentNullException(nameof(camera));
+            _camera = camera ?? throw new ArgumentNullException(nameof(camera));
             if (float.IsNaN(groundHeight) || float.IsInfinity(groundHeight))
             {
                 throw new ArgumentOutOfRangeException(nameof(groundHeight));
@@ -72,7 +73,7 @@ namespace ZooWorld.Systems
         private static bool IsOutside(Vector3 position, Vector3 start, Vector3 end, Vector3 center)
         {
             Vector3 normal = Vector3.Cross(end - start, Vector3.up);
-            return Vector3.Dot(position - start, normal) * Vector3.Dot(center - start, normal) < -0.00001f;
+            return Vector3.Dot(position - start, normal) * Vector3.Dot(center - start, normal) < -OutsideEpsilon;
         }
     }
 }

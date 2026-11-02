@@ -41,7 +41,7 @@ namespace ZooWorld.Tests
             _objects.Clear();
         }
 
-        [Test, Category("AC01")]
+        [Test, Description("Спавны по расписанию добавляют по животному через интервал в диапазоне")]
         public void ScheduledSpawnsAddOneAnimalEachAfterAnIntervalWithinRange()
         {
             AnimalSpawner spawner = Spawner(Catalog(Definition("frog", 1), Definition("snake", 1)));
@@ -66,7 +66,7 @@ namespace ZooWorld.Tests
             }
         }
 
-        [Test, Category("AC01")]
+        [Test, Description("Первый спавн не раньше минимального интервала")]
         public void FirstSpawnDoesNotHappenBeforeTheMinimumInterval()
         {
             AnimalSpawner spawner = Spawner(Catalog(Definition("frog", 1)));
@@ -76,7 +76,7 @@ namespace ZooWorld.Tests
             Assert.That(_target.Rents, Is.Empty);
         }
 
-        [Test, Category("AC01")]
+        [Test, Description("Один seed воспроизводит ту же последовательность спавнов")]
         public void SameSeedReproducesTheSameSpawnSequence()
         {
             AnimalCatalog catalog = Catalog(Definition("frog", 1), Definition("snake", 3));
@@ -100,7 +100,7 @@ namespace ZooWorld.Tests
             }
         }
 
-        [Test, Category("AC01")]
+        [Test, Description("Другой seed меняет последовательность спавнов")]
         public void DifferentSeedChangesTheSpawnSequence()
         {
             AnimalCatalog catalog = Catalog(Definition("frog", 1), Definition("snake", 1));
@@ -127,7 +127,7 @@ namespace ZooWorld.Tests
             Assert.That(differs, Is.True, "A different seed must produce a different spawn sequence.");
         }
 
-        [Test, Category("AC01")]
+        [Test, Description("Взвешенный выбор не берёт нулевой вес и предпочитает тяжёлые виды")]
         public void WeightedSelectionNeverPicksZeroWeightAndPrefersHeavierSpecies()
         {
             AnimalDefinition ignored = Definition("ignored", 0);
@@ -159,7 +159,7 @@ namespace ZooWorld.Tests
                 "A 3:1 spawn weight must favor the heavier species.");
         }
 
-        [Test, Category("AC01")]
+        [Test, Description("Позиции спавна остаются внутри арены и над землёй")]
         public void SpawnPositionsStayInsideTheFootprintAndAboveGround()
         {
             AnimalSpawner spawner = Spawner(Catalog(Definition("frog", 1)), cap: 100);
@@ -180,7 +180,7 @@ namespace ZooWorld.Tests
             }
         }
 
-        [Test, Category("AC01")]
+        [Test, Description("Направления спавна планарные, единичные и случайные")]
         public void SpawnDirectionsArePlanarUnitAndRandomized()
         {
             AnimalSpawner spawner = Spawner(Catalog(Definition("frog", 1)), cap: 100);
@@ -200,7 +200,7 @@ namespace ZooWorld.Tests
             Assert.That(directions.Count, Is.GreaterThan(1), "Spawn directions must be randomized.");
         }
 
-        [Test, Category("AC10")]
+        [Test, Description("Спавн по расписанию пропускается при достижении лимита")]
         public void ScheduledSpawnIsSkippedWhileAtTheLiveCap()
         {
             AnimalSpawner spawner = Spawner(Catalog(Definition("frog", 1)), _target, cap: 3);
@@ -212,7 +212,7 @@ namespace ZooWorld.Tests
             Assert.That(_target.Rents, Has.Count.GreaterThanOrEqualTo(1));
         }
 
-        [Test, Category("AC10")]
+        [Test, Description("Спавн по расписанию пропускается при 100 активных")]
         public void ScheduledSpawnIsSkippedAtOneHundredActive()
         {
             AnimalSpawner spawner = Spawner(Catalog(Definition("frog", 1)), _target, cap: 100);
@@ -221,7 +221,7 @@ namespace ZooWorld.Tests
             Assert.That(_target.Rents, Is.Empty);
         }
 
-        [Test, Category("AC10")]
+        [Test, Description("Спавн возобновляется на следующем интервале после освобождения")]
         public void SpawningResumesAtTheNextScheduledIntervalAfterCapacityFrees()
         {
             AnimalSpawner spawner = Spawner(Catalog(Definition("frog", 1)), _target, cap: 2);
@@ -241,7 +241,7 @@ namespace ZooWorld.Tests
                 "After capacity frees, spawning must resume at the next scheduled interval.");
         }
 
-        [Test, Category("AC10")]
+        [Test, Description("Start отклоняет невалидные настройки и каталог")]
         public void StartRejectsInvalidSettingsAndCatalog()
         {
             AnimalCatalog empty = Asset<AnimalCatalog>();
@@ -252,7 +252,7 @@ namespace ZooWorld.Tests
             Assert.Throws<InvalidOperationException>(() => spawner.Start());
         }
 
-        [Test, Category("AC01"), Category("AC10")]
+        [Test, Description("Advance с невалидным неположительным интервалом не зависает")]
         public void AdvanceWithUnvalidatedNonPositiveIntervalDoesNotHang()
         {
             SimulationSettings broken = Settings(min: -5, max: -1);
@@ -261,7 +261,7 @@ namespace ZooWorld.Tests
             Assert.That(_target.Rents, Is.Empty);
         }
 
-        [Test, Category("AC01")]
+        [Test, Description("Невалидный advance и null-зависимости отклоняются")]
         public void InvalidAdvanceAndNullDependenciesAreRejected()
         {
             AnimalSpawner spawner = Spawner(Catalog(Definition("frog", 1)));

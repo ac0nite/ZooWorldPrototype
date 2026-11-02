@@ -5,10 +5,9 @@ using ZooWorld.Definitions;
 
 namespace ZooWorld.Tests
 {
-    [Category("AC08")]
     public sealed class SpeciesIdGeneratorTests
     {
-        [Test]
+        [Test, Description("Сгенерированный ID — непустой GUID в компактном формате")]
         public void GeneratedIdIsANonEmptyGuidInCompactFormat()
         {
             string id = SpeciesIdGenerator.Generate();
@@ -18,7 +17,7 @@ namespace ZooWorld.Tests
             Assert.That(guid, Is.Not.EqualTo(Guid.Empty));
         }
 
-        [Test]
+        [Test, Description("Повторные вызовы дают различные ID")]
         public void RepeatedCallsProduceDistinctIds()
         {
             var ids = new HashSet<string>();

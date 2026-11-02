@@ -16,12 +16,7 @@ namespace ZooWorld.Interaction
                 throw new ArgumentException("Category ID must not be empty.", nameof(categoryId));
             }
 
-            if (edibleCategoryIds == null)
-            {
-                throw new ArgumentNullException(nameof(edibleCategoryIds));
-            }
-
-            CategoryId = categoryId;
+            CategoryId = categoryId ?? throw new ArgumentNullException(nameof(edibleCategoryIds));
             _edibleCategoryIds = new HashSet<string>(StringComparer.Ordinal);
             foreach (string id in edibleCategoryIds)
             {

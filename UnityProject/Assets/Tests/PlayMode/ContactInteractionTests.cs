@@ -96,7 +96,7 @@ namespace ZooWorld.Tests
             }
         }
 
-        [Test, Category("AC03")]
+        [Test, Description("Хищник съедает добычу при реальном контакте ровно с одной парой событий")]
         public void PredatorConsumesPreyOnRealContactWithExactlyOneOrderedEventPair()
         {
             Animal snake = Rent(_snake, new Vector3(-1, 0.5f, 0), Vector3.right);
@@ -135,7 +135,7 @@ namespace ZooWorld.Tests
             Assert.That(_stats.PreyDeaths, Is.EqualTo(1));
         }
 
-        [Test, Category("AC04")]
+        [Test, Description("Пара хищников при реальном контакте убивает ровно одного по дублям")]
         public void PredatorPairRealContactKillsExactlyOneAcrossDuplicateReports()
         {
             Animal first = Rent(_snake, new Vector3(-1, 0.5f, 0), Vector3.right);
@@ -159,7 +159,7 @@ namespace ZooWorld.Tests
             Assert.That(_stats.PredatorDeaths, Is.EqualTo(1));
         }
 
-        [Test, Category("AC02"), Category("AC03")]
+        [Test, Description("Контакт двух добыч не даёт смертей и событий")]
         public void PreyPairRealContactProducesNoDeathsOrEvents()
         {
             AnimalDefinition prey = FixturePreyDefinition();
@@ -173,7 +173,7 @@ namespace ZooWorld.Tests
             Assert.That(_factory.ActiveCount, Is.EqualTo(2));
         }
 
-        [Test, Category("AC03")]
+        [Test, Description("Контакты с землёй не дают событий при непрерывном движении")]
         public void GroundContactsProduceNoEventsDuringContinuousMovement()
         {
             Animal frog = Rent(_frog, new Vector3(0, 0.5f, 0), Vector3.right);
@@ -183,7 +183,7 @@ namespace ZooWorld.Tests
             Assert.That(_consumed, Is.Empty);
         }
 
-        [Test, Category("AC03"), Category("AC09")]
+        [Test, Description("Повторные и устаревшие контакты отклоняются после смерти и пересдачи")]
         public void ReplayedAndStaleContactsAreRejectedAfterDeathReleaseAndRerent()
         {
             Animal first = Rent(_snake, new Vector3(-1, 0.5f, 0), Vector3.right);
@@ -214,7 +214,7 @@ namespace ZooWorld.Tests
             Assert.That(_stats.PredatorDeaths, Is.EqualTo(1));
         }
 
-        [Test, Category("AC11")]
+        [Test, Description("Скоуп связывает резолвер, события, статистику и инъекцию релея")]
         public void ScopeWiresResolverEventsStatsAndRelayInjection()
         {
             Assert.That(_resolver, Is.Not.Null);

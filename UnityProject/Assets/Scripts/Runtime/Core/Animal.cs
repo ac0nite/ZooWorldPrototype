@@ -29,18 +29,10 @@ namespace ZooWorld.Core
         public void Activate(long activationId, AnimalDefinition definition, MovementContext context)
         {
             ValidateActivation(activationId);
-            if (definition == null)
-            {
-                throw new ArgumentNullException(nameof(definition));
-            }
-
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            InteractionData interaction = definition.InteractionProfile.CreateSnapshot();
-            IMovementStrategy movement = definition.MovementProfile.CreateStrategy(context);
+            InteractionData interaction = (definition ?? throw new ArgumentNullException(nameof(definition)))
+                .InteractionProfile.CreateSnapshot();
+            IMovementStrategy movement = definition.MovementProfile.CreateStrategy(
+                context ?? throw new ArgumentNullException(nameof(context)));
             _movement = movement ?? throw new InvalidOperationException("Movement profile returned no strategy.");
             _motor = context.Motor;
             _bounds = context.Bounds;

@@ -70,7 +70,7 @@ namespace ZooWorld.Tests
             }
         }
 
-        [Test, Category("AC05")]
+        [Test, Description("Змея движется с настроенной скоростью по реальной земле")]
         public void SnakeMovesAtConfiguredSpeedOnRealGround()
         {
             Animal animal = Create(false, new Vector3(0, 0.5f, 0), Vector3.right);
@@ -79,7 +79,7 @@ namespace ZooWorld.Tests
             Assert.That(animal.GetComponent<RigidbodyAnimalMotor>().IsGrounded, Is.True);
         }
 
-        [Test, Category("AC05")]
+        [Test, Description("Дальность, высота прыжка и пауза лягушки совпадают с конфигурацией")]
         public void FrogFlightDistanceHeightAndGroundedWaitMatchConfiguration()
         {
             Animal animal = Create(true, new Vector3(0, 0.5f, 0), Vector3.right);
@@ -120,7 +120,7 @@ namespace ZooWorld.Tests
             Assert.That(wait * Step, Is.EqualTo(1).Within(0.04f));
         }
 
-        [Test, Category("AC05")]
+        [Test, Description("Блокированный прыжок восстанавливается после снятия ограничения")]
         public void BlockedJumpRecoversAfterVerticalConstraintIsRemoved()
         {
             Animal animal = Create(true, new Vector3(0, 0.5f, 0), Vector3.right);
@@ -139,7 +139,8 @@ namespace ZooWorld.Tests
             Assert.That(airborne, Is.True, "Failed launch must not permanently lock the strategy.");
         }
 
-        [TestCase(0f), TestCase(0.4f), Category("AC02")]
+        [TestCase(0f), TestCase(0.4f)]
+        [Description("Движущиеся добычи разлетаются и отскакивают без смертей")]
         public void MovingPreySeparateAndReboundWithoutLosingTheirLives(float offset)
         {
             Animal a = Create(false, new Vector3(-1, 0.5f, -offset / 2), Vector3.right, 1);
@@ -171,7 +172,7 @@ namespace ZooWorld.Tests
             Assert.That(a.IsAlive && b.IsAlive, Is.True);
         }
 
-        [Test, Category("AC02"), Category("AC05")]
+        [Test, Description("Неупругий контакт останавливает тела, движение восстанавливается")]
         public void InelasticContactStopsBodiesThenMovementRecoversAfterBlockerRemoval()
         {
             Animal a = Create(false, new Vector3(-1, 0.5f, 0), Vector3.right, 0);
@@ -187,7 +188,7 @@ namespace ZooWorld.Tests
 
         [TestCase(-1, 0), TestCase(1, 0), TestCase(0, -1), TestCase(0, 1)]
         [TestCase(-1, -1), TestCase(-1, 1), TestCase(1, -1), TestCase(1, 1)]
-        [Category("AC06")]
+        [Description("Оба типа движения разворачиваются у краёв и углов без телепорта")]
         public void BothMovementTypesReturnFromEachEdgeAndCornerWithoutTeleport(int x, int z)
         {
             foreach (bool jumping in new[] { false, true })
@@ -213,7 +214,7 @@ namespace ZooWorld.Tests
             }
         }
 
-        [Test, Category("AC06")]
+        [Test, Description("Касательное отклонение за границей разворачивается внутрь")]
         public void TangentialDeflectionWhileOutsideIsResteeredInward()
         {
             Animal animal = Create(false, new Vector3(5.5f, 0.5f, 0), Vector3.right, bounds: _bounds);
@@ -237,7 +238,7 @@ namespace ZooWorld.Tests
             Assert.That(Mathf.Abs(animal.transform.position.z), Is.LessThan(1.5f));
         }
 
-        [Test, Category("AC05")]
+        [Test, Description("Уменьшенный отскок удерживается, затем скорость восстанавливается")]
         public void ReducedLinearReboundIsHeldThenRestoresConfiguredSpeed()
         {
             Animal animal = Create(false, new Vector3(0, 0.5f, 0), Vector3.right);
@@ -250,7 +251,7 @@ namespace ZooWorld.Tests
             Assert.That(animal.GetComponent<Rigidbody>().linearVelocity.x, Is.EqualTo(3).Within(0.05f));
         }
 
-        [Test, Category("AC02")]
+        [Test, Description("Сохранённые лягушки отскакивают с боевым физматериалом")]
         public void SavedFrogsReboundWithTheProductionPhysicsMaterial()
         {
             var definition = AssetDatabase.LoadAssetAtPath<AnimalDefinition>("Assets/Settings/AnimalDefinitions/Frog.asset");
@@ -289,7 +290,7 @@ namespace ZooWorld.Tests
             Assert.That(a.IsAlive && b.IsAlive, Is.True);
         }
 
-        [Test, Category("AC06")]
+        [Test, Description("Промах лучей камеры отключает разворот без поломки тиков")]
         public void CameraRaysMissingTheGroundPlaneDisableSteeringWithoutBreakingTicks()
         {
             _camera.transform.rotation = Quaternion.identity;
@@ -300,7 +301,7 @@ namespace ZooWorld.Tests
             Assert.That(animal.IsAlive, Is.True);
         }
 
-        [Test, Category("AC05")]
+        [Test, Description("Животное на динамическом теле не считается на земле")]
         public void AnimalRestingOnADynamicBodyIsNotGrounded()
         {
             GameObject platform = Track(new GameObject("Dynamic platform"));
@@ -315,7 +316,7 @@ namespace ZooWorld.Tests
             Assert.That(animal.IsAlive, Is.True);
         }
 
-        [Test, Category("AC06")]
+        [Test, Description("Границы следуют за камерой, нормализованные точки остаются внутри")]
         public void BoundsFollowCameraAndNormalizedPointsStayInside()
         {
             Assert.That(_bounds.TryGetInwardDirection(new Vector3(5.5f, 0, 0), out Vector3 direction), Is.True);
@@ -337,7 +338,7 @@ namespace ZooWorld.Tests
             }
         }
 
-        [Test, Category("AC05"), Category("AC06"), Category("AC09")]
+        [Test, Description("Виды из каталога спавнятся фабрикой с реальным мотором и общими границами")]
         public void SavedSpeciesRentThroughFactoryWithRealMotorAndSharedBounds()
         {
             var catalog = AssetDatabase.LoadAssetAtPath<AnimalCatalog>("Assets/Settings/AnimalDefinitions/AnimalCatalog.asset");
@@ -360,7 +361,7 @@ namespace ZooWorld.Tests
             }
         }
 
-        [Test, Category("AC05")]
+        [Test, Description("Сохранённая лягушка приземляется и ждёт, не отскакивая от земли")]
         public void SavedFrogLandsAndWaitsInsteadOfBouncingOffTheGround()
         {
             var definition = AssetDatabase.LoadAssetAtPath<AnimalDefinition>("Assets/Settings/AnimalDefinitions/Frog.asset");

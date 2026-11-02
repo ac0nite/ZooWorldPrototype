@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,7 +8,7 @@ namespace ZooWorld.UI
     {
         private const string CounterFormat = "Dead prey: {0}\nDead predators: {1}";
 
-        [SerializeField] private Text _counterText;
+        [SerializeField] private TMP_Text _counterText;
 
         public void SetCounters(int preyDeaths, int predatorDeaths)
         {
