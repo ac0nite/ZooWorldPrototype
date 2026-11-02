@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ZooWorld.Physics
+namespace ZooWorld.Motion
 {
     public interface IAnimalMotor
     {

@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace ZooWorld.UI
 {
@@ -14,10 +13,10 @@ namespace ZooWorld.UI
         [SerializeField] private TMP_Text _labelTemplate;
         [SerializeField] private int _poolSize = 4;
         [SerializeField] private float _duration = 1.5f;
-        [SerializeField] private Vector3 _belowOffset = new Vector3(0f, 0f, -1f);
-        [SerializeField] private Vector3 _drift = new Vector3(0f, 0f, 0.6f);
+        [SerializeField] private Vector3 _belowOffset = new(0f, 0f, -1f);
+        [SerializeField] private Vector3 _drift = new(0f, 0f, 0.6f);
 
-        private readonly List<Entry> _entries = new List<Entry>();
+        private readonly List<Entry> _entries = new();
         private int _nextIndex;
 
         private void Awake()
@@ -31,14 +30,11 @@ namespace ZooWorld.UI
 
             for (var i = 0; i < _poolSize; i++)
             {
-                TMP_Text label = Instantiate(_labelTemplate, transform);
+                var label = Instantiate(_labelTemplate, transform);
                 label.text = LabelText;
                 label.gameObject.SetActive(false);
-                CanvasGroup group = label.GetComponent<CanvasGroup>();
-                if (group == null)
-                {
-                    group = label.gameObject.AddComponent<CanvasGroup>();
-                }
+                var group = label.GetComponent<CanvasGroup>();
+                if (group == null) group = label.gameObject.AddComponent<CanvasGroup>();
 
                 _entries.Add(new Entry(label, group));
             }
@@ -48,17 +44,11 @@ namespace ZooWorld.UI
 
         public void Show(Vector3 worldPosition)
         {
-            if (!isActiveAndEnabled || _entries.Count == 0)
-            {
-                return;
-            }
+            if (!isActiveAndEnabled || _entries.Count == 0) return;
 
-            Entry entry = _entries[_nextIndex];
+            var entry = _entries[_nextIndex];
             _nextIndex = (_nextIndex + 1) % _entries.Count;
-            if (entry.Routine != null)
-            {
-                StopCoroutine(entry.Routine);
-            }
+            if (entry.Routine != null) StopCoroutine(entry.Routine);
 
             entry.BasePosition = worldPosition + _belowOffset;
             entry.Label.transform.position = entry.BasePosition;
@@ -74,7 +64,7 @@ namespace ZooWorld.UI
             {
                 yield return null;
                 elapsed += Time.deltaTime;
-                float t = Mathf.Clamp01(elapsed / _duration);
+                var t = Mathf.Clamp01(elapsed / _duration);
                 entry.Label.transform.position = entry.BasePosition + _drift * t;
                 entry.Group.alpha = Mathf.Clamp01(FadeSteepness * (1f - t));
             }

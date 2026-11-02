@@ -367,16 +367,16 @@ namespace ZooWorld.Tests
         [UnityTest, Description("Неудачная активация возвращает экземпляр без утечки счётчика")]
         public IEnumerator FailedActivationReturnsInstanceWithoutReinjectionOrActiveCountLeak()
         {
-            Vector3 previousGravity = UnityEngine.Physics.gravity;
+            Vector3 previousGravity = Physics.gravity;
             try
             {
-                UnityEngine.Physics.gravity = Vector3.zero;
+                Physics.gravity = Vector3.zero;
                 Assert.Throws<ArgumentOutOfRangeException>(() => _factory.Rent(_definition, Vector3.zero, Vector3.right));
                 Assert.That(_factory.ActiveCount, Is.Zero);
             }
             finally
             {
-                UnityEngine.Physics.gravity = previousGravity;
+                Physics.gravity = previousGravity;
             }
 
             Animal animal = Rent(Vector3.zero, Vector3.right);

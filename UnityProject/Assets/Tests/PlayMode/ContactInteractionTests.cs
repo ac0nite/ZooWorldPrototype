@@ -12,7 +12,7 @@ using ZooWorld.Composition;
 using ZooWorld.Core;
 using ZooWorld.Definitions;
 using ZooWorld.Interaction;
-using ZooWorld.Physics;
+using ZooWorld.Motion;
 using ZooWorld.Systems;
 using Object = UnityEngine.Object;
 
@@ -45,11 +45,11 @@ namespace ZooWorld.Tests
             _order = new List<string>();
             _died = new List<AnimalDied>();
             _consumed = new List<AnimalConsumed>();
-            _previousMode = UnityEngine.Physics.simulationMode;
-            _previousGravity = UnityEngine.Physics.gravity;
+            _previousMode = Physics.simulationMode;
+            _previousGravity = Physics.gravity;
             _previousStep = Time.fixedDeltaTime;
-            UnityEngine.Physics.simulationMode = SimulationMode.Script;
-            UnityEngine.Physics.gravity = new Vector3(0, -8, 0);
+            Physics.simulationMode = SimulationMode.Script;
+            Physics.gravity = new Vector3(0, -8, 0);
             Time.fixedDeltaTime = Step;
             _scene = SceneManager.CreateScene("Contact fixture", new CreateSceneParameters(LocalPhysicsMode.Physics3D));
             _physicsScene = _scene.GetPhysicsScene();
@@ -87,8 +87,8 @@ namespace ZooWorld.Tests
 
             _objects.Clear();
             _animals.Clear();
-            UnityEngine.Physics.simulationMode = _previousMode;
-            UnityEngine.Physics.gravity = _previousGravity;
+            Physics.simulationMode = _previousMode;
+            Physics.gravity = _previousGravity;
             Time.fixedDeltaTime = _previousStep;
             if (_scene.IsValid() && _scene.isLoaded)
             {

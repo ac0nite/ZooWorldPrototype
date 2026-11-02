@@ -677,7 +677,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3e47ad1ae97a4bfaad8ca975e2afa93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: ZooWorld.Runtime::ZooWorld.UI.HudView
-  _counterText: {fileID: 0}
+  _counterText: {fileID: 958076187}
 --- !u!114 &958076187
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1495,7 +1495,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f97fefaead3e44548e9bb71e2855a62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: ZooWorld.Runtime::ZooWorld.UI.TastyLabelPool
-  _labelTemplate: {fileID: 0}
+  _labelTemplate: {fileID: 9281945}
   _poolSize: 4
   _duration: 1.5
   _belowOffset: {x: 0, y: 0, z: -1}

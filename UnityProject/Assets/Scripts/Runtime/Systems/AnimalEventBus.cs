@@ -3,6 +3,7 @@ using ZooWorld.Interaction;
 
 namespace ZooWorld.Systems
 {
+    // ReSharper disable once ClassNeverInstantiated.Global
     public sealed class AnimalEventBus
     {
         public event Action<AnimalDied> Died;

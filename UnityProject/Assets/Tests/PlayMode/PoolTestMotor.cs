@@ -1,6 +1,6 @@
 using UnityEngine;
 using VContainer;
-using ZooWorld.Physics;
+using ZooWorld.Motion;
 
 namespace ZooWorld.Tests
 {

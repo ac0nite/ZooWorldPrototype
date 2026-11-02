@@ -16,9 +16,14 @@ namespace ZooWorld.Interaction
                 throw new ArgumentException("Category ID must not be empty.", nameof(categoryId));
             }
 
-            CategoryId = categoryId ?? throw new ArgumentNullException(nameof(edibleCategoryIds));
+            if (edibleCategoryIds == null)
+            {
+                throw new ArgumentNullException(nameof(edibleCategoryIds));
+            }
+
+            CategoryId = categoryId;
             _edibleCategoryIds = new HashSet<string>(StringComparer.Ordinal);
-            foreach (string id in edibleCategoryIds)
+            foreach (var id in edibleCategoryIds)
             {
                 if (string.IsNullOrWhiteSpace(id))
                 {
@@ -29,6 +34,9 @@ namespace ZooWorld.Interaction
             }
         }
 
-        public bool CanConsume(InteractionData other) => _edibleCategoryIds.Contains(other.CategoryId);
+        public bool CanConsume(InteractionData other)
+        {
+            return _edibleCategoryIds.Contains(other.CategoryId);
+        }
     }
 }

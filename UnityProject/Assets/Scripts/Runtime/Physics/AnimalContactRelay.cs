@@ -4,7 +4,7 @@ using ZooWorld.Core;
 using ZooWorld.Interaction;
 using ZooWorld.Systems;
 
-namespace ZooWorld.Physics
+namespace ZooWorld.Motion
 {
     [RequireComponent(typeof(Animal))]
     public sealed class AnimalContactRelay : MonoBehaviour

@@ -46,7 +46,7 @@ namespace ZooWorld.Diagnostics
 
         public void Start()
         {
-            UnityEngine.Physics.ContactEvent += OnPhysicsContact;
+            Physics.ContactEvent += OnPhysicsContact;
             _targetPopulation = ParsePrefillTarget(Environment.GetCommandLineArgs());
             int prefilled = Prefill(_targetPopulation);
             Debug.Log($"[ZooDiag] start unity={Application.unityVersion} dev={Debug.isDebugBuild} " +
@@ -85,7 +85,7 @@ namespace ZooWorld.Diagnostics
 
         public void Dispose()
         {
-            UnityEngine.Physics.ContactEvent -= OnPhysicsContact;
+            Physics.ContactEvent -= OnPhysicsContact;
         }
 
         public static int ParsePrefillTarget(IEnumerable<string> arguments)

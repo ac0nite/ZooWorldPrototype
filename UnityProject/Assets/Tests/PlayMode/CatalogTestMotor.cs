@@ -1,5 +1,5 @@
 using UnityEngine;
-using ZooWorld.Physics;
+using ZooWorld.Motion;
 
 namespace ZooWorld.Tests
 {

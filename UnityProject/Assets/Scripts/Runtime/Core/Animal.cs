@@ -3,7 +3,7 @@ using UnityEngine;
 using ZooWorld.Definitions;
 using ZooWorld.Interaction;
 using ZooWorld.Movement;
-using ZooWorld.Physics;
+using ZooWorld.Motion;
 using ZooWorld.Systems;
 
 namespace ZooWorld.Core

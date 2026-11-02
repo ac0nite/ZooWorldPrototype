@@ -1,7 +1,6 @@
 using System;
 using VContainer;
 using ZooWorld.Core;
-using ZooWorld.Definitions;
 using ZooWorld.Interaction;
 
 namespace ZooWorld.Systems
@@ -35,28 +34,23 @@ namespace ZooWorld.Systems
 
         public void Resolve(AnimalContact contact)
         {
-            if (contact == null)
-            {
-                return;
-            }
+            if (contact == null) return;
 
             ContactsReceived++;
-            Animal actor = contact.Actor;
-            Animal other = contact.Other;
+            var actor = contact.Actor;
+            var other = contact.Other;
             if (actor == null || other == null || ReferenceEquals(actor, other) ||
                 actor.ActivationId <= 0 || actor.ActivationId != contact.ActorActivationId ||
                 other.ActivationId <= 0 || other.ActivationId != contact.OtherActivationId ||
                 !actor.IsAlive || !other.IsAlive ||
                 actor.Interaction == null || other.Interaction == null ||
                 actor.Definition == null || other.Definition == null)
-            {
                 return;
-            }
 
-            Animal first = actor.ActivationId < other.ActivationId ? actor : other;
-            Animal second = ReferenceEquals(first, actor) ? other : actor;
-            uint tieBreak = DeriveTieBreak(first.ActivationId, second.ActivationId, _seed);
-            InteractionDecision decision = _policy.Evaluate(first.Interaction, second.Interaction, tieBreak);
+            var first = actor.ActivationId < other.ActivationId ? actor : other;
+            var second = ReferenceEquals(first, actor) ? other : actor;
+            var tieBreak = DeriveTieBreak(first.ActivationId, second.ActivationId, _seed);
+            var decision = _policy.Evaluate(first.Interaction, second.Interaction, tieBreak);
             Animal eater;
             Animal victim;
             if (decision == InteractionDecision.AConsumesB)
@@ -74,12 +68,9 @@ namespace ZooWorld.Systems
                 return;
             }
 
-            if (!victim.TryDie())
-            {
-                return;
-            }
+            if (!victim.TryDie()) return;
 
-            AnimalDefinition definition = victim.Definition;
+            var definition = victim.Definition;
             try
             {
                 _events.PublishDied(new AnimalDied(victim.ActivationId, definition.Id, definition.Role));
@@ -99,7 +90,7 @@ namespace ZooWorld.Systems
         {
             unchecked
             {
-                uint hash = FnvOffsetBasis ^ seed;
+                var hash = FnvOffsetBasis ^ seed;
                 hash = (hash ^ (uint)firstActivationId) * FnvPrime;
                 hash = (hash ^ (uint)(firstActivationId >> 32)) * FnvPrime;
                 hash = (hash ^ (uint)secondActivationId) * FnvPrime;

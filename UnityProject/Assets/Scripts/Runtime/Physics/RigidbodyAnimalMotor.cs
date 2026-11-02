@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ZooWorld.Physics
+namespace ZooWorld.Motion
 {
     [RequireComponent(typeof(Rigidbody), typeof(Collider))]
     public sealed class RigidbodyAnimalMotor : MonoBehaviour, IAnimalMotor
@@ -29,7 +29,7 @@ namespace ZooWorld.Physics
 
                 Bounds bounds = _collider.bounds;
                 return gameObject.scene.GetPhysicsScene().Raycast(bounds.center, Vector3.down,
-                    out RaycastHit hit, bounds.extents.y + GroundProbeExtraDistance, UnityEngine.Physics.DefaultRaycastLayers,
+                    out RaycastHit hit, bounds.extents.y + GroundProbeExtraDistance, Physics.DefaultRaycastLayers,
                     QueryTriggerInteraction.Ignore) && hit.normal.y > MinGroundNormalY && hit.rigidbody == null;
             }
         }

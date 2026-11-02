@@ -1,6 +1,6 @@
 using UnityEngine;
 using ZooWorld.Core;
-using ZooWorld.Physics;
+using ZooWorld.Motion;
 
 namespace ZooWorld.Movement
 {

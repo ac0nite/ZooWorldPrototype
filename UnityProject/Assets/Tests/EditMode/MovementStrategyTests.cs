@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEngine;
 using ZooWorld.Core;
 using ZooWorld.Definitions;
-using ZooWorld.Physics;
+using ZooWorld.Motion;
 using ZooWorld.Movement;
 using Object = UnityEngine.Object;
 

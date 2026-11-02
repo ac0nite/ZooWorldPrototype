@@ -6,7 +6,7 @@ using VContainer;
 using VContainer.Unity;
 using ZooWorld.Core;
 using ZooWorld.Definitions;
-using ZooWorld.Physics;
+using ZooWorld.Motion;
 using Object = UnityEngine.Object;
 
 namespace ZooWorld.Systems
@@ -14,10 +14,8 @@ namespace ZooWorld.Systems
     public sealed class AnimalFactory : IDisposable, ISpawnTarget
     {
         private readonly IObjectResolver _resolver;
-        private readonly ArenaBounds _bounds;
-        private readonly Dictionary<Animal, ObjectPool<Animal>> _pools = new Dictionary<Animal, ObjectPool<Animal>>();
-        private readonly Dictionary<Animal, (ObjectPool<Animal> Pool, long Id)> _active =
-            new Dictionary<Animal, (ObjectPool<Animal> Pool, long Id)>();
+        private readonly Dictionary<Animal, ObjectPool<Animal>> _pools = new();
+        private readonly Dictionary<Animal, (ObjectPool<Animal> Pool, long Id)> _active = new();
         private GameObject _poolRoot;
         private long _nextActivationId;
         private bool _disposed;
@@ -30,38 +28,31 @@ namespace ZooWorld.Systems
         public AnimalFactory(IObjectResolver resolver, ArenaBounds bounds)
         {
             _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
-            _bounds = bounds;
+            Bounds = bounds;
         }
 
         public int ActiveCount => _active.Count;
-        public ArenaBounds Bounds => _bounds;
+        public ArenaBounds Bounds { get; }
 
         public Animal Rent(AnimalDefinition definition, Vector3 position, Vector3 direction)
         {
-            if (_disposed)
-            {
-                throw new ObjectDisposedException(nameof(AnimalFactory));
-            }
+            if (_disposed) throw new ObjectDisposedException(nameof(AnimalFactory));
 
-            if (definition == null)
-            {
-                throw new ArgumentNullException(nameof(definition));
-            }
+            if (definition == null) throw new ArgumentNullException(nameof(definition));
 
             definition.Validate();
             direction = MovementContext.NormalizeDirection(direction);
             if (!IsFinite(position.x) || !IsFinite(position.y) || !IsFinite(position.z))
-            {
                 throw new ArgumentException("Spawn position must be finite.", nameof(position));
-            }
 
-            long activationId = checked(++_nextActivationId);
-            ObjectPool<Animal> pool = GetPool(definition.Prefab);
-            Animal animal = pool.Get();
+            var activationId = checked(++_nextActivationId);
+            var pool = GetPool(definition.Prefab);
+            var animal = pool.Get();
             try
             {
-                var context = new MovementContext(animal.GetComponent<IAnimalMotor>(), direction, -UnityEngine.Physics.gravity.y, _bounds);
-                Transform transform = animal.transform;
+                var context = new MovementContext(animal.GetComponent<IAnimalMotor>(), direction, -Physics.gravity.y,
+                    Bounds);
+                var transform = animal.transform;
                 transform.SetParent(null);
                 transform.SetPositionAndRotation(position, Quaternion.LookRotation(direction, Vector3.up));
                 transform.localScale = definition.Prefab.transform.localScale;
@@ -86,22 +77,14 @@ namespace ZooWorld.Systems
 
         public bool Release(Animal animal, long activationId)
         {
-            if (_disposed || ReferenceEquals(animal, null))
-            {
-                return false;
-            }
+            if (_disposed || ReferenceEquals(animal, null)) return false;
 
             if (!_active.TryGetValue(animal, out var activation) || activation.Id != activationId ||
                 (animal != null && animal.ActivationId != activationId))
-            {
                 return false;
-            }
 
             _active.Remove(animal);
-            if (animal == null)
-            {
-                return true;
-            }
+            if (animal == null) return true;
 
             animal.Deactivate();
             activation.Pool.Release(animal);
@@ -110,36 +93,21 @@ namespace ZooWorld.Systems
 
         public void Dispose()
         {
-            if (_disposed)
-            {
-                return;
-            }
+            if (_disposed) return;
 
             _disposed = true;
-            foreach (Animal animal in _active.Keys)
-            {
-                DestroyAnimal(animal);
-            }
+            foreach (var animal in _active.Keys) DestroyAnimal(animal);
 
             _active.Clear();
-            foreach (ObjectPool<Animal> pool in _pools.Values)
-            {
-                pool.Dispose();
-            }
+            foreach (var pool in _pools.Values) pool.Dispose();
 
             _pools.Clear();
-            if (_poolRoot != null)
-            {
-                Object.Destroy(_poolRoot);
-            }
+            if (_poolRoot != null) Object.Destroy(_poolRoot);
         }
 
         private ObjectPool<Animal> GetPool(Animal prefab)
         {
-            if (_pools.TryGetValue(prefab, out ObjectPool<Animal> pool))
-            {
-                return pool;
-            }
+            if (_pools.TryGetValue(prefab, out var pool)) return pool;
 
             pool = new ObjectPool<Animal>(
                 () => CreateAnimal(prefab),
@@ -159,7 +127,7 @@ namespace ZooWorld.Systems
 
         private Animal CreateAnimal(Animal prefab)
         {
-            Animal animal = _resolver.Instantiate(prefab, EnsurePoolRoot().transform);
+            var animal = _resolver.Instantiate(prefab, EnsurePoolRoot().transform);
             animal.gameObject.SetActive(false);
             return animal;
         }
@@ -177,10 +145,7 @@ namespace ZooWorld.Systems
 
         private static void DestroyAnimal(Animal animal)
         {
-            if (animal == null)
-            {
-                return;
-            }
+            if (animal == null) return;
 
             animal.Deactivate();
             animal.gameObject.SetActive(false);
