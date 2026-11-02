@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System.Collections;
 using NUnit.Framework;
 using UnityEngine;
@@ -44,10 +45,24 @@ namespace ZooWorld.Tests
         }
 
         [UnityTest, Category("AC11")]
+        public IEnumerator GameScopeResolvesTheRealPolicyAsAScopedSingleton()
+        {
+            var scope = CreateScope();
+            var policy = scope.Container.Resolve<ZooWorld.Interaction.IAnimalInteractionPolicy>();
+            Assert.That(policy, Is.TypeOf<ZooWorld.Interaction.FoodChainPolicy>());
+            Assert.That(scope.Container.Resolve<ZooWorld.Interaction.IAnimalInteractionPolicy>(), Is.SameAs(policy));
+            Object.Destroy(root);
+            yield return null;
+            var replacement = CreateScope().Container.Resolve<ZooWorld.Interaction.IAnimalInteractionPolicy>();
+            Assert.That(replacement, Is.Not.SameAs(policy));
+        }
+
+        [UnityTest, Category("AC11")]
         public IEnumerator PrefabIsInjectedOnceBeforeEnableAndStart()
         {
             var scope = CreateScope();
-            var prefab = Resources.Load<InjectionProbe>("InjectionProbe");
+            var prefab = UnityEditor.AssetDatabase.LoadAssetAtPath<InjectionProbe>(
+                "Assets/Tests/PlayMode/Fixtures/InjectionProbe.prefab");
             Assert.That(prefab, Is.Not.Null, "The fixture must be a saved prefab asset.");
             var clone = scope.Container.Instantiate(prefab, scope.transform);
             instance = clone.gameObject;
@@ -75,3 +90,4 @@ namespace ZooWorld.Tests
         }
     }
 }
+#endif

@@ -1,5 +1,6 @@
 using VContainer;
 using VContainer.Unity;
+using ZooWorld.Interaction;
 
 namespace ZooWorld.Composition
 {
@@ -7,6 +8,7 @@ namespace ZooWorld.Composition
     {
         protected override void Configure(IContainerBuilder builder)
         {
+            builder.Register<FoodChainPolicy>(Lifetime.Singleton).As<IAnimalInteractionPolicy>();
         }
     }
 }
