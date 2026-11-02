@@ -10,15 +10,27 @@ namespace ZooWorld.Core
 
         public void Activate(long activationId)
         {
-            if (activationId <= 0) throw new ArgumentOutOfRangeException(nameof(activationId));
-            if (ActivationId != 0) throw new InvalidOperationException("Release the previous activation before reuse.");
+            if (activationId <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(activationId));
+            }
+
+            if (ActivationId != 0)
+            {
+                throw new InvalidOperationException("Release the previous activation before reuse.");
+            }
+
             ActivationId = activationId;
             IsAlive = true;
         }
 
         public bool TryDie()
         {
-            if (!IsAlive) return false;
+            if (!IsAlive)
+            {
+                return false;
+            }
+
             IsAlive = false;
             return true;
         }

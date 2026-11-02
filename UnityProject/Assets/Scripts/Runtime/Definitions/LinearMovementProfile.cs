@@ -7,15 +7,16 @@ namespace ZooWorld.Definitions
     [CreateAssetMenu(menuName = "Zoo World/Linear Movement Profile")]
     public sealed class LinearMovementProfile : MovementProfile
     {
-        [SerializeField] float speed = 3;
-        public float Speed => speed;
+        [SerializeField] private float _speed = 3;
 
-        public override void Validate() => RequirePositive(speed, nameof(speed));
+        public float Speed => _speed;
+
+        public override void Validate() => RequirePositive(_speed, nameof(_speed));
 
         public override IMovementStrategy CreateStrategy(MovementContext context)
         {
             Validate();
-            return new LinearMovementStrategy(context, speed);
+            return new LinearMovementStrategy(context, _speed);
         }
     }
 }

@@ -7,24 +7,25 @@ namespace ZooWorld.Definitions
     [CreateAssetMenu(menuName = "Zoo World/Jump Movement Profile")]
     public sealed class JumpMovementProfile : MovementProfile
     {
-        [SerializeField] float distance = 2;
-        [SerializeField] float height = 1;
-        [SerializeField] float waitInterval = 1;
-        public float Distance => distance;
-        public float Height => height;
-        public float WaitInterval => waitInterval;
+        [SerializeField] private float _distance = 2;
+        [SerializeField] private float _height = 1;
+        [SerializeField] private float _waitInterval = 1;
+
+        public float Distance => _distance;
+        public float Height => _height;
+        public float WaitInterval => _waitInterval;
 
         public override void Validate()
         {
-            RequirePositive(distance, nameof(distance));
-            RequirePositive(height, nameof(height));
-            RequirePositive(waitInterval, nameof(waitInterval));
+            RequirePositive(_distance, nameof(_distance));
+            RequirePositive(_height, nameof(_height));
+            RequirePositive(_waitInterval, nameof(_waitInterval));
         }
 
         public override IMovementStrategy CreateStrategy(MovementContext context)
         {
             Validate();
-            return new JumpMovementStrategy(context, distance, height, waitInterval);
+            return new JumpMovementStrategy(context, _distance, _height, _waitInterval);
         }
     }
 }

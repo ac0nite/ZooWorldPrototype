@@ -7,23 +7,33 @@ namespace ZooWorld.Definitions
     [CreateAssetMenu(menuName = "Zoo World/Interaction Profile")]
     public sealed class InteractionProfile : ScriptableObject
     {
-        [SerializeField] InteractionCategory category;
-        [SerializeField] InteractionCategory[] edibleCategories = Array.Empty<InteractionCategory>();
+        [SerializeField] private InteractionCategory _category;
+        [SerializeField] private InteractionCategory[] _edibleCategories = Array.Empty<InteractionCategory>();
 
         public InteractionData CreateSnapshot()
         {
-            if (category == null || string.IsNullOrWhiteSpace(category.Id))
-                throw new InvalidOperationException($"Interaction profile '{name}' requires a category with a non-empty ID.");
-            if (edibleCategories == null)
-                throw new InvalidOperationException($"Interaction profile '{name}' has a null edible category collection.");
-            var ids = new string[edibleCategories.Length];
-            for (var i = 0; i < edibleCategories.Length; i++)
+            if (_category == null || string.IsNullOrWhiteSpace(_category.Id))
             {
-                if (edibleCategories[i] == null || string.IsNullOrWhiteSpace(edibleCategories[i].Id))
-                    throw new InvalidOperationException($"Interaction profile '{name}' has an invalid edible category at index {i}.");
-                ids[i] = edibleCategories[i].Id;
+                throw new InvalidOperationException($"Interaction profile '{name}' requires a category with a non-empty ID.");
             }
-            return new InteractionData(category.Id, ids);
+
+            if (_edibleCategories == null)
+            {
+                throw new InvalidOperationException($"Interaction profile '{name}' has a null edible category collection.");
+            }
+
+            var ids = new string[_edibleCategories.Length];
+            for (var i = 0; i < _edibleCategories.Length; i++)
+            {
+                if (_edibleCategories[i] == null || string.IsNullOrWhiteSpace(_edibleCategories[i].Id))
+                {
+                    throw new InvalidOperationException($"Interaction profile '{name}' has an invalid edible category at index {i}.");
+                }
+
+                ids[i] = _edibleCategories[i].Id;
+            }
+
+            return new InteractionData(_category.Id, ids);
         }
     }
 }

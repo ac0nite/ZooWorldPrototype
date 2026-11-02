@@ -5,7 +5,7 @@ namespace ZooWorld.Movement
 {
     public interface IMovementStrategy : IDisposable
     {
-        void FixedTick(float fixedDeltaTime);
-        void SteerInward(Vector3 direction);
+        public void FixedTick(float fixedDeltaTime);
+        public void SteerInward(Vector3 direction);
     }
 }

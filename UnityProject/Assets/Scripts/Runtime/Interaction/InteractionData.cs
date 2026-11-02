@@ -5,25 +5,35 @@ namespace ZooWorld.Interaction
 {
     public sealed class InteractionData
     {
-        readonly HashSet<string> edibleCategoryIds;
+        private readonly HashSet<string> _edibleCategoryIds;
+
         public string CategoryId { get; }
 
         public InteractionData(string categoryId, IEnumerable<string> edibleCategoryIds)
         {
             if (string.IsNullOrWhiteSpace(categoryId))
+            {
                 throw new ArgumentException("Category ID must not be empty.", nameof(categoryId));
+            }
+
             if (edibleCategoryIds == null)
+            {
                 throw new ArgumentNullException(nameof(edibleCategoryIds));
+            }
+
             CategoryId = categoryId;
-            this.edibleCategoryIds = new HashSet<string>(StringComparer.Ordinal);
-            foreach (var id in edibleCategoryIds)
+            _edibleCategoryIds = new HashSet<string>(StringComparer.Ordinal);
+            foreach (string id in edibleCategoryIds)
             {
                 if (string.IsNullOrWhiteSpace(id))
+                {
                     throw new ArgumentException("Edible category ID must not be empty.", nameof(edibleCategoryIds));
-                this.edibleCategoryIds.Add(id);
+                }
+
+                _edibleCategoryIds.Add(id);
             }
         }
 
-        public bool CanConsume(InteractionData other) => edibleCategoryIds.Contains(other.CategoryId);
+        public bool CanConsume(InteractionData other) => _edibleCategoryIds.Contains(other.CategoryId);
     }
 }

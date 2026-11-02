@@ -13,7 +13,9 @@ namespace ZooWorld.Definitions
         protected void RequirePositive(float value, string parameter)
         {
             if (float.IsNaN(value) || float.IsInfinity(value) || value <= 0)
+            {
                 throw new InvalidOperationException($"Movement profile '{name}' requires positive finite {parameter}.");
+            }
         }
     }
 }
