@@ -102,6 +102,8 @@ namespace ZooWorld.Tests
             Animal snake = Rent(_snake, new Vector3(-1, 0.5f, 0), Vector3.right);
             Animal frog = Rent(_frog, new Vector3(1, 0.5f, 0), Vector3.left);
             long frogActivation = frog.ActivationId;
+            InteractionData snakeData = snake.Interaction;
+            InteractionData frogData = frog.Interaction;
             bool activeAtDied = false;
             int countAtDied = -1;
             _events.Died += _ => { activeAtDied = frog.gameObject.activeSelf; countAtDied = _factory.ActiveCount; };
@@ -112,6 +114,9 @@ namespace ZooWorld.Tests
 
             Assert.That(frog.IsAlive, Is.False, "The predator must consume the prey on contact.");
             Assert.That(snake.IsAlive, Is.True);
+            Assert.That(snakeData.CanConsume(frogData), Is.True);
+            Assert.That(frogData.CanConsume(snakeData), Is.False,
+                "Only the predator may consume the prey; the outcome must not depend on the tie-break.");
             Assert.That(_order, Is.EqualTo(new[] { "died", "consumed" }));
             Assert.That(_died[0].ActivationId, Is.EqualTo(frogActivation));
             Assert.That(_died[0].SpeciesId, Is.EqualTo(_frog.Id));
