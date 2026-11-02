@@ -47,8 +47,6 @@ demo species `hare`/`turtle` under
 
 - Проект: `UnityProject/` (Unity `6000.6.2f1`, версия зафиксирована в
   `ProjectSettings/ProjectVersion.txt`)
-- Архитектура и приёмочный контракт: [ARCHITECTURE.ru.md](ARCHITECTURE.ru.md)
-- Разбор задания: [TEST_TASK_ANALYSIS.md](TEST_TASK_ANALYSIS.md)
 
 Запуск: открыть `UnityProject` в Unity 6000.6.x и нажать Play —
 стартовая сцена `Assets/Scenes/ZooWorld.unity`.
