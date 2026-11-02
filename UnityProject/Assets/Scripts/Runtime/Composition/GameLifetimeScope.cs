@@ -5,6 +5,7 @@ using VContainer.Unity;
 using ZooWorld.Definitions;
 using ZooWorld.Interaction;
 using ZooWorld.Systems;
+using ZooWorld.UI;
 
 namespace ZooWorld.Composition
 {
@@ -14,6 +15,8 @@ namespace ZooWorld.Composition
         [SerializeField] private float _groundHeight;
         [SerializeField] private AnimalCatalog _catalog;
         [SerializeField] private SimulationSettings _settings;
+        [SerializeField] private HudView _hudView;
+        [SerializeField] private TastyLabelPool _tastyLabels;
 
         protected override void Configure(IContainerBuilder builder)
         {
@@ -45,6 +48,18 @@ namespace ZooWorld.Composition
                 builder.RegisterInstance(_catalog);
                 builder.RegisterInstance(_settings);
                 builder.RegisterEntryPoint<AnimalSpawner>().AsSelf();
+            }
+
+            if (_hudView != null)
+            {
+                builder.RegisterInstance<IHudView>(_hudView);
+                builder.RegisterEntryPoint<HudPresenter>();
+            }
+
+            if (_tastyLabels != null)
+            {
+                builder.RegisterInstance<ITastyView>(_tastyLabels);
+                builder.RegisterEntryPoint<TastyPresenter>();
             }
         }
     }
