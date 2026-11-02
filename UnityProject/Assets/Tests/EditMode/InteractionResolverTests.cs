@@ -81,9 +81,29 @@ namespace ZooWorld.Tests
             Assert.That(_consumed[0].EaterActivationId, Is.EqualTo(3));
             Assert.That(activeAtDied || activeAtConsumed, Is.True,
                 "The victim must still be active while its death/consumption events are delivered.");
+            Assert.That(frog.ActivationId, Is.EqualTo(0),
+                "After events the victim lifecycle must end: activation cleared.");
+            Assert.That(frog.gameObject.activeSelf, Is.False,
+                "After events the victim object must be disabled.");
             Assert.That(_stats.PreyDeaths, Is.EqualTo(1));
             Assert.That(_stats.PredatorDeaths, Is.EqualTo(0));
             Assert.That(_changes, Is.EqualTo(1));
+        }
+
+        [Test, Category("AC03")]
+        public void ThrowingEventSubscriberDoesNotPreventVictimRelease()
+        {
+            Animal snake = Activate(3, PredatorDefinition("snake"));
+            Animal frog = Activate(5, PreyDefinition("frog"));
+            _events.Died += _ => throw new InvalidOperationException("subscriber failure");
+            Assert.Throws<InvalidOperationException>(() => _resolver.Resolve(Contact(snake, frog)));
+            Assert.That(frog.IsAlive, Is.False);
+            Assert.That(frog.ActivationId, Is.EqualTo(0),
+                "A throwing subscriber must not leave a dead animal active.");
+            Assert.That(frog.gameObject.activeSelf, Is.False);
+            Assert.That(_died.Count, Is.EqualTo(1), "Handlers registered before the throwing one still run.");
+            Assert.That(_consumed, Is.Empty, "A throwing Died handler aborts the remaining chain.");
+            Assert.That(_stats.PreyDeaths, Is.EqualTo(1));
         }
 
         [Test, Category("AC03")]
@@ -118,11 +138,11 @@ namespace ZooWorld.Tests
             Animal firstForward = Activate(11, PredatorDefinition("alpha"));
             Animal secondForward = Activate(13, PredatorDefinition("beta"));
             _resolver.Resolve(Contact(firstForward, secondForward));
-            long forwardVictim = firstForward.IsAlive ? secondForward.ActivationId : firstForward.ActivationId;
+            long forwardVictim = _died[0].ActivationId;
             Animal firstReverse = Activate(11, PredatorDefinition("alpha"));
             Animal secondReverse = Activate(13, PredatorDefinition("beta"));
             _resolver.Resolve(Contact(secondReverse, firstReverse));
-            long reverseVictim = firstReverse.IsAlive ? secondReverse.ActivationId : firstReverse.ActivationId;
+            long reverseVictim = _died[1].ActivationId;
             Assert.That(reverseVictim, Is.EqualTo(forwardVictim));
             Assert.That(_died.Count, Is.EqualTo(2));
             Assert.That(_consumed.Count, Is.EqualTo(2));
@@ -156,8 +176,8 @@ namespace ZooWorld.Tests
             Animal d = Activate(23, PredatorDefinition("beta"));
             _resolver.Resolve(Contact(a, b));
             another.Resolve(Contact(c, d));
-            long first = a.IsAlive ? b.ActivationId : a.ActivationId;
-            long second = c.IsAlive ? d.ActivationId : c.ActivationId;
+            long first = _died[0].ActivationId;
+            long second = _died[1].ActivationId;
             Assert.That(second, Is.EqualTo(first));
         }
 

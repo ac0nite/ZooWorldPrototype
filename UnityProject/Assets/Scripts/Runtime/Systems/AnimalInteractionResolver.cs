@@ -74,9 +74,19 @@ namespace ZooWorld.Systems
             }
 
             AnimalDefinition definition = victim.Definition;
-            _events.PublishDied(new AnimalDied(victim.ActivationId, definition.Id, definition.Role));
-            _events.PublishConsumed(new AnimalConsumed(eater.ActivationId, eater.transform.position));
-            _factory.Release(victim, victim.ActivationId);
+            try
+            {
+                _events.PublishDied(new AnimalDied(victim.ActivationId, definition.Id, definition.Role));
+                _events.PublishConsumed(new AnimalConsumed(eater.ActivationId, eater.transform.position));
+            }
+            finally
+            {
+                if (!_factory.Release(victim, victim.ActivationId) && victim != null)
+                {
+                    victim.Deactivate();
+                    victim.gameObject.SetActive(false);
+                }
+            }
         }
 
         internal static uint DeriveTieBreak(long firstActivationId, long secondActivationId, uint seed)

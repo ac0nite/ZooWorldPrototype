@@ -195,7 +195,7 @@ namespace ZooWorld.Tests
             _resolver.Resolve(forward);
             Animal victim = first.IsAlive ? second : first;
             Animal survivor = first.IsAlive ? first : second;
-            long staleVictimId = victim.ActivationId;
+            long staleVictimId = _died[0].ActivationId;
             _resolver.Resolve(forward);
             _resolver.Resolve(reverse);
             Assert.That(_died.Count, Is.EqualTo(1), "Duplicate reports must not kill twice.");

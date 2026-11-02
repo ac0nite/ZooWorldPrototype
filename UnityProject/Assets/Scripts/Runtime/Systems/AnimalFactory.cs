@@ -84,27 +84,28 @@ namespace ZooWorld.Systems
             }
         }
 
-        public void Release(Animal animal, long activationId)
+        public bool Release(Animal animal, long activationId)
         {
             if (_disposed || ReferenceEquals(animal, null))
             {
-                return;
+                return false;
             }
 
             if (!_active.TryGetValue(animal, out var activation) || activation.Id != activationId ||
                 (animal != null && animal.ActivationId != activationId))
             {
-                return;
+                return false;
             }
 
             _active.Remove(animal);
             if (animal == null)
             {
-                return;
+                return true;
             }
 
             animal.Deactivate();
             activation.Pool.Release(animal);
+            return true;
         }
 
         public void Dispose()
