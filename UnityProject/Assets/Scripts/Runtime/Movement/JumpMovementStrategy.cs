@@ -6,6 +6,9 @@ namespace ZooWorld.Movement
 {
     public sealed class JumpMovementStrategy : IMovementStrategy
     {
+        private const float MinPlanarSpeedSqr = 0.0025f;
+        private const float InwardDotThreshold = 0.5f;
+
         private readonly IAnimalMotor _motor;
         private readonly float _verticalSpeed;
         private readonly float _horizontalSpeed;
@@ -85,13 +88,20 @@ namespace ZooWorld.Movement
 
             Vector3 planarVelocity = _motor.Velocity;
             planarVelocity.y = 0;
-            if (planarVelocity.sqrMagnitude >= 0.0025f &&
-                Vector3.Dot(planarVelocity.normalized, _direction) >= 0.5f)
+            float planarSpeed = planarVelocity.magnitude;
+            if (planarSpeed * planarSpeed < MinPlanarSpeedSqr)
             {
-                return;
+                ApplyPlanarSpeed(_horizontalSpeed);
             }
+            else if (Vector3.Dot(planarVelocity / planarSpeed, _direction) < InwardDotThreshold)
+            {
+                ApplyPlanarSpeed(planarSpeed);
+            }
+        }
 
-            Vector3 velocity = _direction * _horizontalSpeed;
+        private void ApplyPlanarSpeed(float speed)
+        {
+            Vector3 velocity = _direction * speed;
             velocity.y = _motor.Velocity.y;
             _motor.Velocity = velocity;
         }

@@ -91,7 +91,9 @@ namespace ZooWorld.Tests
             Assert.That(bounds, Is.Not.Null);
             Assert.That(bounds.TryGetInwardDirection(new Vector3(5.5f, 0, 0), out Vector3 inward), Is.True);
             Assert.That(inward.x, Is.LessThan(0));
-            Assert.That(scope.Container.Resolve<ZooWorld.Systems.AnimalFactory>(), Is.Not.Null);
+            var factory = scope.Container.Resolve<ZooWorld.Systems.AnimalFactory>();
+            Assert.That(factory, Is.Not.Null);
+            Assert.That(factory.Bounds, Is.SameAs(bounds));
         }
 
         [UnityTest, Category("AC11")]

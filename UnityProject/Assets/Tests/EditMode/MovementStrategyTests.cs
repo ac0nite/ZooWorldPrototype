@@ -158,7 +158,7 @@ namespace ZooWorld.Tests
                 b.FixedTick(Step);
             }
 
-            AssertVector(first.Velocity, new Vector3(0, 2, -2));
+            AssertVector(first.Velocity, new Vector3(0, 2, -new Vector3(-1, 0, 0.5f).magnitude));
             AssertVector(second.Velocity, new Vector3(0, 4, 2));
             Assert.That(EditorJsonUtility.ToJson(profile), Is.EqualTo(serializedBefore));
         }

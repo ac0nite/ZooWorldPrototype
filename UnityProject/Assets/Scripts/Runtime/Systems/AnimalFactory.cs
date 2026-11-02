@@ -34,6 +34,7 @@ namespace ZooWorld.Systems
         }
 
         public int ActiveCount => _active.Count;
+        public ArenaBounds Bounds => _bounds;
 
         public Animal Rent(AnimalDefinition definition, Vector3 position, Vector3 direction)
         {
