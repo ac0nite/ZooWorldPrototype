@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System.Collections;
+using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEditor;
@@ -151,6 +152,7 @@ namespace ZooWorld.Tests
             serialized.ApplyModifiedPropertiesWithoutUndo();
             root.SetActive(true);
             var factory = scope.Container.Resolve<AnimalFactory>();
+            var stats = scope.Container.Resolve<GameStats>();
             Assert.That(scope.Container.Resolve<AnimalSpawner>(), Is.Not.Null);
             float waited = 0;
             while (factory.ActiveCount == 0 && waited < 5f)
@@ -175,6 +177,31 @@ namespace ZooWorld.Tests
             Assert.That(factory.ActiveCount, Is.Zero);
             Assert.That(Object.FindObjectsByType<Animal>(FindObjectsSortMode.None), Is.Empty,
                 "Scope disposal must stop spawning and destroy active animals.");
+            Assert.That(stats.PreyDeaths + stats.PredatorDeaths, Is.EqualTo(0),
+                "Scope cleanup must not count spawned animals as deaths.");
+        }
+
+        [UnityTest, Category("AC11")]
+        public IEnumerator ScopeWithOnlyOneOfCatalogOrSettingsFailsToConfigure()
+        {
+            for (var caseIndex = 0; caseIndex < 2; caseIndex++)
+            {
+                var root = new GameObject("Partial Scope Fixture");
+                _objects.Add(root);
+                root.SetActive(false);
+                var scope = root.AddComponent<GameLifetimeScope>();
+                var serialized = new SerializedObject(scope);
+                serialized.FindProperty("_arenaCamera").objectReferenceValue = _camera;
+                serialized.FindProperty("_catalog").objectReferenceValue =
+                    caseIndex == 0 ? _catalog : null;
+                serialized.FindProperty("_settings").objectReferenceValue =
+                    caseIndex == 1 ? Settings(1, 2, 10) : null;
+                serialized.ApplyModifiedPropertiesWithoutUndo();
+                LogAssert.Expect(LogType.Exception, new Regex(
+                    "InvalidOperationException: GameLifetimeScope requires both an animal catalog"));
+                root.SetActive(true);
+                yield return null;
+            }
         }
 
         private static Animal SingleActiveAnimal()

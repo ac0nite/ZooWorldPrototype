@@ -252,6 +252,15 @@ namespace ZooWorld.Tests
             Assert.Throws<InvalidOperationException>(() => spawner.Start());
         }
 
+        [Test, Category("AC01"), Category("AC10")]
+        public void AdvanceWithUnvalidatedNonPositiveIntervalDoesNotHang()
+        {
+            SimulationSettings broken = Settings(min: -5, max: -1);
+            var spawner = new AnimalSpawner(Catalog(Definition("frog", 1)), broken, _target, _bounds);
+            spawner.Advance(1f);
+            Assert.That(_target.Rents, Is.Empty);
+        }
+
         [Test, Category("AC01")]
         public void InvalidAdvanceAndNullDependenciesAreRejected()
         {

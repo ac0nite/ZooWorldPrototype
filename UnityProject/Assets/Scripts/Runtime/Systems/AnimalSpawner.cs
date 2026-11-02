@@ -46,7 +46,7 @@ namespace ZooWorld.Systems
             }
 
             _elapsed += deltaTime;
-            while (_elapsed >= _nextInterval)
+            while (_nextInterval > 0 && _elapsed >= _nextInterval)
             {
                 _elapsed -= _nextInterval;
                 _nextInterval = SampleInterval();
