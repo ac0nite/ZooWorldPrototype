@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5581076763834704013}
   - component: {fileID: 507875149484189592}
   - component: {fileID: 2439886949852261758}
+  - component: {fileID: 7750313354330448153}
   m_Layer: 0
   m_Name: PoolAnimalSecond
   m_TagString: Untagged
@@ -107,3 +108,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3f3cd8e840c84b48975cc0db1fb4f9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: ZooWorld.PlayModeTests::ZooWorld.Tests.PoolTestMotor
+--- !u!114 &7750313354330448153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1917771873265767429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d255ee4656e724d7e80b4788acc66edd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ZooWorld.Runtime::ZooWorld.Physics.AnimalContactRelay

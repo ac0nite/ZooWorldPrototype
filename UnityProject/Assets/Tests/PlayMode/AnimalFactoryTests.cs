@@ -11,6 +11,7 @@ using VContainer.Unity;
 using ZooWorld.Composition;
 using ZooWorld.Core;
 using ZooWorld.Definitions;
+using ZooWorld.Interaction;
 using ZooWorld.Systems;
 using Object = UnityEngine.Object;
 
@@ -30,7 +31,10 @@ namespace ZooWorld.Tests
             _previousFixedDeltaTime = Time.fixedDeltaTime;
             Time.fixedDeltaTime = 0.25f;
             var builder = new ContainerBuilder();
+            builder.Register<FoodChainPolicy>(Lifetime.Singleton).As<IAnimalInteractionPolicy>();
+            builder.Register<AnimalEventBus>(Lifetime.Singleton);
             builder.Register<AnimalFactory>(Lifetime.Singleton);
+            builder.Register<AnimalInteractionResolver>(Lifetime.Singleton);
             builder.Register<LifecycleProbe>(Lifetime.Singleton);
             _container = builder.Build();
             _factory = _container.Resolve<AnimalFactory>();

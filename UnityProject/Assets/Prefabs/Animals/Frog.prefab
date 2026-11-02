@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 2300501005915841903}
   - component: {fileID: 7516539070854937856}
   - component: {fileID: 2131939717448438944}
+  - component: {fileID: 2147472486320234426}
   m_Layer: 0
   m_Name: Frog
   m_TagString: Untagged
@@ -166,3 +167,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc6adf3a937324596863d35cb9dad6fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: ZooWorld.Runtime::ZooWorld.Core.Animal
+--- !u!114 &2147472486320234426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2290587987257427429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d255ee4656e724d7e80b4788acc66edd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ZooWorld.Runtime::ZooWorld.Physics.AnimalContactRelay

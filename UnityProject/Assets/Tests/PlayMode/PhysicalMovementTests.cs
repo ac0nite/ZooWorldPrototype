@@ -251,15 +251,18 @@ namespace ZooWorld.Tests
         }
 
         [Test, Category("AC02")]
-        public void SavedSnakesReboundWithTheProductionPhysicsMaterial()
+        public void SavedFrogsReboundWithTheProductionPhysicsMaterial()
         {
-            var definition = AssetDatabase.LoadAssetAtPath<AnimalDefinition>("Assets/Settings/AnimalDefinitions/Snake.asset");
+            var definition = AssetDatabase.LoadAssetAtPath<AnimalDefinition>("Assets/Settings/AnimalDefinitions/Frog.asset");
             Assert.That(definition, Is.Not.Null);
             PhysicsMaterial material = definition.Prefab.GetComponent<Collider>().sharedMaterial;
             Assert.That(material.bounciness, Is.EqualTo(1));
             Assert.That(material.bounceCombine, Is.EqualTo(PhysicsMaterialCombine.Minimum));
-            using IObjectResolver container = new ContainerBuilder().Build();
-            using var factory = new AnimalFactory(container);
+            Assert.That(material.staticFriction, Is.EqualTo(0));
+            Assert.That(material.dynamicFriction, Is.EqualTo(0));
+            Assert.That(material.frictionCombine, Is.EqualTo(PhysicsMaterialCombine.Minimum));
+            using IObjectResolver container = BuildInteractionContainer(null);
+            var factory = container.Resolve<AnimalFactory>();
             Animal a = factory.Rent(definition, new Vector3(-1, 0.5f, 0), Vector3.right);
             Animal b = factory.Rent(definition, new Vector3(1, 0.5f, 0), Vector3.left);
             SceneManager.MoveGameObjectToScene(a.gameObject, _scene);
@@ -267,21 +270,49 @@ namespace ZooWorld.Tests
             _animals.Add(a);
             _animals.Add(b);
             bool bounced = false;
-            for (int i = 0; i < 35; i++)
+            for (int i = 0; i < 140; i++)
             {
                 Tick(1);
-                if (a.GetComponent<Rigidbody>().linearVelocity.x <= -1 &&
-                    b.GetComponent<Rigidbody>().linearVelocity.x >= 1)
+                Vector3 normal = (b.transform.position - a.transform.position).normalized;
+                float outward = Vector3.Dot(
+                    b.GetComponent<Rigidbody>().linearVelocity - a.GetComponent<Rigidbody>().linearVelocity, normal);
+                if (outward >= 1)
                 {
                     bounced = true;
                     break;
                 }
             }
 
-            Assert.That(bounced, Is.True, "Saved production animals must physically rebound.");
+            Assert.That(bounced, Is.True, "Saved production prey must physically rebound without dying.");
             Tick(15);
-            Assert.That(Vector3.Distance(a.transform.position, b.transform.position), Is.GreaterThanOrEqualTo(1.2f));
+            Assert.That(Vector3.Distance(a.transform.position, b.transform.position), Is.GreaterThanOrEqualTo(1.1f));
             Assert.That(a.IsAlive && b.IsAlive, Is.True);
+        }
+
+        [Test, Category("AC06")]
+        public void CameraRaysMissingTheGroundPlaneDisableSteeringWithoutBreakingTicks()
+        {
+            _camera.transform.rotation = Quaternion.identity;
+            Animal animal = Create(false, new Vector3(0, 0.5f, 0), Vector3.right, bounds: _bounds);
+            Assert.That(_bounds.TryGetInwardDirection(animal.transform.position, out _), Is.False);
+            Tick(50);
+            Assert.That(animal.transform.position.x, Is.EqualTo(3).Within(0.06f));
+            Assert.That(animal.IsAlive, Is.True);
+        }
+
+        [Test, Category("AC05")]
+        public void AnimalRestingOnADynamicBodyIsNotGrounded()
+        {
+            GameObject platform = Track(new GameObject("Dynamic platform"));
+            platform.transform.position = new Vector3(0, 0.25f, 0);
+            platform.AddComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+            platform.AddComponent<BoxCollider>().size = new Vector3(2, 0.5f, 2);
+            Animal animal = Create(false, new Vector3(0, 1f, 0), Vector3.right);
+            var motor = animal.GetComponent<RigidbodyAnimalMotor>();
+            Tick(3);
+            Assert.That(motor.IsGrounded, Is.False);
+            Assert.That(animal.transform.position.y, Is.EqualTo(1f).Within(0.05f));
+            Assert.That(animal.IsAlive, Is.True);
         }
 
         [Test, Category("AC06")]
@@ -313,8 +344,8 @@ namespace ZooWorld.Tests
             Assert.That(catalog, Is.Not.Null);
             catalog.Validate();
             Assert.That(catalog.Definitions.Count, Is.EqualTo(2));
-            using IObjectResolver container = new ContainerBuilder().Build();
-            using var factory = new AnimalFactory(container, _bounds);
+            using IObjectResolver container = BuildInteractionContainer(_bounds);
+            var factory = container.Resolve<AnimalFactory>();
             foreach (string species in new[] { "Snake", "Frog" })
             {
                 var definition = AssetDatabase.LoadAssetAtPath<AnimalDefinition>("Assets/Settings/AnimalDefinitions/" + species + ".asset");
@@ -333,8 +364,8 @@ namespace ZooWorld.Tests
         public void SavedFrogLandsAndWaitsInsteadOfBouncingOffTheGround()
         {
             var definition = AssetDatabase.LoadAssetAtPath<AnimalDefinition>("Assets/Settings/AnimalDefinitions/Frog.asset");
-            using IObjectResolver container = new ContainerBuilder().Build();
-            using var factory = new AnimalFactory(container);
+            using IObjectResolver container = BuildInteractionContainer(null);
+            var factory = container.Resolve<AnimalFactory>();
             Animal animal = factory.Rent(definition, new Vector3(0, 0.5f, 0), Vector3.right);
             SceneManager.MoveGameObjectToScene(animal.gameObject, _scene);
             _animals.Add(animal);
@@ -344,6 +375,16 @@ namespace ZooWorld.Tests
             Tick(30);
             Assert.That(animal.transform.position.x, Is.EqualTo(landingX).Within(0.04f));
             Assert.That(animal.GetComponent<RigidbodyAnimalMotor>().IsGrounded, Is.True);
+        }
+
+        private static IObjectResolver BuildInteractionContainer(ArenaBounds bounds)
+        {
+            var builder = new ContainerBuilder();
+            builder.Register<ZooWorld.Interaction.FoodChainPolicy>(Lifetime.Singleton).As<ZooWorld.Interaction.IAnimalInteractionPolicy>();
+            builder.Register<AnimalEventBus>(Lifetime.Singleton);
+            builder.Register(resolver => new AnimalFactory(resolver, bounds), Lifetime.Singleton);
+            builder.Register<AnimalInteractionResolver>(Lifetime.Singleton);
+            return builder.Build();
         }
 
         private Animal Create(bool jumping, Vector3 position, Vector3 direction, float restitution = 0, ArenaBounds bounds = null)

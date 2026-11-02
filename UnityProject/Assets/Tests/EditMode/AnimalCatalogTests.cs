@@ -5,6 +5,7 @@ using UnityEditor;
 using UnityEngine;
 using ZooWorld.Core;
 using ZooWorld.Definitions;
+using ZooWorld.Physics;
 using Object = UnityEngine.Object;
 
 namespace ZooWorld.Tests
@@ -159,9 +160,21 @@ namespace ZooWorld.Tests
         }
 
         [TestCase(typeof(Rigidbody)), TestCase(typeof(BoxCollider)), TestCase(typeof(CatalogTestMotor))]
+        [TestCase(typeof(AnimalContactRelay))]
         public void MissingPrefabComponentReportsSpecies(Type componentType)
         {
             Object.DestroyImmediate(_second.Prefab.GetComponent(componentType));
+            AssertInvalid("second");
+        }
+
+        [Test]
+        public void ChildOnlyColliderDoesNotSatisfyPrefabRequirements()
+        {
+            Object.DestroyImmediate(_second.Prefab.GetComponent<Collider>());
+            var child = new GameObject("Child collider");
+            _objects.Add(child);
+            child.transform.SetParent(_second.Prefab.transform);
+            child.AddComponent<BoxCollider>();
             AssertInvalid("second");
         }
 
@@ -237,6 +250,7 @@ namespace ZooWorld.Tests
             root.AddComponent<Rigidbody>();
             root.AddComponent<BoxCollider>();
             var motor = root.AddComponent<CatalogTestMotor>();
+            root.AddComponent<AnimalContactRelay>();
             Assert.That(motor, Is.Not.Null, "Fixture requires an attachable test-only motor.");
             var movement = Asset<LinearMovementProfile>(id + " Movement");
             var interaction = Asset<InteractionProfile>(id + " Interaction");

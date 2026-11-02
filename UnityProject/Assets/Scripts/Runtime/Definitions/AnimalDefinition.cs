@@ -43,10 +43,11 @@ namespace ZooWorld.Definitions
             }
 
             if (_prefab.GetComponent<Rigidbody>() == null ||
-                _prefab.GetComponentInChildren<Collider>(true) == null ||
-                _prefab.GetComponent<IAnimalMotor>() == null)
+                _prefab.GetComponent<Collider>() == null ||
+                _prefab.GetComponent<IAnimalMotor>() == null ||
+                _prefab.GetComponent<AnimalContactRelay>() == null)
             {
-                throw new InvalidOperationException($"Species '{name}' ({_id}) prefab requires Rigidbody, Collider and IAnimalMotor components.");
+                throw new InvalidOperationException($"Species '{name}' ({_id}) prefab requires Rigidbody, Collider, IAnimalMotor and AnimalContactRelay components on its root.");
             }
 
             _movementProfile.Validate();
