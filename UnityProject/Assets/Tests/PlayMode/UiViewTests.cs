@@ -65,20 +65,43 @@ namespace ZooWorld.Tests
             pool.Show(captured);
             Text label = SingleActiveLabel(pool);
             Assert.That(label.text, Is.EqualTo("Tasty!"));
+            var group = label.GetComponent<CanvasGroup>();
+            Assert.That(group, Is.Not.Null);
             float labelScreenY = _camera.WorldToScreenPoint(label.transform.position).y;
             float eaterScreenY = _camera.WorldToScreenPoint(captured).y;
             Assert.That(labelScreenY, Is.LessThan(eaterScreenY),
                 "The popup must appear below the eater on screen, not above it.");
             float elapsed = 0f;
-            while (elapsed < 1.4f)
+            while (elapsed < 0.4f)
             {
                 elapsed += Time.deltaTime;
                 yield return null;
             }
 
-            Assert.That(SingleActiveLabel(pool), Is.Not.Null, "The label must still be visible at 1.4 s.");
-            elapsed = 0f;
-            while (elapsed < 0.5f)
+            Assert.That(group.alpha, Is.EqualTo(1f),
+                "The label must stay fully opaque during the first half of its duration.");
+            float earlyScreenY = _camera.WorldToScreenPoint(label.transform.position).y;
+            while (elapsed < 1.2f)
+            {
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+
+            Assert.That(group.alpha, Is.LessThan(1f),
+                "The label must fade during the second half of its duration.");
+            Assert.That(group.alpha, Is.GreaterThan(0f));
+            float lateScreenY = _camera.WorldToScreenPoint(label.transform.position).y;
+            Assert.That(lateScreenY, Is.GreaterThan(earlyScreenY),
+                "The label must drift upward on screen while fading.");
+            while (elapsed < 1.3f)
+            {
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+
+            Assert.That(label.gameObject.activeSelf, Is.True,
+                "The label must still be visible at 1.3 s of its 1.5 s duration.");
+            while (elapsed < 1.8f)
             {
                 elapsed += Time.deltaTime;
                 yield return null;

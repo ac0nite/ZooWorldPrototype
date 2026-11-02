@@ -20,6 +20,7 @@ namespace ZooWorld.Tests
         private readonly List<Object> _extraObjects = new List<Object>();
         private GameObject _root;
         private GameObject _instance;
+        private long _nextUiAnimalId = 3;
 
         [UnityTearDown]
         public IEnumerator TearDown()
@@ -131,50 +132,14 @@ namespace ZooWorld.Tests
         [UnityTest, Category("AC07"), Category("AC11")]
         public IEnumerator GameScopeWiresHudAndTastyViewsFromSerializedReferences()
         {
-            _instance = new GameObject("UI fixture");
-            _instance.SetActive(false);
-            var counterGo = new GameObject("Counters");
-            counterGo.transform.SetParent(_instance.transform, false);
-            Text counterText = counterGo.AddComponent<Text>();
-            var hudGo = new GameObject("Hud view");
-            hudGo.transform.SetParent(_instance.transform, false);
-            var hudView = hudGo.AddComponent<HudView>();
-            var hudSerialized = new UnityEditor.SerializedObject(hudView);
-            hudSerialized.FindProperty("_counterText").objectReferenceValue = counterText;
-            hudSerialized.ApplyModifiedPropertiesWithoutUndo();
-            var canvasGo = new GameObject("Tasty canvas");
-            canvasGo.transform.SetParent(_instance.transform, false);
-            var canvas = canvasGo.AddComponent<Canvas>();
-            canvas.renderMode = RenderMode.WorldSpace;
-            var templateGo = new GameObject("Tasty template");
-            templateGo.transform.SetParent(canvasGo.transform, false);
-            Text template = templateGo.AddComponent<Text>();
-            var tastyLabels = canvasGo.AddComponent<TastyLabelPool>();
-            var tastySerialized = new UnityEditor.SerializedObject(tastyLabels);
-            tastySerialized.FindProperty("_labelTemplate").objectReferenceValue = template;
-            tastySerialized.ApplyModifiedPropertiesWithoutUndo();
-
-            _root = new GameObject("Test GameLifetimeScope");
-            _root.SetActive(false);
-            var scope = _root.AddComponent<GameLifetimeScope>();
-            var scopeSerialized = new UnityEditor.SerializedObject(scope);
-            scopeSerialized.FindProperty("_hudView").objectReferenceValue = hudView;
-            scopeSerialized.FindProperty("_tastyLabels").objectReferenceValue = tastyLabels;
-            scopeSerialized.ApplyModifiedPropertiesWithoutUndo();
-            _instance.SetActive(true);
-            _root.SetActive(true);
+            GameLifetimeScope scope = WireUiScope(out Text counterText, out TastyLabelPool tastyLabels);
             yield return null;
 
             Assert.That(counterText.text, Is.EqualTo("Dead prey: 0\nDead predators: 0"),
                 "The HUD presenter must push initial counters at startup.");
 
             var resolver = scope.Container.Resolve<ZooWorld.Systems.AnimalInteractionResolver>();
-            Animal snake = ActivateUiAnimal(3, UiDefinition("snake", AnimalRole.Predator, "predator",
-                new[] { "prey", "predator" }));
-            Animal frog = ActivateUiAnimal(5, UiDefinition("frog", AnimalRole.Prey, "prey",
-                System.Array.Empty<string>()));
-            resolver.Resolve(new AnimalContact(snake, snake.ActivationId, frog, frog.ActivationId,
-                Vector3.zero, Vector3.zero));
+            DriveUiConsumption(resolver);
 
             Assert.That(counterText.text, Is.EqualTo("Dead prey: 1\nDead predators: 0"));
             Text active = null;
@@ -190,6 +155,88 @@ namespace ZooWorld.Tests
             Assert.That(active, Is.Not.Null, "The Tasty presenter must show a label on consumption.");
             Assert.That(active.transform.position, Is.EqualTo(new Vector3(0f, 0f, -1f)));
             Assert.That(active.text, Is.EqualTo("Tasty!"));
+        }
+
+        [UnityTest, Category("AC11")]
+        public IEnumerator DestroyedScopeCutsViewUpdatesFromLateEvents()
+        {
+            GameLifetimeScope scope = WireUiScope(out Text counterText, out TastyLabelPool tastyLabels);
+            yield return null;
+
+            var resolver = scope.Container.Resolve<ZooWorld.Systems.AnimalInteractionResolver>();
+            DriveUiConsumption(resolver);
+            Assert.That(counterText.text, Is.EqualTo("Dead prey: 1\nDead predators: 0"));
+            Assert.That(ActiveUiLabels(tastyLabels), Is.EqualTo(1));
+
+            Object.Destroy(_root);
+            yield return null;
+
+            DriveUiConsumption(resolver);
+            Assert.That(counterText.text, Is.EqualTo("Dead prey: 1\nDead predators: 0"),
+                "Disposed presenters must not push late model updates to the view.");
+            Assert.That(ActiveUiLabels(tastyLabels), Is.EqualTo(1),
+                "Disposed presenters must not show Tasty labels for late events.");
+        }
+
+        private GameLifetimeScope WireUiScope(out Text counterText, out TastyLabelPool tastyLabels)
+        {
+            _instance = new GameObject("UI fixture");
+            _instance.SetActive(false);
+            var counterGo = new GameObject("Counters");
+            counterGo.transform.SetParent(_instance.transform, false);
+            counterText = counterGo.AddComponent<Text>();
+            var hudGo = new GameObject("Hud view");
+            hudGo.transform.SetParent(_instance.transform, false);
+            var hudView = hudGo.AddComponent<HudView>();
+            var hudSerialized = new UnityEditor.SerializedObject(hudView);
+            hudSerialized.FindProperty("_counterText").objectReferenceValue = counterText;
+            hudSerialized.ApplyModifiedPropertiesWithoutUndo();
+            var canvasGo = new GameObject("Tasty canvas");
+            canvasGo.transform.SetParent(_instance.transform, false);
+            var canvas = canvasGo.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.WorldSpace;
+            var templateGo = new GameObject("Tasty template");
+            templateGo.transform.SetParent(canvasGo.transform, false);
+            Text template = templateGo.AddComponent<Text>();
+            tastyLabels = canvasGo.AddComponent<TastyLabelPool>();
+            var tastySerialized = new UnityEditor.SerializedObject(tastyLabels);
+            tastySerialized.FindProperty("_labelTemplate").objectReferenceValue = template;
+            tastySerialized.ApplyModifiedPropertiesWithoutUndo();
+
+            _root = new GameObject("Test GameLifetimeScope");
+            _root.SetActive(false);
+            var scope = _root.AddComponent<GameLifetimeScope>();
+            var scopeSerialized = new UnityEditor.SerializedObject(scope);
+            scopeSerialized.FindProperty("_hudView").objectReferenceValue = hudView;
+            scopeSerialized.FindProperty("_tastyLabels").objectReferenceValue = tastyLabels;
+            scopeSerialized.ApplyModifiedPropertiesWithoutUndo();
+            _instance.SetActive(true);
+            _root.SetActive(true);
+            return scope;
+        }
+
+        private void DriveUiConsumption(ZooWorld.Systems.AnimalInteractionResolver resolver)
+        {
+            Animal snake = ActivateUiAnimal(_nextUiAnimalId++, UiDefinition("snake", AnimalRole.Predator,
+                "predator", new[] { "prey", "predator" }));
+            Animal frog = ActivateUiAnimal(_nextUiAnimalId++, UiDefinition("frog", AnimalRole.Prey, "prey",
+                System.Array.Empty<string>()));
+            resolver.Resolve(new AnimalContact(snake, snake.ActivationId, frog, frog.ActivationId,
+                Vector3.zero, Vector3.zero));
+        }
+
+        private static int ActiveUiLabels(TastyLabelPool pool)
+        {
+            var count = 0;
+            foreach (Text label in pool.GetComponentsInChildren<Text>())
+            {
+                if (label.gameObject.activeSelf)
+                {
+                    count++;
+                }
+            }
+
+            return count;
         }
 
         private Animal ActivateUiAnimal(long id, AnimalDefinition definition)

@@ -46,7 +46,7 @@ namespace ZooWorld.UI
 
         public void Show(Vector3 worldPosition)
         {
-            if (_entries.Count == 0)
+            if (!isActiveAndEnabled || _entries.Count == 0)
             {
                 return;
             }
