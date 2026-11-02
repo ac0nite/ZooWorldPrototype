@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using ZooWorld.Interaction;
 
@@ -10,7 +11,10 @@ namespace ZooWorld.Definitions
         [SerializeField] private InteractionCategory _category;
         [SerializeField] private InteractionCategory[] _edibleCategories = Array.Empty<InteractionCategory>();
 
-        public InteractionData CreateSnapshot()
+        public InteractionCategory Category => _category;
+        public IReadOnlyList<InteractionCategory> EdibleCategories => Array.AsReadOnly(_edibleCategories);
+
+        public void Validate()
         {
             if (_category == null || string.IsNullOrWhiteSpace(_category.Id))
             {
@@ -22,14 +26,21 @@ namespace ZooWorld.Definitions
                 throw new InvalidOperationException($"Interaction profile '{name}' has a null edible category collection.");
             }
 
-            var ids = new string[_edibleCategories.Length];
             for (var i = 0; i < _edibleCategories.Length; i++)
             {
                 if (_edibleCategories[i] == null || string.IsNullOrWhiteSpace(_edibleCategories[i].Id))
                 {
                     throw new InvalidOperationException($"Interaction profile '{name}' has an invalid edible category at index {i}.");
                 }
+            }
+        }
 
+        public InteractionData CreateSnapshot()
+        {
+            Validate();
+            var ids = new string[_edibleCategories.Length];
+            for (var i = 0; i < _edibleCategories.Length; i++)
+            {
                 ids[i] = _edibleCategories[i].Id;
             }
 

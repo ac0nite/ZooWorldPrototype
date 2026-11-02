@@ -1,7 +1,7 @@
 {
   "name": "ZooWorld.Tests",
   "rootNamespace": "ZooWorld.Tests",
-  "references": ["ZooWorld.Runtime", "VContainer", "VContainer.Unity"],
+  "references": ["ZooWorld.Runtime", "ZooWorld.PlayModeTests", "VContainer", "VContainer.Unity"],
   "includePlatforms": ["Editor"],
   "optionalUnityReferences": ["TestAssemblies"],
   "autoReferenced": false
