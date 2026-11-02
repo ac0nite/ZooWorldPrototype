@@ -11,7 +11,7 @@ using Object = UnityEngine.Object;
 
 namespace ZooWorld.Systems
 {
-    public sealed class AnimalFactory : IDisposable
+    public sealed class AnimalFactory : IDisposable, ISpawnTarget
     {
         private readonly IObjectResolver _resolver;
         private readonly ArenaBounds _bounds;

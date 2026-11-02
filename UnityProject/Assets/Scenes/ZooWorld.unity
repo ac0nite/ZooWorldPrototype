@@ -1081,7 +1081,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1184172962
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1178,6 +1178,8 @@ MonoBehaviour:
   autoInjectGameObjects: []
   _arenaCamera: {fileID: 1862356163}
   _groundHeight: 0
+  _catalog: {fileID: 11400000, guid: 59a9c4257183e41d5b1f0818a1ec381b, type: 2}
+  _settings: {fileID: 11400000, guid: 2fe5c4cc0846e400eb35abd15149dad1, type: 2}
 --- !u!4 &1252064242
 Transform:
   m_ObjectHideFlags: 0
