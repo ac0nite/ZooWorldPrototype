@@ -273,6 +273,21 @@ namespace ZooWorld.Tests
         }
 
         [Test, Category("AC03")]
+        public void ResolveCountsEveryNonNullContactReport()
+        {
+            Animal snake = Activate(3, PredatorDefinition("snake"));
+            Animal frog = Activate(5, PreyDefinition("frog"));
+            Assert.That(_resolver.ContactsReceived, Is.EqualTo(0));
+            _resolver.Resolve(Contact(snake, frog));
+            Assert.That(_resolver.ContactsReceived, Is.EqualTo(1));
+            _resolver.Resolve(Contact(snake, frog));
+            Assert.That(_resolver.ContactsReceived, Is.EqualTo(2),
+                "Rejected duplicate reports still count as received load.");
+            _resolver.Resolve(null);
+            Assert.That(_resolver.ContactsReceived, Is.EqualTo(2));
+        }
+
+        [Test, Category("AC03")]
         public void ContactRequiresBothActors()
         {
             Assert.Throws<ArgumentNullException>(() => new AnimalContact(null, 1, Activate(3, PreyDefinition("frog")), 3,

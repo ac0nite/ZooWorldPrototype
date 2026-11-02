@@ -3,6 +3,7 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 using ZooWorld.Definitions;
+using ZooWorld.Diagnostics;
 using ZooWorld.Interaction;
 using ZooWorld.Systems;
 using ZooWorld.UI;
@@ -48,6 +49,10 @@ namespace ZooWorld.Composition
                 builder.RegisterInstance(_catalog);
                 builder.RegisterInstance(_settings);
                 builder.RegisterEntryPoint<AnimalSpawner>().AsSelf();
+                if (Debug.isDebugBuild && !Application.isEditor)
+                {
+                    builder.RegisterEntryPoint<SimulationDiagnostics>();
+                }
             }
 
             if (_hudView != null)

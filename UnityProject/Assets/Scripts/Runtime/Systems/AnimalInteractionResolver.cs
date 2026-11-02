@@ -13,6 +13,8 @@ namespace ZooWorld.Systems
         private readonly AnimalEventBus _events;
         private readonly uint _seed;
 
+        public long ContactsReceived { get; private set; }
+
         [Inject]
         public AnimalInteractionResolver(IAnimalInteractionPolicy policy, AnimalFactory factory,
             AnimalEventBus events) : this(policy, factory, events, 0)
@@ -35,6 +37,7 @@ namespace ZooWorld.Systems
                 return;
             }
 
+            ContactsReceived++;
             Animal actor = contact.Actor;
             Animal other = contact.Other;
             if (actor == null || other == null || ReferenceEquals(actor, other) ||
