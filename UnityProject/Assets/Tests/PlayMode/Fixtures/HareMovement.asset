@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: HareMovement
   m_EditorClassIdentifier: ZooWorld.Runtime::ZooWorld.Definitions.JumpMovementProfile
   _distance: 1.5
-  _height: 0.7
+  _height: 0.5
   _waitInterval: 0.8

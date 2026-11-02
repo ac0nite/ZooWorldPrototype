@@ -18,4 +18,4 @@ MonoBehaviour:
   _prefab: {fileID: 2131939717448438944, guid: e986d3dbec62541ab9fccd9be88812ac, type: 3}
   _movementProfile: {fileID: 11400000, guid: 1d0c24eb527c0448fa00edf1fcb8777a, type: 2}
   _interactionProfile: {fileID: 11400000, guid: 8a85f78b6aa994f499887d9366ea4d04, type: 2}
-  _spawnWeight: 1
+  _spawnWeight: 3

@@ -23,12 +23,15 @@ namespace ZooWorld.Tests
 
         // AC-08 fixture (declared before the demo assets): the third species "hare"
         // is a prey that reuses the shipped prey interaction profile and jumps with
-        // distance=1.5 m, height=0.7 m, wait=0.8 s. Expected outcomes below come from
-        // these fixture constants and the AC-05 PhysX tolerances, not from production code.
+        // distance=1.5 m, height=0.5 m, wait=0.8 s; the fourth species "turtle" is a
+        // linear-mover prey at speed 1 m/s. Expected outcomes below come from these
+        // fixture constants and the AC-05 PhysX tolerances, not from production code.
         private const float HareJumpDistance = 1.5f;
-        private const float HareJumpHeight = 0.7f;
+        private const float HareJumpHeight = 0.5f;
         private const float HareJumpWait = 0.8f;
         private const float HareRestHeight = 0.375f;
+        private const float TurtleSpeed = 1f;
+        private const float TurtleRestHeight = 0.55f;
 
         private readonly List<Object> _objects = new List<Object>();
         private readonly List<Animal> _animals = new List<Animal>();
@@ -45,6 +48,7 @@ namespace ZooWorld.Tests
         private AnimalDefinition _snake;
         private AnimalDefinition _frog;
         private AnimalDefinition _hare;
+        private AnimalDefinition _turtle;
         private AnimalCatalog _demoCatalog;
 
         [SetUp]
@@ -73,10 +77,12 @@ namespace ZooWorld.Tests
             _snake = AssetDatabase.LoadAssetAtPath<AnimalDefinition>("Assets/Settings/AnimalDefinitions/Snake.asset");
             _frog = AssetDatabase.LoadAssetAtPath<AnimalDefinition>("Assets/Settings/AnimalDefinitions/Frog.asset");
             _hare = AssetDatabase.LoadAssetAtPath<AnimalDefinition>("Assets/Tests/PlayMode/Fixtures/Hare.asset");
+            _turtle = AssetDatabase.LoadAssetAtPath<AnimalDefinition>("Assets/Tests/PlayMode/Fixtures/Turtle.asset");
             _demoCatalog = AssetDatabase.LoadAssetAtPath<AnimalCatalog>("Assets/Tests/PlayMode/Fixtures/ExtensibilityCatalog.asset");
             Assert.That(_snake, Is.Not.Null);
             Assert.That(_frog, Is.Not.Null);
             Assert.That(_hare, Is.Not.Null, "The demo third-species definition must be a saved asset.");
+            Assert.That(_turtle, Is.Not.Null, "The demo fourth-species definition must be a saved asset.");
             Assert.That(_demoCatalog, Is.Not.Null, "The demo catalog must be a saved asset.");
         }
 
@@ -107,28 +113,34 @@ namespace ZooWorld.Tests
         }
 
         [Test, Category("AC08")]
-        public void DemoCatalogValidatesWithThirdSpeciesWhileShippedCatalogStaysUnchanged()
+        public void DemoCatalogAddsSpeciesThroughAssetsOnly()
         {
             Assert.DoesNotThrow(() => _demoCatalog.Validate());
-            Assert.That(_demoCatalog.Definitions.Count, Is.EqualTo(3));
+            Assert.That(_demoCatalog.Definitions.Count, Is.EqualTo(4));
             var ids = new List<string>();
             foreach (AnimalDefinition definition in _demoCatalog.Definitions)
             {
                 ids.Add(definition.Id);
             }
 
-            Assert.That(ids, Is.EquivalentTo(new[] { "frog", "snake", "hare" }));
+            Assert.That(ids, Is.EquivalentTo(new[] { "frog", "snake", "hare", "turtle" }));
             var shipped = AssetDatabase.LoadAssetAtPath<AnimalCatalog>("Assets/Settings/AnimalDefinitions/AnimalCatalog.asset");
             Assert.That(shipped.Definitions.Count, Is.EqualTo(2),
                 "The shipped catalog must keep exactly the two task species; the demo lives in fixture assets.");
             Assert.That(_hare.Role, Is.EqualTo(AnimalRole.Prey));
             Assert.That(_hare.InteractionProfile, Is.SameAs(_frog.InteractionProfile),
                 "The hare reuses the shipped prey interaction profile asset.");
-            var movement = _hare.MovementProfile as JumpMovementProfile;
-            Assert.That(movement, Is.Not.Null);
-            Assert.That(movement.Distance, Is.EqualTo(HareJumpDistance));
-            Assert.That(movement.Height, Is.EqualTo(HareJumpHeight));
-            Assert.That(movement.WaitInterval, Is.EqualTo(HareJumpWait));
+            var hareMovement = _hare.MovementProfile as JumpMovementProfile;
+            Assert.That(hareMovement, Is.Not.Null);
+            Assert.That(hareMovement.Distance, Is.EqualTo(HareJumpDistance));
+            Assert.That(hareMovement.Height, Is.EqualTo(HareJumpHeight));
+            Assert.That(hareMovement.WaitInterval, Is.EqualTo(HareJumpWait));
+            Assert.That(_turtle.Role, Is.EqualTo(AnimalRole.Prey));
+            Assert.That(_turtle.InteractionProfile, Is.SameAs(_frog.InteractionProfile),
+                "The turtle reuses the shipped prey interaction profile asset.");
+            var turtleMovement = _turtle.MovementProfile as LinearMovementProfile;
+            Assert.That(turtleMovement, Is.Not.Null);
+            Assert.That(turtleMovement.Speed, Is.EqualTo(TurtleSpeed));
         }
 
         [Test, Category("AC05"), Category("AC08")]
@@ -218,12 +230,108 @@ namespace ZooWorld.Tests
             Assert.That(_stats.PreyDeaths + _stats.PredatorDeaths, Is.EqualTo(0));
         }
 
+        [Test, Category("AC05"), Category("AC08")]
+        public void NewLinearSpeciesMovesAtItsConfiguredSpeed()
+        {
+            Animal turtle = Rent(_turtle, new Vector3(0, TurtleRestHeight, 0), Vector3.right);
+            Tick(50);
+            Assert.That(turtle.transform.position.x, Is.EqualTo(TurtleSpeed).Within(0.06f));
+            Assert.That(turtle.GetComponent<RigidbodyAnimalMotor>().IsGrounded, Is.True);
+            Assert.That(turtle.IsAlive, Is.True);
+        }
+
+        [Test, Category("AC02"), Category("AC08")]
+        public void NewLinearSpeciesPairBouncesOnContact()
+        {
+            Animal first = Rent(_turtle, new Vector3(-1, TurtleRestHeight, 0), Vector3.right);
+            Animal second = Rent(_turtle, new Vector3(1, TurtleRestHeight, 0), Vector3.left);
+            float minDistance = float.MaxValue;
+            bool bounced = false;
+            for (var i = 0; i < 60; i++)
+            {
+                Tick(1);
+                minDistance = Mathf.Min(minDistance,
+                    Vector3.Distance(first.transform.position, second.transform.position));
+                Vector3 normal = (second.transform.position - first.transform.position).normalized;
+                float outward = Vector3.Dot(
+                    second.GetComponent<Rigidbody>().linearVelocity - first.GetComponent<Rigidbody>().linearVelocity, normal);
+                if (outward >= 1 && first.transform.position.x < second.transform.position.x)
+                {
+                    bounced = true;
+                    break;
+                }
+            }
+
+            Assert.That(minDistance, Is.LessThan(1.15f),
+                "The turtles must actually reach contact range (sum of radii 1.1 m).");
+            Assert.That(bounced, Is.True, "The new prey species must physically rebound.");
+            Tick(15);
+            Assert.That(first.IsAlive && second.IsAlive, Is.True);
+            Assert.That(_died, Is.Empty);
+            Assert.That(_stats.PreyDeaths + _stats.PredatorDeaths, Is.EqualTo(0));
+        }
+
+        [Test, Category("AC02"), Category("AC05"), Category("AC08")]
+        public void FrogClearsObstacleWallThatBlocksGroundSpecies()
+        {
+            Wall(new Vector3(-1, 0.275f, 0));
+            Animal frog = Rent(_frog, new Vector3(-2, 0.5f, 0), Vector3.right);
+            for (var i = 0; i < 140 && frog.transform.position.x <= -0.5f; i++)
+            {
+                Tick(1);
+            }
+
+            Assert.That(frog.transform.position.x, Is.GreaterThan(-0.5f),
+                "The frog's jump must carry it past the wall's far face (-0.925 m); a blocked frog rests near the near face (-1.575 m).");
+            Assert.That(frog.IsAlive, Is.True);
+        }
+
+        [Test, Category("AC02"), Category("AC05"), Category("AC08")]
+        public void SnakeCannotCrossTheObstacleWall()
+        {
+            Wall(new Vector3(-1.5f, 0.275f, 0));
+            Animal snake = Rent(_snake, new Vector3(-2, 0.5f, 0), Vector3.right);
+            Tick(150);
+            Assert.That(snake.transform.position.x, Is.LessThan(-1f),
+                "The linear-moving snake must stay on the near side of the wall.");
+            Assert.That(snake.IsAlive, Is.True);
+        }
+
+        [Test, Category("AC02"), Category("AC05"), Category("AC08")]
+        public void HareCannotCrossTheObstacleWall()
+        {
+            Wall(new Vector3(-1.5f, 0.275f, 0));
+            Animal hare = Rent(_hare, new Vector3(-2, HareRestHeight, 0), Vector3.right);
+            Tick(140);
+            Assert.That(hare.transform.position.x, Is.LessThan(-1.4f),
+                "The hare's lower jump must hit the wall face and fall back.");
+            Assert.That(hare.IsAlive, Is.True);
+        }
+
+        [Test, Category("AC02"), Category("AC05"), Category("AC08")]
+        public void TurtleCannotCrossTheObstacleWall()
+        {
+            Wall(new Vector3(-1.5f, 0.275f, 0));
+            Animal turtle = Rent(_turtle, new Vector3(-2, TurtleRestHeight, 0), Vector3.right);
+            Tick(150);
+            Assert.That(turtle.transform.position.x, Is.LessThan(-1f),
+                "The linear-moving turtle must stay on the near side of the wall.");
+            Assert.That(turtle.IsAlive, Is.True);
+        }
+
         private Animal Rent(AnimalDefinition definition, Vector3 position, Vector3 direction)
         {
             Animal animal = _factory.Rent(definition, position, direction);
             SceneManager.MoveGameObjectToScene(animal.gameObject, _scene);
             _animals.Add(animal);
             return animal;
+        }
+
+        private void Wall(Vector3 position)
+        {
+            GameObject wall = Track(new GameObject("Obstacle wall"));
+            wall.transform.position = position;
+            wall.AddComponent<BoxCollider>().size = new Vector3(0.15f, 0.55f, 4f);
         }
 
         private void Tick(int count)
