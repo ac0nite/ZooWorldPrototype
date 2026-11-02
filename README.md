@@ -17,10 +17,6 @@ This README maps that criterion to the implementation.
 
 - Project: `UnityProject/` (Unity `6000.6.2f1`, the version is fixed in
   `ProjectSettings/ProjectVersion.txt`)
-- Architecture and acceptance contract (AC-01…AC-12, verification log):
-  [ARCHITECTURE.md](ARCHITECTURE.md) ·
-  [ARCHITECTURE.ru.md](ARCHITECTURE.ru.md)
-- Task analysis (Russian): [TEST_TASK_ANALYSIS.md](TEST_TASK_ANALYSIS.md)
 
 ### How the task's criteria are addressed
 
@@ -94,10 +90,9 @@ unity command test run --mode editor --format json --project-path UnityProject
 unity command test run --mode playmode --async_tests true --format json --project-path UnityProject
 ```
 
-Latest recorded baseline: EditMode 139/139, PlayMode 62/62
-(see `ARCHITECTURE.md` §10.4–10.5 for run logs, independent reviews and
-targeted mutation experiments executed in isolated worktrees). A 100-animal
-development-player profiling run is documented there as well.
+Latest recorded baseline: EditMode 139/139, PlayMode 62/62. The suite was
+additionally verified by targeted mutation experiments in isolated
+worktrees and a 100-animal development-player profiling run.
 
 ### Adding a species
 
@@ -112,12 +107,13 @@ No code changes for a species built from existing capabilities:
 Shipped species: `Frog`/`Snake` under `Assets/Settings/` +
 `Assets/Prefabs/Animals/`. Demo species `Hare`/`Turtle` under
 `Assets/Tests/PlayMode/Fixtures/` prove the flow — they were added as
-assets only, with zero edits to shared systems (AC-08).
+assets only, with zero edits to shared systems.
 
 A new movement algorithm = profile subclass + `IMovementStrategy`; a new
 food category = assets; a genuinely new interaction (poison, mating) =
-new `InteractionDecision` kinds and resolver handling. See
-`ARCHITECTURE.md` §10.6 for the deliberate limits of the current build.
+new `InteractionDecision` kinds and resolver handling.
+
+Auxiliary tool used: Devin (AI coding agent by Cognition).
 
 ---
 
@@ -135,9 +131,6 @@ new `InteractionDecision` kinds and resolver handling. See
 
 - Проект: `UnityProject/` (Unity `6000.6.2f1`, версия зафиксирована в
   `ProjectSettings/ProjectVersion.txt`)
-- Архитектура и приёмочный контракт (AC-01…AC-12, журнал проверок):
-  [ARCHITECTURE.ru.md](ARCHITECTURE.ru.md)
-- Разбор задания: [TEST_TASK_ANALYSIS.md](TEST_TASK_ANALYSIS.md)
 
 ### Как закрыты критерии задания
 
@@ -212,10 +205,9 @@ unity command test run --mode editor --format json --project-path UnityProject
 unity command test run --mode playmode --async_tests true --format json --project-path UnityProject
 ```
 
-Последний зафиксированный baseline: EditMode 139/139, PlayMode 62/62
-(логи, независимые ревью и направленные мутационные эксперименты в
-изолированных worktree — в `ARCHITECTURE.ru.md`, разделы 10.4–10.5).
-Там же задокументировано профилирование development-плеера со 100
+Последний зафиксированный baseline: EditMode 139/139, PlayMode 62/62.
+Дополнительно проведены направленные мутационные эксперименты в
+изолированных worktree и профилирование development-плеера со 100
 активными животными.
 
 ### Добавление вида
@@ -231,9 +223,10 @@ unity command test run --mode playmode --async_tests true --format json --projec
 Поставляемые виды: `Frog`/`Snake` в `Assets/Settings/` +
 `Assets/Prefabs/Animals/`. Демонстрационные `Hare`/`Turtle` в
 `Assets/Tests/PlayMode/Fixtures/` доказывают сценарий — добавлены
-только ассетами, без правок общих систем (AC-08).
+только ассетами, без правок общих систем.
 
 Новый алгоритм движения = наследник профиля + `IMovementStrategy`; новая
 пищевая категория = ассеты; принципиально новое взаимодействие (яд,
 размножение) = новые виды `InteractionDecision` и обработка в resolver.
-Осознанные ограничения текущей сборки — в `ARCHITECTURE.ru.md`, §10.6.
+
+Использованный вспомогательный инструмент: Devin (ИИ-агент разработки от Cognition).
