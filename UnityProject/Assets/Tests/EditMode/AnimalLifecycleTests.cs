@@ -8,71 +8,71 @@ namespace ZooWorld.Tests
 {
     public sealed class AnimalLifecycleTests
     {
-        GameObject root;
-        Animal animal;
+        private GameObject _root;
+        private Animal _animal;
 
         [SetUp]
         public void SetUp()
         {
-            root = new GameObject("Lifecycle fixture");
-            animal = root.AddComponent<Animal>();
+            _root = new GameObject("Lifecycle fixture");
+            _animal = _root.AddComponent<Animal>();
         }
 
         [TearDown]
-        public void TearDown() => Object.DestroyImmediate(root);
+        public void TearDown() => Object.DestroyImmediate(_root);
 
         [Test, Category("AC03"), Category("AC04")]
         public void DeathSucceedsOnlyOnceForAnActivation()
         {
-            Assert.That(animal.TryDie(), Is.False);
-            animal.Activate(41);
-            Assert.That(animal.IsAlive, Is.True);
-            Assert.That(animal.TryDie(), Is.True);
-            Assert.That(animal.TryDie(), Is.False);
-            Assert.That(animal.IsAlive, Is.False);
-            Assert.That(animal.ActivationId, Is.EqualTo(41));
+            Assert.That(_animal.TryDie(), Is.False);
+            _animal.Activate(41);
+            Assert.That(_animal.IsAlive, Is.True);
+            Assert.That(_animal.TryDie(), Is.True);
+            Assert.That(_animal.TryDie(), Is.False);
+            Assert.That(_animal.IsAlive, Is.False);
+            Assert.That(_animal.ActivationId, Is.EqualTo(41));
         }
 
         [Test, Category("AC09")]
         public void ReleaseClearsIdentityAndNextActivationIsAlive()
         {
-            animal.Activate(41);
-            Assert.That(animal.TryDie(), Is.True);
-            animal.Deactivate();
-            animal.Deactivate();
-            Assert.That(animal.ActivationId, Is.Zero);
-            Assert.That(animal.TryDie(), Is.False);
-            animal.Activate(42);
-            Assert.That(animal.ActivationId, Is.EqualTo(42));
-            Assert.That(animal.IsAlive, Is.True);
-            Assert.That(animal.TryDie(), Is.True);
+            _animal.Activate(41);
+            Assert.That(_animal.TryDie(), Is.True);
+            _animal.Deactivate();
+            _animal.Deactivate();
+            Assert.That(_animal.ActivationId, Is.Zero);
+            Assert.That(_animal.TryDie(), Is.False);
+            _animal.Activate(42);
+            Assert.That(_animal.ActivationId, Is.EqualTo(42));
+            Assert.That(_animal.IsAlive, Is.True);
+            Assert.That(_animal.TryDie(), Is.True);
         }
 
         [Test, Category("AC10")]
         public void CleanupIsNotADeathTransition()
         {
-            animal.Activate(41);
-            animal.Deactivate();
-            Assert.That(animal.IsAlive, Is.False);
-            Assert.That(animal.TryDie(), Is.False);
+            _animal.Activate(41);
+            _animal.Deactivate();
+            Assert.That(_animal.IsAlive, Is.False);
+            Assert.That(_animal.TryDie(), Is.False);
         }
 
         [TestCase(0), TestCase(-1), Category("AC09")]
         public void NonPositiveActivationIdsAreRejected(long id)
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => animal.Activate(id));
-            Assert.That(animal.IsAlive, Is.False);
-            Assert.That(animal.ActivationId, Is.Zero);
+            Assert.Throws<ArgumentOutOfRangeException>(() => _animal.Activate(id));
+            Assert.That(_animal.IsAlive, Is.False);
+            Assert.That(_animal.ActivationId, Is.Zero);
         }
 
         [Test, Category("AC09")]
         public void LiveOrDeadActivationCannotBeOverwrittenBeforeRelease()
         {
-            animal.Activate(41);
-            Assert.Throws<InvalidOperationException>(() => animal.Activate(42));
-            Assert.That(animal.TryDie(), Is.True);
-            Assert.Throws<InvalidOperationException>(() => animal.Activate(42));
-            Assert.That(animal.ActivationId, Is.EqualTo(41));
+            _animal.Activate(41);
+            Assert.Throws<InvalidOperationException>(() => _animal.Activate(42));
+            Assert.That(_animal.TryDie(), Is.True);
+            Assert.Throws<InvalidOperationException>(() => _animal.Activate(42));
+            Assert.That(_animal.ActivationId, Is.EqualTo(41));
         }
     }
 }

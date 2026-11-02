@@ -17,7 +17,7 @@ namespace ZooWorld.Tests
             InjectionCount++;
         }
 
-        void OnEnable() => InjectedBeforeEnable = Dependency != null;
-        void Start() => InjectedBeforeStart = Dependency != null;
+        private void OnEnable() => InjectedBeforeEnable = Dependency != null;
+        private void Start() => InjectedBeforeStart = Dependency != null;
     }
 }

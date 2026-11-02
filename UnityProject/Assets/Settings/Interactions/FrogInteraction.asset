@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b645ecb61fb684da787f30c084228c76, type: 3}
   m_Name: FrogInteraction
   m_EditorClassIdentifier: ZooWorld.Runtime::ZooWorld.Definitions.InteractionProfile
-  category: {fileID: 11400000, guid: 936b74327b82f489aa5557dd2260eea1, type: 2}
-  edibleCategories: []
+  _category: {fileID: 11400000, guid: 936b74327b82f489aa5557dd2260eea1, type: 2}
+  _edibleCategories: []

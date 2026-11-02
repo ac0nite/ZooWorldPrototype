@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdc7453ead2fe447db01180eacb28d08, type: 3}
   m_Name: predator
   m_EditorClassIdentifier: ZooWorld.Runtime::ZooWorld.Definitions.InteractionCategory
-  id: predator
+  _id: predator

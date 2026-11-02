@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b645ecb61fb684da787f30c084228c76, type: 3}
   m_Name: SnakeInteraction
   m_EditorClassIdentifier: ZooWorld.Runtime::ZooWorld.Definitions.InteractionProfile
-  category: {fileID: 11400000, guid: c2c052af9dff741a8904369b65c69fa7, type: 2}
-  edibleCategories:
+  _category: {fileID: 11400000, guid: c2c052af9dff741a8904369b65c69fa7, type: 2}
+  _edibleCategories:
   - {fileID: 11400000, guid: 936b74327b82f489aa5557dd2260eea1, type: 2}
   - {fileID: 11400000, guid: c2c052af9dff741a8904369b65c69fa7, type: 2}

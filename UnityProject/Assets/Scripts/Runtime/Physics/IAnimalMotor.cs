@@ -4,8 +4,8 @@ namespace ZooWorld.Physics
 {
     public interface IAnimalMotor
     {
-        Vector3 Position { get; }
-        Vector3 Velocity { get; set; }
-        bool IsGrounded { get; }
+        public Vector3 Position { get; }
+        public Vector3 Velocity { get; set; }
+        public bool IsGrounded { get; }
     }
 }

@@ -6,7 +6,7 @@ namespace ZooWorld.Tests
 {
     public sealed class FoodChainPolicyTests
     {
-        readonly IAnimalInteractionPolicy policy = new FoodChainPolicy();
+        private readonly IAnimalInteractionPolicy _policy = new FoodChainPolicy();
 
         [TestCase(false, false, 0u, InteractionDecision.None)]
         [TestCase(false, false, 1u, InteractionDecision.None)]
@@ -24,7 +24,7 @@ namespace ZooWorld.Tests
         {
             var a = new InteractionData("a", aEatsB ? new[] { "b" } : Array.Empty<string>());
             var b = new InteractionData("b", bEatsA ? new[] { "a" } : Array.Empty<string>());
-            Assert.That(policy.Evaluate(a, b, tieBreak), Is.EqualTo(expected));
+            Assert.That(_policy.Evaluate(a, b, tieBreak), Is.EqualTo(expected));
         }
 
         [TestCase(0u), TestCase(1u), Category("AC03")]
@@ -32,9 +32,9 @@ namespace ZooWorld.Tests
         {
             var prey = new InteractionData("prey", Array.Empty<string>());
             var predator = new InteractionData("predator", new[] { "prey", "predator" });
-            Assert.That(policy.Evaluate(prey, prey, tieBreak), Is.EqualTo(InteractionDecision.None));
-            Assert.That(policy.Evaluate(predator, prey, tieBreak), Is.EqualTo(InteractionDecision.AConsumesB));
-            Assert.That(policy.Evaluate(prey, predator, tieBreak), Is.EqualTo(InteractionDecision.BConsumesA));
+            Assert.That(_policy.Evaluate(prey, prey, tieBreak), Is.EqualTo(InteractionDecision.None));
+            Assert.That(_policy.Evaluate(predator, prey, tieBreak), Is.EqualTo(InteractionDecision.AConsumesB));
+            Assert.That(_policy.Evaluate(prey, predator, tieBreak), Is.EqualTo(InteractionDecision.BConsumesA));
         }
 
         [TestCase(0u, InteractionDecision.AConsumesB)]
@@ -47,9 +47,9 @@ namespace ZooWorld.Tests
         {
             var first = new InteractionData("predator", new[] { "prey", "predator" });
             var second = new InteractionData("predator", new[] { "prey", "predator" });
-            Assert.That(policy.Evaluate(first, second, tieBreak), Is.EqualTo(expected));
-            Assert.That(policy.Evaluate(first, second, tieBreak), Is.EqualTo(expected));
-            Assert.That(policy.Evaluate(second, first, tieBreak), Is.EqualTo(expected));
+            Assert.That(_policy.Evaluate(first, second, tieBreak), Is.EqualTo(expected));
+            Assert.That(_policy.Evaluate(first, second, tieBreak), Is.EqualTo(expected));
+            Assert.That(_policy.Evaluate(second, first, tieBreak), Is.EqualTo(expected));
         }
 
         [Test, Category("AC08")]
@@ -57,8 +57,8 @@ namespace ZooWorld.Tests
         {
             var insect = new InteractionData("insect", Array.Empty<string>());
             var frog = new InteractionData("prey", new[] { "insect" });
-            Assert.That(policy.Evaluate(frog, insect, 0), Is.EqualTo(InteractionDecision.AConsumesB));
-            Assert.That(policy.Evaluate(insect, frog, 0), Is.EqualTo(InteractionDecision.BConsumesA));
+            Assert.That(_policy.Evaluate(frog, insect, 0), Is.EqualTo(InteractionDecision.AConsumesB));
+            Assert.That(_policy.Evaluate(insect, frog, 0), Is.EqualTo(InteractionDecision.BConsumesA));
         }
 
         [Test, Category("AC09")]

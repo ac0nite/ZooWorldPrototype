@@ -6,65 +6,94 @@ namespace ZooWorld.Movement
 {
     public sealed class JumpMovementStrategy : IMovementStrategy
     {
-        readonly IAnimalMotor motor;
-        readonly float verticalSpeed;
-        readonly float horizontalSpeed;
-        readonly float waitInterval;
-        Vector3 direction;
-        float remainingWait;
-        bool launched;
-        bool leftGround;
-        bool disposed;
+        private readonly IAnimalMotor _motor;
+        private readonly float _verticalSpeed;
+        private readonly float _horizontalSpeed;
+        private readonly float _waitInterval;
+        private Vector3 _direction;
+        private float _remainingWait;
+        private bool _launched;
+        private bool _leftGround;
+        private bool _disposed;
 
         internal JumpMovementStrategy(MovementContext context, float distance, float height, float waitInterval)
         {
-            motor = context.Motor;
-            direction = context.InitialDirection;
-            verticalSpeed = Mathf.Sqrt(2 * context.Gravity * height);
-            horizontalSpeed = distance / (2 * verticalSpeed / context.Gravity);
-            this.waitInterval = waitInterval;
-            remainingWait = waitInterval;
+            _motor = context.Motor;
+            _direction = context.InitialDirection;
+            _verticalSpeed = Mathf.Sqrt(2 * context.Gravity * height);
+            _horizontalSpeed = distance / (2 * _verticalSpeed / context.Gravity);
+            _waitInterval = waitInterval;
+            _remainingWait = waitInterval;
         }
 
         public void FixedTick(float fixedDeltaTime)
         {
-            if (disposed) return;
-            if (launched)
+            if (_disposed)
             {
-                if (!motor.IsGrounded) leftGround = true;
-                else if (leftGround)
-                {
-                    launched = false;
-                    leftGround = false;
-                    remainingWait = waitInterval;
-                    motor.Velocity = new Vector3(0, motor.Velocity.y, 0);
-                }
                 return;
             }
-            if (!motor.IsGrounded) return;
-            remainingWait -= fixedDeltaTime;
-            if (remainingWait > 0) return;
-            var velocity = direction * horizontalSpeed;
-            velocity.y = verticalSpeed;
-            motor.Velocity = velocity;
-            launched = true;
+
+            if (_launched)
+            {
+                if (!_motor.IsGrounded)
+                {
+                    _leftGround = true;
+                }
+                else if (_leftGround)
+                {
+                    _launched = false;
+                    _leftGround = false;
+                    _remainingWait = _waitInterval;
+                    _motor.Velocity = new Vector3(0, _motor.Velocity.y, 0);
+                }
+
+                return;
+            }
+
+            if (!_motor.IsGrounded)
+            {
+                return;
+            }
+
+            _remainingWait -= fixedDeltaTime;
+            if (_remainingWait > 0)
+            {
+                return;
+            }
+
+            Vector3 velocity = _direction * _horizontalSpeed;
+            velocity.y = _verticalSpeed;
+            _motor.Velocity = velocity;
+            _launched = true;
         }
 
         public void SteerInward(Vector3 direction)
         {
-            if (disposed) return;
-            this.direction = MovementContext.NormalizeDirection(direction);
-            if (!launched) return;
-            var velocity = this.direction * horizontalSpeed;
-            velocity.y = motor.Velocity.y;
-            motor.Velocity = velocity;
+            if (_disposed)
+            {
+                return;
+            }
+
+            _direction = MovementContext.NormalizeDirection(direction);
+            if (!_launched)
+            {
+                return;
+            }
+
+            Vector3 velocity = _direction * _horizontalSpeed;
+            velocity.y = _motor.Velocity.y;
+            _motor.Velocity = velocity;
         }
 
         public void Dispose()
         {
-            if (disposed) return;
-            disposed = true;
-            motor.Velocity = Vector3.zero;
+            if (_disposed)
+            {
+                return;
+            }
+
+            _disposed = true;
+            _motor.Velocity = Vector3.zero;
         }
     }
 }

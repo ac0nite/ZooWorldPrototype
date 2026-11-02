@@ -12,12 +12,14 @@ namespace ZooWorld.Tests
             firstBuilder.Register<Dependency>(Lifetime.Singleton);
             var secondBuilder = new ContainerBuilder();
             secondBuilder.Register<Dependency>(Lifetime.Singleton);
-            using var first = firstBuilder.Build();
-            using var second = secondBuilder.Build();
+            using IObjectResolver first = firstBuilder.Build();
+            using IObjectResolver second = secondBuilder.Build();
             Assert.That(first.Resolve<Dependency>(), Is.SameAs(first.Resolve<Dependency>()));
             Assert.That(second.Resolve<Dependency>(), Is.Not.SameAs(first.Resolve<Dependency>()));
         }
 
-        public sealed class Dependency { }
+        public sealed class Dependency
+        {
+        }
     }
 }
