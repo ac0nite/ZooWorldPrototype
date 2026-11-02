@@ -49,15 +49,51 @@ namespace ZooWorld.Tests
         }
 
         [Test, Category("AC02")]
-        public void LinearTicksDoNotOverwriteMotorRebound()
+        public void LinearPreservesReboundDuringHoldThenRestoresConfiguredSpeed()
         {
             var motor = new Motor();
             using IMovementStrategy strategy = Profile<LinearMovementProfile>().CreateStrategy(Context(motor, Vector3.right));
             strategy.FixedTick(Step);
             motor.Velocity = new Vector3(-1.5f, 0, 1);
             strategy.FixedTick(Step);
-            strategy.FixedTick(Step);
             AssertVector(motor.Velocity, new Vector3(-1.5f, 0, 1));
+            strategy.FixedTick(Step);
+            Vector3 reboundDirection = new Vector3(-1.5f, 0, 1).normalized;
+            float restored = new Vector3(motor.Velocity.x, 0, motor.Velocity.z).magnitude;
+            Assert.That(restored, Is.GreaterThan(new Vector3(-1.5f, 0, 1).magnitude));
+            Assert.That(restored, Is.LessThan(3));
+            for (var i = 0; i < 6; i++)
+            {
+                strategy.FixedTick(Step);
+            }
+
+            AssertVector(motor.Velocity, reboundDirection * 3);
+        }
+
+        [Test, Category("AC02"), Category("AC06")]
+        public void LinearSteeringRedirectsReboundInwardWithoutErasingItsSpeed()
+        {
+            var motor = new Motor();
+            using IMovementStrategy strategy = Profile<LinearMovementProfile>().CreateStrategy(Context(motor, Vector3.right));
+            strategy.FixedTick(Step);
+            motor.Velocity = new Vector3(2, 0, 0.5f);
+            strategy.FixedTick(Step);
+            strategy.SteerInward(Vector3.left);
+            Vector3 planar = new Vector3(motor.Velocity.x, 0, motor.Velocity.z);
+            Assert.That(Vector3.Distance(planar.normalized, Vector3.left), Is.LessThan(Tolerance));
+            Assert.That(planar.magnitude, Is.EqualTo(new Vector3(2, 0, 0.5f).magnitude).Within(Tolerance));
+        }
+
+        [Test, Category("AC06")]
+        public void LinearSteeringWhileMovingInwardLeavesPhysicalVelocityUntouched()
+        {
+            var motor = new Motor();
+            using IMovementStrategy strategy = Profile<LinearMovementProfile>().CreateStrategy(Context(motor, Vector3.right));
+            strategy.FixedTick(Step);
+            strategy.SteerInward(Vector3.right);
+            AssertVector(motor.Velocity, new Vector3(3, 0, 0));
+            strategy.SteerInward(Vector3.right + Vector3.forward * 0.2f);
+            Assert.That(motor.Velocity.x, Is.GreaterThan(0));
         }
 
         [Test, Category("AC09")]

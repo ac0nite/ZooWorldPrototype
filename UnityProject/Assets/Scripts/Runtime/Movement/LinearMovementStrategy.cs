@@ -6,10 +6,18 @@ namespace ZooWorld.Movement
 {
     public sealed class LinearMovementStrategy : IMovementStrategy
     {
+        private const float MinPlanarSpeedSqr = 0.0025f;
+        private const float StopRecoverySeconds = 0.3f;
+        private const float ReboundHoldSeconds = 0.3f;
+        private const float SpeedTolerance = 0.01f;
+        private const float InwardDotThreshold = 0.5f;
+
         private readonly IAnimalMotor _motor;
         private readonly float _speed;
         private Vector3 _direction;
         private bool _started;
+        private float _stoppedTime;
+        private float _deflectionTime;
         private bool _disposed;
 
         internal LinearMovementStrategy(MovementContext context, float speed)
@@ -21,13 +29,48 @@ namespace ZooWorld.Movement
 
         public void FixedTick(float fixedDeltaTime)
         {
-            if (_disposed || _started)
+            if (_disposed)
             {
                 return;
             }
 
-            _started = true;
-            ApplyDirection();
+            if (!_started)
+            {
+                _started = true;
+                ApplySpeed(_speed);
+                return;
+            }
+
+            Vector3 planarVelocity = _motor.Velocity;
+            planarVelocity.y = 0;
+            float planarSpeed = planarVelocity.magnitude;
+            if (planarSpeed * planarSpeed >= MinPlanarSpeedSqr)
+            {
+                _stoppedTime = 0;
+                _direction = planarVelocity / planarSpeed;
+                if (Mathf.Abs(planarSpeed - _speed) > SpeedTolerance)
+                {
+                    _deflectionTime += fixedDeltaTime;
+                    if (_deflectionTime >= ReboundHoldSeconds)
+                    {
+                        ApplySpeed(Mathf.MoveTowards(planarSpeed, _speed, _speed * fixedDeltaTime));
+                    }
+                }
+                else
+                {
+                    _deflectionTime = 0;
+                }
+
+                return;
+            }
+
+            _stoppedTime += fixedDeltaTime;
+            _deflectionTime = 0;
+            if (_stoppedTime >= StopRecoverySeconds)
+            {
+                ApplySpeed(_speed);
+                _stoppedTime = 0;
+            }
         }
 
         public void SteerInward(Vector3 direction)
@@ -38,15 +81,27 @@ namespace ZooWorld.Movement
             }
 
             _direction = MovementContext.NormalizeDirection(direction);
-            if (_started)
+            if (!_started)
             {
-                ApplyDirection();
+                return;
+            }
+
+            Vector3 planarVelocity = _motor.Velocity;
+            planarVelocity.y = 0;
+            float planarSpeed = planarVelocity.magnitude;
+            if (planarSpeed * planarSpeed < MinPlanarSpeedSqr)
+            {
+                ApplySpeed(_speed);
+            }
+            else if (Vector3.Dot(planarVelocity / planarSpeed, _direction) < InwardDotThreshold)
+            {
+                ApplySpeed(planarSpeed);
             }
         }
 
-        private void ApplyDirection()
+        private void ApplySpeed(float speed)
         {
-            Vector3 velocity = _direction * _speed;
+            Vector3 velocity = _direction * speed;
             velocity.y = _motor.Velocity.y;
             _motor.Velocity = velocity;
         }

@@ -14,6 +14,7 @@ namespace ZooWorld.Systems
     public sealed class AnimalFactory : IDisposable
     {
         private readonly IObjectResolver _resolver;
+        private readonly ArenaBounds _bounds;
         private readonly Dictionary<Animal, ObjectPool<Animal>> _pools = new Dictionary<Animal, ObjectPool<Animal>>();
         private readonly Dictionary<Animal, (ObjectPool<Animal> Pool, long Id)> _active =
             new Dictionary<Animal, (ObjectPool<Animal> Pool, long Id)>();
@@ -21,9 +22,15 @@ namespace ZooWorld.Systems
         private long _nextActivationId;
         private bool _disposed;
 
-        public AnimalFactory(IObjectResolver resolver)
+        [Inject]
+        public AnimalFactory(IObjectResolver resolver) : this(resolver, null)
+        {
+        }
+
+        public AnimalFactory(IObjectResolver resolver, ArenaBounds bounds)
         {
             _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
+            _bounds = bounds;
         }
 
         public int ActiveCount => _active.Count;
@@ -52,7 +59,7 @@ namespace ZooWorld.Systems
             Animal animal = pool.Get();
             try
             {
-                var context = new MovementContext(animal.GetComponent<IAnimalMotor>(), direction, -UnityEngine.Physics.gravity.y);
+                var context = new MovementContext(animal.GetComponent<IAnimalMotor>(), direction, -UnityEngine.Physics.gravity.y, _bounds);
                 Transform transform = animal.transform;
                 transform.SetParent(null);
                 transform.SetPositionAndRotation(position, Quaternion.LookRotation(direction, Vector3.up));

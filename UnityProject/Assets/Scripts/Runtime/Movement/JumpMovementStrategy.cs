@@ -13,6 +13,7 @@ namespace ZooWorld.Movement
         private Vector3 _direction;
         private float _remainingWait;
         private bool _launched;
+        private float _launchElapsed;
         private bool _leftGround;
         private bool _disposed;
 
@@ -35,11 +36,12 @@ namespace ZooWorld.Movement
 
             if (_launched)
             {
+                _launchElapsed += fixedDeltaTime;
                 if (!_motor.IsGrounded)
                 {
                     _leftGround = true;
                 }
-                else if (_leftGround)
+                else if (_leftGround || (_launchElapsed >= 0.1f && _motor.Velocity.y <= 0.1f))
                 {
                     _launched = false;
                     _leftGround = false;
@@ -65,6 +67,7 @@ namespace ZooWorld.Movement
             velocity.y = _verticalSpeed;
             _motor.Velocity = velocity;
             _launched = true;
+            _launchElapsed = 0;
         }
 
         public void SteerInward(Vector3 direction)
@@ -76,6 +79,14 @@ namespace ZooWorld.Movement
 
             _direction = MovementContext.NormalizeDirection(direction);
             if (!_launched)
+            {
+                return;
+            }
+
+            Vector3 planarVelocity = _motor.Velocity;
+            planarVelocity.y = 0;
+            if (planarVelocity.sqrMagnitude >= 0.0025f &&
+                Vector3.Dot(planarVelocity.normalized, _direction) >= 0.5f)
             {
                 return;
             }

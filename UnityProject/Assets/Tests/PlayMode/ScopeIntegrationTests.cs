@@ -77,6 +77,23 @@ namespace ZooWorld.Tests
             Assert.That(replacement, Is.Not.SameAs(policy));
         }
 
+        [Test, Category("AC06"), Category("AC11")]
+        public void GameScopeRegistersArenaBoundsFromSerializedCamera()
+        {
+            _instance = new GameObject("Bounds camera");
+            var camera = _instance.AddComponent<Camera>();
+            camera.transform.SetPositionAndRotation(new Vector3(0, 10, 0), Quaternion.Euler(90, 0, 0));
+            camera.orthographic = true;
+            camera.orthographicSize = 5;
+            camera.aspect = 1;
+            GameLifetimeScope scope = CreateScope(camera);
+            var bounds = scope.Container.Resolve<ZooWorld.Systems.ArenaBounds>();
+            Assert.That(bounds, Is.Not.Null);
+            Assert.That(bounds.TryGetInwardDirection(new Vector3(5.5f, 0, 0), out Vector3 inward), Is.True);
+            Assert.That(inward.x, Is.LessThan(0));
+            Assert.That(scope.Container.Resolve<ZooWorld.Systems.AnimalFactory>(), Is.Not.Null);
+        }
+
         [UnityTest, Category("AC11")]
         public IEnumerator PrefabIsInjectedOnceBeforeEnableAndStart()
         {
@@ -96,7 +113,7 @@ namespace ZooWorld.Tests
             Assert.That(prefab.gameObject.activeSelf, Is.True);
         }
 
-        private GameLifetimeScope CreateScope()
+        private GameLifetimeScope CreateScope(Camera camera = null)
         {
             _root = new GameObject("Test GameLifetimeScope");
             _root.SetActive(false);
@@ -104,6 +121,13 @@ namespace ZooWorld.Tests
             using (LifetimeScope.Enqueue(builder => builder.RegisterEntryPoint<LifecycleProbe>().AsSelf()))
             {
                 scope = _root.AddComponent<GameLifetimeScope>();
+                if (camera != null)
+                {
+                    var serialized = new UnityEditor.SerializedObject(scope);
+                    serialized.FindProperty("_arenaCamera").objectReferenceValue = camera;
+                    serialized.ApplyModifiedPropertiesWithoutUndo();
+                }
+
                 _root.SetActive(true);
             }
 

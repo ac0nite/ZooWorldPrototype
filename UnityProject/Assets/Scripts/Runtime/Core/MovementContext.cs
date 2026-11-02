@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using ZooWorld.Physics;
+using ZooWorld.Systems;
 
 namespace ZooWorld.Core
 {
@@ -9,8 +10,9 @@ namespace ZooWorld.Core
         public IAnimalMotor Motor { get; }
         public Vector3 InitialDirection { get; }
         public float Gravity { get; }
+        public ArenaBounds Bounds { get; }
 
-        public MovementContext(IAnimalMotor motor, Vector3 initialDirection, float gravity)
+        public MovementContext(IAnimalMotor motor, Vector3 initialDirection, float gravity, ArenaBounds bounds = null)
         {
             Motor = motor ?? throw new ArgumentNullException(nameof(motor));
             InitialDirection = NormalizeDirection(initialDirection);
@@ -20,6 +22,7 @@ namespace ZooWorld.Core
             }
 
             Gravity = gravity;
+            Bounds = bounds;
         }
 
         internal static Vector3 NormalizeDirection(Vector3 direction)
