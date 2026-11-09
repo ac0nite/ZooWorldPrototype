@@ -1,0 +1,1007 @@
+{
+  "success": true,
+  "command": "command",
+  "data": {
+    "command": "test run",
+    "parameters": {
+      "mode": "editor"
+    },
+    "result": {
+      "Summary": {
+        "Total": 139,
+        "Passed": 139,
+        "Failed": 0,
+        "Skipped": 0,
+        "Inconclusive": 0
+      },
+      "Results": [
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.ChildOnlyColliderDoesNotSatisfyPrefabRequirements",
+          "Status": "Passed",
+          "Duration": 0.0263422,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.DifferentCategoryAssetsWithSameIdAreRejected",
+          "Status": "Passed",
+          "Duration": 0.000978,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.DuplicateCategoryDiagnosticIdentifiesBothProfiles",
+          "Status": "Passed",
+          "Duration": 0.0009303,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.DuplicateIdBetweenOwnAndEdibleCategoryIsRejected",
+          "Status": "Passed",
+          "Duration": 0.0007281,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.DuplicateIdInEdibleOnlyCategoriesIsRejected",
+          "Status": "Passed",
+          "Duration": 0.000731,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.DuplicateSpeciesIdIsDiagnosed",
+          "Status": "Passed",
+          "Duration": 0.0006185,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.EmptyCatalogIsRejected",
+          "Status": "Passed",
+          "Duration": 0.000648,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.EmptyEdibleCategoryIdIsRejected(\"\")",
+          "Status": "Passed",
+          "Duration": 0.0016856,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.EmptyEdibleCategoryIdIsRejected(\" \")",
+          "Status": "Passed",
+          "Duration": 0.0009024,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.EmptySpeciesIdIsDiagnosed(\"\")",
+          "Status": "Passed",
+          "Duration": 0.001862,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.EmptySpeciesIdIsDiagnosed(\" \")",
+          "Status": "Passed",
+          "Duration": 0.00118,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.InvalidMovementSettingsReportProfile",
+          "Status": "Passed",
+          "Duration": 0.0014149,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.InvalidWeightReportsSpecies(-1.0f)",
+          "Status": "Passed",
+          "Duration": 0.0030075,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.InvalidWeightReportsSpecies(float.NaN)",
+          "Status": "Passed",
+          "Duration": 0.0011127,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.InvalidWeightReportsSpecies(float.PositiveInfinity)",
+          "Status": "Passed",
+          "Duration": 0.0016155,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.LargeFiniteWeightsDoNotOverflowValidationTotal",
+          "Status": "Passed",
+          "Duration": 0.0027335,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.MissingInteractionCategoryReportsProfile",
+          "Status": "Passed",
+          "Duration": 0.0013164,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.MissingPrefabComponentReportsSpecies(UnityEngine.Rigidbody)",
+          "Status": "Passed",
+          "Duration": 0.0031525,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.MissingPrefabComponentReportsSpecies(UnityEngine.BoxCollider)",
+          "Status": "Passed",
+          "Duration": 0.0013436,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.MissingPrefabComponentReportsSpecies(ZooWorld.Tests.CatalogTestMotor)",
+          "Status": "Passed",
+          "Duration": 0.0017141,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.MissingPrefabComponentReportsSpecies(ZooWorld.Motion.AnimalContactRelay)",
+          "Status": "Passed",
+          "Duration": 0.0014731,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.MissingReferenceReportsSpecies(\"_prefab\")",
+          "Status": "Passed",
+          "Duration": 0.0035709,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.MissingReferenceReportsSpecies(\"_movementProfile\")",
+          "Status": "Passed",
+          "Duration": 0.0019641,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.MissingReferenceReportsSpecies(\"_interactionProfile\")",
+          "Status": "Passed",
+          "Duration": 0.0015616,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.NewDefinitionsReceiveDistinctGuidIds",
+          "Status": "Passed",
+          "Duration": 0.0096813,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.NullEdibleCategoryIsRejected",
+          "Status": "Passed",
+          "Duration": 0.0014398,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.NullEntryReportsItsIndex",
+          "Status": "Passed",
+          "Duration": 0.0009856,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.SameCategoryAssetCanBeReferencedAcrossProfilesAndEdibleLists",
+          "Status": "Passed",
+          "Duration": 0.0012315,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.SerializedSpeciesIdOverridesGeneratedDefault",
+          "Status": "Passed",
+          "Duration": 0.0011617,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.ValidationDoesNotRepairDuplicateIds",
+          "Status": "Passed",
+          "Duration": 0.0008406,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.ValidationPreservesExistingSpeciesIds",
+          "Status": "Passed",
+          "Duration": 0.0007798,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.ValidCatalogAllowsSharedProfilesAndZeroWeightEntry",
+          "Status": "Passed",
+          "Duration": 0.0009036,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalCatalogTests.ZeroTotalWeightIsRejected",
+          "Status": "Passed",
+          "Duration": 0.0008261,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalLifecycleTests.CleanupIsNotADeathTransition",
+          "Status": "Passed",
+          "Duration": 0.0016911,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalLifecycleTests.DeathSucceedsOnlyOnceForAnActivation",
+          "Status": "Passed",
+          "Duration": 0.0016292,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalLifecycleTests.LiveOrDeadActivationCannotBeOverwrittenBeforeRelease",
+          "Status": "Passed",
+          "Duration": 0.0006129,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalLifecycleTests.NonPositiveActivationIdsAreRejected(0)",
+          "Status": "Passed",
+          "Duration": 0.0023212,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalLifecycleTests.NonPositiveActivationIdsAreRejected(-1)",
+          "Status": "Passed",
+          "Duration": 0.0006083,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalLifecycleTests.ReleaseClearsIdentityAndNextActivationIsAlive",
+          "Status": "Passed",
+          "Duration": 0.0006577,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalSpawnerTests.AdvanceWithUnvalidatedNonPositiveIntervalDoesNotHang",
+          "Status": "Passed",
+          "Duration": 0.0043602,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalSpawnerTests.DifferentSeedChangesTheSpawnSequence",
+          "Status": "Passed",
+          "Duration": 0.0031269,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalSpawnerTests.FirstSpawnDoesNotHappenBeforeTheMinimumInterval",
+          "Status": "Passed",
+          "Duration": 0.0008407,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalSpawnerTests.InvalidAdvanceAndNullDependenciesAreRejected",
+          "Status": "Passed",
+          "Duration": 0.0020207,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalSpawnerTests.SameSeedReproducesTheSameSpawnSequence",
+          "Status": "Passed",
+          "Duration": 0.0027841,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalSpawnerTests.ScheduledSpawnIsSkippedAtOneHundredActive",
+          "Status": "Passed",
+          "Duration": 0.0005344,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalSpawnerTests.ScheduledSpawnIsSkippedWhileAtTheLiveCap",
+          "Status": "Passed",
+          "Duration": 0.0004679,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalSpawnerTests.ScheduledSpawnsAddOneAnimalEachAfterAnIntervalWithinRange",
+          "Status": "Passed",
+          "Duration": 0.0013287,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalSpawnerTests.SpawnDirectionsArePlanarUnitAndRandomized",
+          "Status": "Passed",
+          "Duration": 0.0017419,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalSpawnerTests.SpawningResumesAtTheNextScheduledIntervalAfterCapacityFrees",
+          "Status": "Passed",
+          "Duration": 0.0006159,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalSpawnerTests.SpawnPositionsStayInsideTheFootprintAndAboveGround",
+          "Status": "Passed",
+          "Duration": 0.0009495,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalSpawnerTests.StartRejectsInvalidSettingsAndCatalog",
+          "Status": "Passed",
+          "Duration": 0.0005302,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalSpawnerTests.WeightedSelectionNeverPicksZeroWeightAndPrefersHeavierSpecies",
+          "Status": "Passed",
+          "Duration": 0.0014805,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.CompositionTests.ScopeSingletonIsSharedWithinContainerButNotAcrossContainers",
+          "Status": "Passed",
+          "Duration": 0.0009021,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.DiagnosticsTests.ParsePrefillTargetReadsOnlyWellFormedPositiveValues",
+          "Status": "Passed",
+          "Duration": 0.0012959,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.FoodChainPolicyTests.EmptyCategoryIdsAreRejected(null)",
+          "Status": "Passed",
+          "Duration": 0.0014798,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.FoodChainPolicyTests.EmptyCategoryIdsAreRejected(\"\")",
+          "Status": "Passed",
+          "Duration": 0.0003732,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.FoodChainPolicyTests.EmptyCategoryIdsAreRejected(\" \")",
+          "Status": "Passed",
+          "Duration": 0.0003051,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.FoodChainPolicyTests.InitialPreyAndPredatorPermissionsWorkInBothArgumentOrders(uint.MinValue)",
+          "Status": "Passed",
+          "Duration": 0.0015065,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.FoodChainPolicyTests.InitialPreyAndPredatorPermissionsWorkInBothArgumentOrders(1)",
+          "Status": "Passed",
+          "Duration": 0.00028,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.FoodChainPolicyTests.PermissionsAndExplicitTieBreakDetermineDecision(False,False,uint.MinValue,None)",
+          "Status": "Passed",
+          "Duration": 0.0016247,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.FoodChainPolicyTests.PermissionsAndExplicitTieBreakDetermineDecision(False,False,1,None)",
+          "Status": "Passed",
+          "Duration": 0.0003599,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.FoodChainPolicyTests.PermissionsAndExplicitTieBreakDetermineDecision(True,False,uint.MinValue,AConsumesB)",
+          "Status": "Passed",
+          "Duration": 0.0001576,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.FoodChainPolicyTests.PermissionsAndExplicitTieBreakDetermineDecision(True,False,1,AConsumesB)",
+          "Status": "Passed",
+          "Duration": 0.0002045,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.FoodChainPolicyTests.PermissionsAndExplicitTieBreakDetermineDecision(False,True,uint.MinValue,BConsumesA)",
+          "Status": "Passed",
+          "Duration": 0.0002565,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.FoodChainPolicyTests.PermissionsAndExplicitTieBreakDetermineDecision(False,True,1,BConsumesA)",
+          "Status": "Passed",
+          "Duration": 0.0002497,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.FoodChainPolicyTests.PermissionsAndExplicitTieBreakDetermineDecision(True,True,uint.MinValue,AConsumesB)",
+          "Status": "Passed",
+          "Duration": 0.0002364,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.FoodChainPolicyTests.PermissionsAndExplicitTieBreakDetermineDecision(True,True,1,BConsumesA)",
+          "Status": "Passed",
+          "Duration": 0.0001765,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.FoodChainPolicyTests.PermissionsAndExplicitTieBreakDetermineDecision(True,True,2,AConsumesB)",
+          "Status": "Passed",
+          "Duration": 0.0002811,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.FoodChainPolicyTests.PermissionsAndExplicitTieBreakDetermineDecision(True,True,3,BConsumesA)",
+          "Status": "Passed",
+          "Duration": 0.0003165,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.FoodChainPolicyTests.SnapshotDefensivelyCopiesEdibleCategories",
+          "Status": "Passed",
+          "Duration": 0.0005679,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.FoodChainPolicyTests.ThirdFoodCategoryRequiresOnlyNewData",
+          "Status": "Passed",
+          "Duration": 0.000246,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.FoodChainPolicyTests.TwoPredatorsHaveExactlyOneConsumerAndRepeatedEvaluationIsStable(uint.MinValue,AConsumesB)",
+          "Status": "Passed",
+          "Duration": 0.0014706,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.FoodChainPolicyTests.TwoPredatorsHaveExactlyOneConsumerAndRepeatedEvaluationIsStable(1,BConsumesA)",
+          "Status": "Passed",
+          "Duration": 0.0003998,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.FoodChainPolicyTests.TwoPredatorsHaveExactlyOneConsumerAndRepeatedEvaluationIsStable(2,AConsumesB)",
+          "Status": "Passed",
+          "Duration": 0.0003336,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.FoodChainPolicyTests.TwoPredatorsHaveExactlyOneConsumerAndRepeatedEvaluationIsStable(3,BConsumesA)",
+          "Status": "Passed",
+          "Duration": 0.0002888,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.HudPresenterTests.ChangesAfterDisposeDoNotReachTheView",
+          "Status": "Passed",
+          "Duration": 0.0091213,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.HudPresenterTests.PredatorDeathUpdatesOnlyThePredatorCounter",
+          "Status": "Passed",
+          "Duration": 0.0022247,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.HudPresenterTests.PreyDeathProducesExactlyOneViewUpdate",
+          "Status": "Passed",
+          "Duration": 0.0018091,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.HudPresenterTests.RepeatedStartDoesNotDoubleSubscribe",
+          "Status": "Passed",
+          "Duration": 0.0016999,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.HudPresenterTests.ReplacementPresenterDoesNotMultiplyUpdates",
+          "Status": "Passed",
+          "Duration": 0.0020874,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.HudPresenterTests.StartPushesCountersAccumulatedBeforeSubscription",
+          "Status": "Passed",
+          "Duration": 0.0015216,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.HudPresenterTests.StartPushesCurrentCountersToTheView",
+          "Status": "Passed",
+          "Duration": 0.0004418,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.InteractionProfileTests.EmptyCategoryIdsAreDiagnosed(null)",
+          "Status": "Passed",
+          "Duration": 0.0032575,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.InteractionProfileTests.EmptyCategoryIdsAreDiagnosed(\"\")",
+          "Status": "Passed",
+          "Duration": 0.000855,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.InteractionProfileTests.EmptyCategoryIdsAreDiagnosed(\" \")",
+          "Status": "Passed",
+          "Duration": 0.0007737,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.InteractionProfileTests.InitialProfilesProduceTaskPermissions",
+          "Status": "Passed",
+          "Duration": 0.0014853,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.InteractionProfileTests.MissingCategoryReportsProfileName",
+          "Status": "Passed",
+          "Duration": 0.0008272,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.InteractionProfileTests.NullOrInvalidEdibleEntryIsDiagnosedWithIndex",
+          "Status": "Passed",
+          "Duration": 0.0010731,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.InteractionProfileTests.SavedInitialAssetsReproduceTaskPermissions",
+          "Status": "Passed",
+          "Duration": 0.0023559,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.InteractionProfileTests.SnapshotSurvivesLaterChangesToSourceAssets",
+          "Status": "Passed",
+          "Duration": 0.000866,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.InteractionResolverTests.AnimalWithoutInteractionDataIsRejected",
+          "Status": "Passed",
+          "Duration": 0.0071572,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.InteractionResolverTests.ConsumedCapturesTheEatersWorldPositionAtConsumptionTime",
+          "Status": "Passed",
+          "Duration": 0.0035053,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.InteractionResolverTests.ContactRequiresBothActors",
+          "Status": "Passed",
+          "Duration": 0.0017845,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.InteractionResolverTests.DeadReleasedOrUnactivatedParticipantsAreRejected",
+          "Status": "Passed",
+          "Duration": 0.0029377,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.InteractionResolverTests.DuplicateAndSwappedReportsProduceASingleDeathAndEventPair",
+          "Status": "Passed",
+          "Duration": 0.0017346,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.InteractionResolverTests.GameStatsUnsubscribesOnDispose",
+          "Status": "Passed",
+          "Duration": 0.0011174,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.InteractionResolverTests.NeitherConsumableContactPublishesNothing",
+          "Status": "Passed",
+          "Duration": 0.0010481,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.InteractionResolverTests.PredatorConsumesPreyPublishesDiedThenConsumedThenReleases",
+          "Status": "Passed",
+          "Duration": 0.0023266,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.InteractionResolverTests.PredatorPairKeepsOneSurvivorAndStopsPublishingAfterDeath",
+          "Status": "Passed",
+          "Duration": 0.0012262,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.InteractionResolverTests.PredatorPairSelectsTheSameVictimForBothContactOrders",
+          "Status": "Passed",
+          "Duration": 0.0017229,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.InteractionResolverTests.PreyIsConsumedRegardlessOfContactArgumentOrder",
+          "Status": "Passed",
+          "Duration": 0.0009738,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.InteractionResolverTests.ResolveCountsEveryNonNullContactReport",
+          "Status": "Passed",
+          "Duration": 0.0011207,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.InteractionResolverTests.ResolverRejectsNullContactsAndInvalidConstructorArguments",
+          "Status": "Passed",
+          "Duration": 0.0005939,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.InteractionResolverTests.SameSeedAlwaysSelectsTheSameVictimForAPair",
+          "Status": "Passed",
+          "Duration": 0.0014831,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.InteractionResolverTests.SelfContactIsRejected",
+          "Status": "Passed",
+          "Duration": 0.000738,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.InteractionResolverTests.StaleActivationIdsAreRejected",
+          "Status": "Passed",
+          "Duration": 0.0012434,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.InteractionResolverTests.ThrowingEventSubscriberDoesNotPreventVictimRelease",
+          "Status": "Passed",
+          "Duration": 0.0017096,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.MovementStrategyTests.ContextRejectsMissingMotorInvalidGravityAndNonPlanarDirection",
+          "Status": "Passed",
+          "Duration": 0.0011267,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.MovementStrategyTests.DisposedStrategiesStopMotionAndIgnoreFurtherCalls(False)",
+          "Status": "Passed",
+          "Duration": 0.0028379,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.MovementStrategyTests.DisposedStrategiesStopMotionAndIgnoreFurtherCalls(True)",
+          "Status": "Passed",
+          "Duration": 0.0003408,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.MovementStrategyTests.FreshStrategyOnSameMotorDoesNotInheritOldTimerDirectionOrStoppedState",
+          "Status": "Passed",
+          "Duration": 0.0006523,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.MovementStrategyTests.JumpDoesNotLaunchInAirAndWaitRestartsAfterObservedLanding",
+          "Status": "Passed",
+          "Duration": 0.0005831,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.MovementStrategyTests.JumpRejectsInvalidParameters(\"_distance\",0.0f)",
+          "Status": "Passed",
+          "Duration": 0.0017456,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.MovementStrategyTests.JumpRejectsInvalidParameters(\"_height\",-1.0f)",
+          "Status": "Passed",
+          "Duration": 0.000488,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.MovementStrategyTests.JumpRejectsInvalidParameters(\"_waitInterval\",0.0f)",
+          "Status": "Passed",
+          "Duration": 0.0003772,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.MovementStrategyTests.JumpRejectsInvalidParameters(\"_distance\",float.NaN)",
+          "Status": "Passed",
+          "Duration": 0.0003425,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.MovementStrategyTests.JumpRejectsInvalidParameters(\"_height\",float.PositiveInfinity)",
+          "Status": "Passed",
+          "Duration": 0.0003435,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.MovementStrategyTests.JumpRejectsInvalidParameters(\"_waitInterval\",float.NaN)",
+          "Status": "Passed",
+          "Duration": 0.000324,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.MovementStrategyTests.JumpWaitsThenLaunchesWithIndependentlyCalculatedBallisticVelocity",
+          "Status": "Passed",
+          "Duration": 0.0004626,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.MovementStrategyTests.LinearPreservesReboundDuringHoldThenRestoresConfiguredSpeed",
+          "Status": "Passed",
+          "Duration": 0.0005891,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.MovementStrategyTests.LinearRejectsInvalidParameters(\"_speed\",0.0f)",
+          "Status": "Passed",
+          "Duration": 0.0014544,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.MovementStrategyTests.LinearRejectsInvalidParameters(\"_speed\",-1.0f)",
+          "Status": "Passed",
+          "Duration": 0.0004859,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.MovementStrategyTests.LinearRejectsInvalidParameters(\"_speed\",float.NaN)",
+          "Status": "Passed",
+          "Duration": 0.0005053,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.MovementStrategyTests.LinearRejectsInvalidParameters(\"_speed\",float.PositiveInfinity)",
+          "Status": "Passed",
+          "Duration": 0.0003892,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.MovementStrategyTests.LinearStartsAtConfiguredPlanarSpeedAndPreservesVerticalVelocity",
+          "Status": "Passed",
+          "Duration": 0.0006543,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.MovementStrategyTests.LinearSteeringBeforeFirstTickDefersMotionAndReplacesInitialDirection",
+          "Status": "Passed",
+          "Duration": 0.0004548,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.MovementStrategyTests.LinearSteeringRedirectsReboundInwardWithoutErasingItsSpeed",
+          "Status": "Passed",
+          "Duration": 0.0005563,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.MovementStrategyTests.LinearSteeringWhileMovingInwardLeavesPhysicalVelocityUntouched",
+          "Status": "Passed",
+          "Duration": 0.0005999,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.MovementStrategyTests.SharedJumpProfileHasIndependentTimersDirectionsAndPhase",
+          "Status": "Passed",
+          "Duration": 0.0010822,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.MovementStrategyTests.SharedLinearProfileCreatesIndependentDirectionAndStartState",
+          "Status": "Passed",
+          "Duration": 0.0005922,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.MovementStrategyTests.SteeringBeforeJumpChangesOnlyThisActivationsLaunchDirection",
+          "Status": "Passed",
+          "Duration": 0.0003528,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.SpeciesIdGeneratorTests.GeneratedIdIsANonEmptyGuidInCompactFormat",
+          "Status": "Passed",
+          "Duration": 0.0010338,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.SpeciesIdGeneratorTests.RepeatedCallsProduceDistinctIds",
+          "Status": "Passed",
+          "Duration": 0.0037866,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.TastyPresenterTests.ConsumptionsAfterDisposeDoNotReachTheView",
+          "Status": "Passed",
+          "Duration": 0.0036839,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.TastyPresenterTests.ConsumptionShowsTastyOnceAtTheCapturedEaterPosition",
+          "Status": "Passed",
+          "Duration": 0.002686,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.TastyPresenterTests.MutualPredatorContactShowsExactlyOneTasty",
+          "Status": "Passed",
+          "Duration": 0.0014864,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.TastyPresenterTests.NonLethalContactShowsNoTasty",
+          "Status": "Passed",
+          "Duration": 0.0012078,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.TastyPresenterTests.RepeatedStartDoesNotDoubleSubscribe",
+          "Status": "Passed",
+          "Duration": 0.0013415,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.TastyPresenterTests.ReplacementPresenterDoesNotMultiplyShows",
+          "Status": "Passed",
+          "Duration": 0.0011513,
+          "Message": null,
+          "StackTrace": null
+        }
+      ],
+      "Duration": 10.56,
+      "StatusPath": null,
+      "Mode": "EditMode",
+      "FilterApplied": null,
+      "success": true,
+      "result": null
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7800,
+      "projectPath": "/Users/andrey.sachuk/ZooWorldPrototype/UnityProject"
+    }
+  },
+  "errors": [],
+  "warnings": []
+}

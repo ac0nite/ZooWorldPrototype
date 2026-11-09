@@ -43,3 +43,7 @@ crashlytics-build.properties
 *.aab
 *.unitypackage
 *.app
+
+# Local agent tooling (also covered by .git/info/exclude locally)
+.devin/
+.windsurf/

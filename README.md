@@ -11,6 +11,8 @@ animals spawn on a 1–2 s timer, move and collide through real PhysX, and
 predators eat prey. A uGUI HUD shows dead-prey/dead-predator counters and
 a "Tasty!" popup under each successful hunt.
 
+![Gameplay](docs/screenshots/gameplay.png)
+
 The task's main evaluation criterion is the **animal architecture** —
 clear, easily extensible code that scales to roughly a thousand species.
 This README maps that criterion to the implementation.
@@ -82,17 +84,49 @@ food chain, HUD counters and the Tasty popup are all live.
 ### Tests
 
 NUnit via Unity Test Framework: EditMode for pure rules/presenters,
-PlayMode for real PhysX contacts, pooling and DI wiring. With the Editor
-running:
+PlayMode for real PhysX contacts, pooling and DI wiring.
+
+Run via the Editor's Test Runner window, or headless in batch mode:
 
 ```bash
-unity command test run --mode editor --format json --project-path UnityProject
-unity command test run --mode playmode --async_tests true --format json --project-path UnityProject
+Unity -batchmode -projectPath UnityProject -runTests -testPlatform EditMode -testResults editmode.xml -quit
+Unity -batchmode -projectPath UnityProject -runTests -testPlatform PlayMode -testResults playmode.xml -quit
 ```
 
-Latest recorded baseline: EditMode 139/139, PlayMode 62/62. The suite was
+Latest recorded baseline: EditMode 139/139, PlayMode 68/68 — the raw
+reports are committed under `docs/test-results/`. The suite was
 additionally verified by targeted mutation experiments in isolated
-worktrees and a 100-animal development-player profiling run.
+worktrees.
+
+### Performance
+
+A ~270 s development-player run at the 100-animal cap (standalone,
+uncapped): ~890 fps, ~1.1 ms main-thread CPU per frame, ~3.6 MB GC heap,
+~0 managed allocations per frame, ~380 physics pairs / ~134 contacts /
+~106 deaths per second. The instrumentation ships in the runtime:
+`SimulationDiagnostics` logs a `[ZooDiag]` line once per second in
+development builds, and `-zooworld-prefill=100` pre-fills the population
+to the cap. Known cost: a ~2 s spike on the initial burst of 100 pooled
+instantiations.
+
+### Build
+
+File > Build Profiles > Build produces a standalone player; the only
+scene in Build Settings is `Assets/Scenes/ZooWorld.unity`.
+
+### Limitations and next steps
+
+- The live population is capped at 100 (`SimulationSettings`) — a project
+  decision, separate from the unbounded species catalog. Larger crowds
+  would need a cheaper backend behind the same `IAnimalMotor` port.
+- PhysX is the collision backend, isolated behind
+  `AnimalContactRelay`/`IAnimalMotor`; a different backend (including a
+  custom solver) can replace it without touching strategies.
+- Animals keep their initial random direction until they cross the arena
+  edge; per-species wandering would be a new `IMovementStrategy`.
+- No audio, persistence or editor tooling (inspectors, gizmos) —
+  deliberate scope; catalog validation runs at startup and via context
+  menu.
 
 ### Adding a species
 
@@ -194,21 +228,53 @@ service locator. UI построен по MVP: пассивные uGUI-пред�
 `Assets/Scenes/ZooWorld.unity`. Спавн, движение, столкновения, пищевая
 цепочка, счётчики и «Tasty!» работают.
 
+![Gameplay](docs/screenshots/gameplay.png)
+
 ### Тесты
 
 NUnit через Unity Test Framework: EditMode для чистых правил и
 презентеров, PlayMode для реальных PhysX-контактов, пула и DI-разводки.
-При открытом редакторе:
+
+Запуск — через окно Test Runner в редакторе или в batch-режиме:
 
 ```bash
-unity command test run --mode editor --format json --project-path UnityProject
-unity command test run --mode playmode --async_tests true --format json --project-path UnityProject
+Unity -batchmode -projectPath UnityProject -runTests -testPlatform EditMode -testResults editmode.xml -quit
+Unity -batchmode -projectPath UnityProject -runTests -testPlatform PlayMode -testResults playmode.xml -quit
 ```
 
-Последний зафиксированный baseline: EditMode 139/139, PlayMode 62/62.
-Дополнительно проведены направленные мутационные эксперименты в
-изолированных worktree и профилирование development-плеера со 100
-активными животными.
+Последний зафиксированный baseline: EditMode 139/139, PlayMode 68/68 —
+сырые отчёты лежат в `docs/test-results/`. Дополнительно проведены
+направленные мутационные эксперименты в изолированных worktree.
+
+### Производительность
+
+Прогон development-плеера ~270 с при лимите в 100 животных (standalone,
+без ограничения fps): ~890 fps, ~1.1 мс CPU на основном потоке в кадре,
+~3.6 МБ managed-кучи, ~0 управляемых аллокаций в кадре, ~380 физических
+пар / ~134 контакта / ~106 смертей в секунду. Инструментация встроена в
+рантайм: `SimulationDiagnostics` раз в секунду пишет строку `[ZooDiag]` в
+development-билдах, а `-zooworld-prefill=100` заполняет популяцию до
+лимита. Известная цена: спайк ~2 с на стартовом burst-инстанцировании 100
+объектов пула.
+
+### Сборка
+
+File > Build Profiles > Build собирает standalone-плеер; в Build Settings
+только сцена `Assets/Scenes/ZooWorld.unity`.
+
+### Ограничения и дальнейшие шаги
+
+- Живая популяция ограничена 100 (`SimulationSettings`) — решение
+  проекта, отдельное от неограниченного каталога видов. Большим толпам
+  понадобится более дешёвый backend за тем же портом `IAnimalMotor`.
+- PhysX — текущий backend столкновений, изолированный за
+  `AnimalContactRelay`/`IAnimalMotor`; другой backend (включая
+  собственный solver) заменяет его без правок стратегий.
+- Животные держат стартовое случайное направление до выхода за край
+  арены; блуждание по виду — это новая `IMovementStrategy`.
+- Нет звука, сохранений и editor-инструментов (инспекторы, gizmos) —
+  осознанный объём; валидация каталога идёт при старте и через
+  context menu.
 
 ### Добавление вида
 

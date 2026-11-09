@@ -10,6 +10,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bdc7453ead2fe447db01180eacb28d08, type: 3}
-  m_Name: prey
+  m_Name: PredatorCategory
   m_EditorClassIdentifier: ZooWorld.Runtime::ZooWorld.Definitions.InteractionCategory
-  _id: prey
+  _id: predator

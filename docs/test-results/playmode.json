@@ -1,0 +1,504 @@
+{
+  "success": true,
+  "command": "command",
+  "data": {
+    "command": "test status",
+    "parameters": {},
+    "result": {
+      "status": "completed",
+      "duration": 8.56,
+      "summary": {
+        "total": 68,
+        "passed": 68,
+        "failed": 0,
+        "skipped": 0,
+        "inconclusive": 0
+      },
+      "results": [
+        {
+          "FullName": "ZooWorld.Tests.AnimalFactoryTests.ContainerDisposalOwnsFactoryAndDestroysItsInstances",
+          "Status": "Passed",
+          "Duration": 0.009516,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalFactoryTests.DisposeDestroysActiveAndInactiveInstancesAndRejectsNewRent",
+          "Status": "Passed",
+          "Duration": 0.0047308,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalFactoryTests.DuplicateAndStaleReleaseCannotRemoveCurrentActivation",
+          "Status": "Passed",
+          "Duration": 0.0069473,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalFactoryTests.FailedActivationReturnsInstanceWithoutReinjectionOrActiveCountLeak",
+          "Status": "Passed",
+          "Duration": 0.0089964,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalFactoryTests.GameScopeDisposalDestroysActiveAndPooledAnimals",
+          "Status": "Passed",
+          "Duration": 0.0121722,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalFactoryTests.InteractionSnapshotIsImmutableAndRebuiltOnReuse",
+          "Status": "Passed",
+          "Duration": 0.007101,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalFactoryTests.InvalidRentDoesNotLeakActiveCountAndOtherFactoriesCannotReleaseAnimals",
+          "Status": "Passed",
+          "Duration": 0.0107802,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalFactoryTests.PrefabPoolsAreIsolatedPerPrefabAsset",
+          "Status": "Passed",
+          "Duration": 0.0089699,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalFactoryTests.RecycledJumpWaitStartsFromFullIntervalInsteadOfPreviousRemainder",
+          "Status": "Passed",
+          "Duration": 1.7501046,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalFactoryTests.ReleaseDisposesPerActivationStrategyAndFreshRentCreatesNewOne",
+          "Status": "Passed",
+          "Duration": 0.2501123,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalFactoryTests.ReleaseOfExternallyDestroyedActiveAnimalStillCleansActiveCount",
+          "Status": "Passed",
+          "Duration": 0.0083739,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalFactoryTests.RentFacesInitialDirection",
+          "Status": "Passed",
+          "Duration": 0.0082358,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalFactoryTests.ReusedPrefabUsesNewMovementProfileAndStopsTickingAfterDeath",
+          "Status": "Passed",
+          "Duration": 0.732418,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalFactoryTests.ReuseResetsIdentityPoseAndVelocitiesWithoutReinjection",
+          "Status": "Passed",
+          "Duration": 0.0090238,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.AnimalFactoryTests.SharedProfileAnimalsHaveIndependentJumpTimersAndDirections",
+          "Status": "Passed",
+          "Duration": 1.4907721,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.ContactInteractionTests.GroundContactsProduceNoEventsDuringContinuousMovement",
+          "Status": "Passed",
+          "Duration": 0.0154838,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.ContactInteractionTests.PredatorConsumesPreyOnRealContactWithExactlyOneOrderedEventPair",
+          "Status": "Passed",
+          "Duration": 0.0074078,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.ContactInteractionTests.PredatorPairRealContactKillsExactlyOneAcrossDuplicateReports",
+          "Status": "Passed",
+          "Duration": 0.0053919,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.ContactInteractionTests.PreyPairRealContactProducesNoDeathsOrEvents",
+          "Status": "Passed",
+          "Duration": 0.0052998,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.ContactInteractionTests.ReplayedAndStaleContactsAreRejectedAfterDeathReleaseAndRerent",
+          "Status": "Passed",
+          "Duration": 0.0009118,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.ContactInteractionTests.ScopeWiresResolverEventsStatsAndRelayInjection",
+          "Status": "Passed",
+          "Duration": 0.0014995,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.ExtensibilityTests.DemoCatalogAddsSpeciesThroughAssetsOnly",
+          "Status": "Passed",
+          "Duration": 0.0070831,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.ExtensibilityTests.FrogClearsObstacleWallThatBlocksGroundSpecies",
+          "Status": "Passed",
+          "Duration": 0.0076914,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.ExtensibilityTests.HareCannotCrossTheObstacleWall",
+          "Status": "Passed",
+          "Duration": 0.0082184,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.ExtensibilityTests.NewLinearSpeciesMovesAtItsConfiguredSpeed",
+          "Status": "Passed",
+          "Duration": 0.0027345,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.ExtensibilityTests.NewLinearSpeciesPairBouncesOnContact",
+          "Status": "Passed",
+          "Duration": 0.0043214,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.ExtensibilityTests.NewSpeciesBouncesOffPreyThroughUnchangedInteractionRules",
+          "Status": "Passed",
+          "Duration": 0.0055945,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.ExtensibilityTests.NewSpeciesDiesToPredatorThroughUnchangedInteractionRules",
+          "Status": "Passed",
+          "Duration": 0.0018268,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.ExtensibilityTests.NewSpeciesRentsThroughFactoryAndJumpsWithItsConfiguredProfile",
+          "Status": "Passed",
+          "Duration": 0.0055141,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.ExtensibilityTests.SnakeCannotCrossTheObstacleWall",
+          "Status": "Passed",
+          "Duration": 0.0090188,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.ExtensibilityTests.TurtleCannotCrossTheObstacleWall",
+          "Status": "Passed",
+          "Duration": 0.0090161,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.PhysicalMovementTests.AnimalRestingOnADynamicBodyIsNotGrounded",
+          "Status": "Passed",
+          "Duration": 0.0059051,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.PhysicalMovementTests.BlockedJumpRecoversAfterVerticalConstraintIsRemoved",
+          "Status": "Passed",
+          "Duration": 0.00812,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.PhysicalMovementTests.BothMovementTypesReturnFromEachEdgeAndCornerWithoutTeleport(-1,0)",
+          "Status": "Passed",
+          "Duration": 0.007132,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.PhysicalMovementTests.BothMovementTypesReturnFromEachEdgeAndCornerWithoutTeleport(1,0)",
+          "Status": "Passed",
+          "Duration": 0.0064263,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.PhysicalMovementTests.BothMovementTypesReturnFromEachEdgeAndCornerWithoutTeleport(0,-1)",
+          "Status": "Passed",
+          "Duration": 0.0054849,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.PhysicalMovementTests.BothMovementTypesReturnFromEachEdgeAndCornerWithoutTeleport(0,1)",
+          "Status": "Passed",
+          "Duration": 0.0054359,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.PhysicalMovementTests.BothMovementTypesReturnFromEachEdgeAndCornerWithoutTeleport(-1,-1)",
+          "Status": "Passed",
+          "Duration": 0.0056344,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.PhysicalMovementTests.BothMovementTypesReturnFromEachEdgeAndCornerWithoutTeleport(-1,1)",
+          "Status": "Passed",
+          "Duration": 0.0056826,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.PhysicalMovementTests.BothMovementTypesReturnFromEachEdgeAndCornerWithoutTeleport(1,-1)",
+          "Status": "Passed",
+          "Duration": 0.0057383,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.PhysicalMovementTests.BothMovementTypesReturnFromEachEdgeAndCornerWithoutTeleport(1,1)",
+          "Status": "Passed",
+          "Duration": 0.0056727,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.PhysicalMovementTests.BoundsFollowCameraAndNormalizedPointsStayInside",
+          "Status": "Passed",
+          "Duration": 0.0012415,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.PhysicalMovementTests.CameraRaysMissingTheGroundPlaneDisableSteeringWithoutBreakingTicks",
+          "Status": "Passed",
+          "Duration": 0.004137,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.PhysicalMovementTests.FrogFlightDistanceHeightAndGroundedWaitMatchConfiguration",
+          "Status": "Passed",
+          "Duration": 0.008384,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.PhysicalMovementTests.InelasticContactStopsBodiesThenMovementRecoversAfterBlockerRemoval",
+          "Status": "Passed",
+          "Duration": 0.0021854,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.PhysicalMovementTests.MovingPreySeparateAndReboundWithoutLosingTheirLives(0.0f)",
+          "Status": "Passed",
+          "Duration": 0.0044447,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.PhysicalMovementTests.MovingPreySeparateAndReboundWithoutLosingTheirLives(0.4f)",
+          "Status": "Passed",
+          "Duration": 0.0041778,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.PhysicalMovementTests.ReducedLinearReboundIsHeldThenRestoresConfiguredSpeed",
+          "Status": "Passed",
+          "Duration": 0.005264,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.PhysicalMovementTests.SavedFrogLandsAndWaitsInsteadOfBouncingOffTheGround",
+          "Status": "Passed",
+          "Duration": 0.0076682,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.PhysicalMovementTests.SavedFrogsReboundWithTheProductionPhysicsMaterial",
+          "Status": "Passed",
+          "Duration": 0.0063163,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.PhysicalMovementTests.SavedSpeciesRentThroughFactoryWithRealMotorAndSharedBounds",
+          "Status": "Passed",
+          "Duration": 0.0097943,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.PhysicalMovementTests.SnakeMovesAtConfiguredSpeedOnRealGround",
+          "Status": "Passed",
+          "Duration": 0.0025091,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.PhysicalMovementTests.TangentialDeflectionWhileOutsideIsResteeredInward",
+          "Status": "Passed",
+          "Duration": 0.0026386,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.ScopeIntegrationTests.DestroyedScopeCutsViewUpdatesFromLateEvents",
+          "Status": "Passed",
+          "Duration": 0.0185263,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.ScopeIntegrationTests.EntryPointStartsTicksAndStopsAfterScopeDisposal",
+          "Status": "Passed",
+          "Duration": 0.0186002,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.ScopeIntegrationTests.GameScopeRegistersArenaBoundsFromSerializedCamera",
+          "Status": "Passed",
+          "Duration": 0.0032775,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.ScopeIntegrationTests.GameScopeResolvesTheRealPolicyAsAScopedSingleton",
+          "Status": "Passed",
+          "Duration": 0.0054424,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.ScopeIntegrationTests.GameScopeWiresHudAndTastyViewsFromSerializedReferences",
+          "Status": "Passed",
+          "Duration": 0.0074255,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.ScopeIntegrationTests.PrefabIsInjectedOnceBeforeEnableAndStart",
+          "Status": "Passed",
+          "Duration": 0.0086601,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.SpawnerIntegrationTests.LiveCapSkipsSpawnAtOneHundredActiveAndResumesAfterRelease",
+          "Status": "Passed",
+          "Duration": 0.055589,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.SpawnerIntegrationTests.ScheduledSpawnsRentLiveAnimalsInsideTheArena",
+          "Status": "Passed",
+          "Duration": 0.0577705,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.SpawnerIntegrationTests.ScopeWithOnlyOneOfCatalogOrSettingsFailsToConfigure",
+          "Status": "Passed",
+          "Duration": 0.0329923,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.SpawnerIntegrationTests.SpawnerTicksThroughScopeEntryPointAndStopsOnDisposal",
+          "Status": "Passed",
+          "Duration": 0.1685075,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.UiViewTests.HudViewStartsFromZeroedPreviewText",
+          "Status": "Passed",
+          "Duration": 0.0007446,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.UiViewTests.HudViewWritesBothCountersInTheTaskFormat",
+          "Status": "Passed",
+          "Duration": 0.0002411,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.UiViewTests.TastyLabelAppearsBelowTheEaterInTopDownViewThenHides",
+          "Status": "Passed",
+          "Duration": 1.8046354,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.UiViewTests.TastyLabelPoolReusesALabelAfterItHides",
+          "Status": "Passed",
+          "Duration": 1.8039968,
+          "Message": null,
+          "StackTrace": null
+        },
+        {
+          "FullName": "ZooWorld.Tests.UiViewTests.TastyLabelPoolStealsTheRoundRobinSlotWhenAllLabelsAreBusy",
+          "Status": "Passed",
+          "Duration": 0.008634,
+          "Message": null,
+          "StackTrace": null
+        }
+      ]
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7800,
+      "projectPath": "/Users/andrey.sachuk/ZooWorldPrototype/UnityProject"
+    }
+  },
+  "errors": [],
+  "warnings": []
+}
