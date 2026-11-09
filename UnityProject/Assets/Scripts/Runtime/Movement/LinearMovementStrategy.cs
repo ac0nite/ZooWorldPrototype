@@ -1,30 +1,29 @@
 using UnityEngine;
 using ZooWorld.Core;
 using ZooWorld.Motion;
+using ZooWorld.Definitions;
 
 namespace ZooWorld.Movement
 {
     public sealed class LinearMovementStrategy : IMovementStrategy
     {
-        private const float MinPlanarSpeedSqr = 0.0025f;
-        private const float StopRecoverySeconds = 0.3f;
-        private const float ReboundHoldSeconds = 0.3f;
-        private const float SpeedTolerance = 0.01f;
-        private const float InwardDotThreshold = 0.5f;
-
         private readonly IAnimalMotor _motor;
         private readonly float _speed;
+        private readonly MovementTuning _tuning;
+        private readonly float _minPlanarSpeedSqr;
         private Vector3 _direction;
         private bool _started;
         private float _stoppedTime;
         private float _deflectionTime;
         private bool _disposed;
 
-        internal LinearMovementStrategy(MovementContext context, float speed)
+        internal LinearMovementStrategy(MovementContext context, float speed, MovementTuning tuning)
         {
             _motor = context.Motor;
             _direction = context.InitialDirection;
             _speed = speed;
+            _tuning = tuning;
+            _minPlanarSpeedSqr = tuning.MinPlanarSpeed * tuning.MinPlanarSpeed;
         }
 
         public void FixedTick(float fixedDeltaTime)
@@ -44,14 +43,14 @@ namespace ZooWorld.Movement
             Vector3 planarVelocity = _motor.Velocity;
             planarVelocity.y = 0;
             float planarSpeed = planarVelocity.magnitude;
-            if (planarSpeed * planarSpeed >= MinPlanarSpeedSqr)
+            if (planarSpeed * planarSpeed >= _minPlanarSpeedSqr)
             {
                 _stoppedTime = 0;
                 _direction = planarVelocity / planarSpeed;
-                if (Mathf.Abs(planarSpeed - _speed) > SpeedTolerance)
+                if (Mathf.Abs(planarSpeed - _speed) > _tuning.SpeedTolerance)
                 {
                     _deflectionTime += fixedDeltaTime;
-                    if (_deflectionTime >= ReboundHoldSeconds)
+                    if (_deflectionTime >= _tuning.ReboundHoldSeconds)
                     {
                         ApplySpeed(Mathf.MoveTowards(planarSpeed, _speed, _speed * fixedDeltaTime));
                     }
@@ -66,7 +65,7 @@ namespace ZooWorld.Movement
 
             _stoppedTime += fixedDeltaTime;
             _deflectionTime = 0;
-            if (_stoppedTime >= StopRecoverySeconds)
+            if (_stoppedTime >= _tuning.StopRecoverySeconds)
             {
                 ApplySpeed(_speed);
                 _stoppedTime = 0;
@@ -94,11 +93,11 @@ namespace ZooWorld.Movement
             Vector3 planarVelocity = _motor.Velocity;
             planarVelocity.y = 0;
             float planarSpeed = planarVelocity.magnitude;
-            if (planarSpeed * planarSpeed < MinPlanarSpeedSqr)
+            if (planarSpeed * planarSpeed < _minPlanarSpeedSqr)
             {
                 ApplySpeed(_speed);
             }
-            else if (Vector3.Dot(planarVelocity / planarSpeed, _direction) < InwardDotThreshold)
+            else if (Vector3.Dot(planarVelocity / planarSpeed, _direction) < _tuning.InwardDotThreshold)
             {
                 ApplySpeed(planarSpeed);
             }

@@ -11,11 +11,15 @@ namespace ZooWorld.Definitions
 
         public float Speed => _speed;
 
-        public override void Validate() => RequirePositive(_speed, nameof(_speed));
+        public override void Validate()
+        {
+            RequirePositive(_speed, nameof(_speed));
+            ValidateTuning();
+        }
 
         public override IMovementStrategy CreateStrategy(MovementContext context)
         {
-            return new LinearMovementStrategy(context, _speed);
+            return new LinearMovementStrategy(context, _speed, Tuning);
         }
     }
 }

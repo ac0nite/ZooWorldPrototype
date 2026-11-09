@@ -1,20 +1,18 @@
 using UnityEngine;
 using ZooWorld.Core;
 using ZooWorld.Motion;
+using ZooWorld.Definitions;
 
 namespace ZooWorld.Movement
 {
     public sealed class JumpMovementStrategy : IMovementStrategy
     {
-        private const float MinPlanarSpeedSqr = 0.0025f;
-        private const float InwardDotThreshold = 0.5f;
-        private const float MinAirborneSeconds = 0.1f;
-        private const float MaxLandingVelocityY = 0.1f;
-
         private readonly IAnimalMotor _motor;
         private readonly float _verticalSpeed;
         private readonly float _horizontalSpeed;
         private readonly float _waitInterval;
+        private readonly MovementTuning _tuning;
+        private readonly float _minPlanarSpeedSqr;
         private Vector3 _direction;
         private float _remainingWait;
         private bool _launched;
@@ -22,7 +20,8 @@ namespace ZooWorld.Movement
         private bool _leftGround;
         private bool _disposed;
 
-        internal JumpMovementStrategy(MovementContext context, float distance, float height, float waitInterval)
+        internal JumpMovementStrategy(MovementContext context, float distance, float height,
+            float waitInterval, MovementTuning tuning)
         {
             _motor = context.Motor;
             _direction = context.InitialDirection;
@@ -30,6 +29,8 @@ namespace ZooWorld.Movement
             _horizontalSpeed = distance / (2 * _verticalSpeed / context.Gravity);
             _waitInterval = waitInterval;
             _remainingWait = waitInterval;
+            _tuning = tuning;
+            _minPlanarSpeedSqr = tuning.MinPlanarSpeed * tuning.MinPlanarSpeed;
         }
 
         public void FixedTick(float fixedDeltaTime)
@@ -46,7 +47,7 @@ namespace ZooWorld.Movement
                 {
                     _leftGround = true;
                 }
-                else if (_leftGround || (_launchElapsed >= MinAirborneSeconds && _motor.Velocity.y <= MaxLandingVelocityY))
+                else if (_leftGround || (_launchElapsed >= _tuning.MinAirborneSeconds && _motor.Velocity.y <= _tuning.MaxLandingVelocityY))
                 {
                     _launched = false;
                     _leftGround = false;
@@ -96,11 +97,11 @@ namespace ZooWorld.Movement
             Vector3 planarVelocity = _motor.Velocity;
             planarVelocity.y = 0;
             float planarSpeed = planarVelocity.magnitude;
-            if (planarSpeed * planarSpeed < MinPlanarSpeedSqr)
+            if (planarSpeed * planarSpeed < _minPlanarSpeedSqr)
             {
                 ApplyPlanarSpeed(_horizontalSpeed);
             }
-            else if (Vector3.Dot(planarVelocity / planarSpeed, _direction) < InwardDotThreshold)
+            else if (Vector3.Dot(planarVelocity / planarSpeed, _direction) < _tuning.InwardDotThreshold)
             {
                 ApplyPlanarSpeed(planarSpeed);
             }

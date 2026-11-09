@@ -20,11 +20,12 @@ namespace ZooWorld.Definitions
             RequirePositive(_distance, nameof(_distance));
             RequirePositive(_height, nameof(_height));
             RequirePositive(_waitInterval, nameof(_waitInterval));
+            ValidateTuning();
         }
 
         public override IMovementStrategy CreateStrategy(MovementContext context)
         {
-            return new JumpMovementStrategy(context, _distance, _height, _waitInterval);
+            return new JumpMovementStrategy(context, _distance, _height, _waitInterval, Tuning);
         }
     }
 }
