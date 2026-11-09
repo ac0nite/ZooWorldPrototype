@@ -75,6 +75,41 @@ the narrow `IAnimalMotor` port; strategies never touch Rigidbody APIs.
 | Adapter / Port | `IAnimalMotor` over Rigidbody, `ISpawnTarget` | Movement code is backend-neutral; PhysX stays behind a narrow interface |
 | Data-driven configuration | ScriptableObject definitions/profiles/catalog | Species are assets, validated up front — the ~1000-species growth axis |
 
+### Design decisions and trade-offs
+
+- **Why MVP, not MVVM.** MVVM in uGUI needs a binding layer — UniRx
+  (a new dependency and paradigm) or a hand-rolled binder — both
+  disproportionate for two counters and one label. Passive views +
+  plain C# presenters give the same seam (`IHudView`/`ITastyView`)
+  with zero dependencies and full EditMode coverage; the pattern is
+  swappable behind that seam without touching gameplay.
+- **Why guards and throws are where they are.** Throws live only at
+  boundaries: DI wiring, serialized references, asset validation,
+  lifecycle contracts (double activation, foreign release id). In
+  Unity `null` is real runtime state — a destroyed object or an
+  unassigned inspector field — so `!= null` checks on
+  `UnityEngine.Object` are engine semantics, not defensiveness. Hot
+  paths (movement tick, contact resolve) carry no validation.
+- **Why PhysX + an isolation layer, not a custom solver.** The task
+  requires physics-based collisions and bouncing, so PhysX is the
+  natural backend. Its quirks — duplicate contacts, stale pooled
+  references — are absorbed behind `AnimalContactRelay` and
+  `IAnimalMotor`; gameplay code stays backend-neutral and a
+  different backend could be dropped in without rule changes.
+- **Why policy and resolver are separate.** `IAnimalInteractionPolicy`
+  is a pure decision function — deterministic, trivially testable,
+  no side effects. `AnimalInteractionResolver` owns contact
+  deduplication, lifecycle transitions and event publication. "Who
+  eats whom" never shares a class with "when a Unity contact
+  arrives".
+- **Deliberately not built.** Custom physics solver (NIH for what
+  PhysX already provides), ECS (the task permits the component
+  approach and the 100-animal cap does not need it), per-species
+  code branches (violates the extensibility requirement), a reactive
+  UI framework (disproportionate to this UI), direction
+  re-randomization (animals keep their heading — a documented
+  gameplay choice, not an oversight).
+
 ### Run
 
 Open `UnityProject` in Unity 6000.6.x and press Play — the startup scene
@@ -221,6 +256,41 @@ service locator. UI построен по MVP: пассивные uGUI-пред�
 | Immutable snapshot / DTO | `InteractionData`, `AnimalContact`, полезные данные событий | Политики и подписчики не касаются изменяемых объектов из пула |
 | Adapter / Port | `IAnimalMotor` над Rigidbody, `ISpawnTarget` | Код движения нейтрален к backend; PhysX остаётся за узким интерфейсом |
 | Data-driven конфигурация | ScriptableObject-определения/профили/каталог | Виды — это ассеты с валидацией; ось роста на ~1000 видов |
+
+### Решения и компромиссы
+
+- **Почему MVP, а не MVVM.** MVVM в uGUI требует binding-слоя —
+  UniRx (новая зависимость и парадигма) или самодельный байндер —
+  оба несоразмерны двум счётчикам и одной метке. Пассивные view +
+  plain C# presenters дают тот же шов (`IHudView`/`ITastyView`) без
+  зависимостей и с полным покрытием EditMode-тестами; за этим швом
+  паттерн меняется, не трогая геймплей.
+- **Почему проверки и throw стоят там, где стоят.** Броски — только
+  на границах: DI-проводка, сериализованные ссылки, валидация
+  ассетов, контракты жизненного цикла (двойная активация, чужой
+  release id). В Unity `null` — реальное состояние времени
+  выполнения (уничтоженный объект, неназначенное поле в инспекторе),
+  поэтому `!= null` на `UnityEngine.Object` — семантика движка, а не
+  дефенсивность. Горячие пути (тик движения, резолв контакта)
+  валидации не содержат.
+- **Почему PhysX + слой изоляции, а не свой solver.** Задание
+  требует столкновений и отскока «с использованием физики» — PhysX
+  естественный backend. Его особенности — дубли контактов, устаревшие
+  ссылки из пула — поглощены `AnimalContactRelay` и `IAnimalMotor`;
+  геймплей нейтрален к backend, и другой движок встаёт без смены
+  правил.
+- **Почему policy и resolver разделены.** `IAnimalInteractionPolicy`
+  — чистая функция решения: детерминированная, легко тестируемая,
+  без эффектов. `AnimalInteractionResolver` владеет дедупликацией
+  контактов, переходами жизненного цикла и публикацией событий.
+  «Кто кого ест» никогда не живёт в одном классе с «когда пришёл
+  контакт Unity».
+- **Осознанно не построено.** Свой solver физики (NIH там, где PhysX
+  уже есть), ECS (задание допускает компонентный подход, лимит в 100
+  животных его не требует), ветвления по виду (ломают требование
+  расширяемости), реактивный UI-фреймворк (несоразмерен этому UI),
+  переслучайвание направления (животные держат курс — задокументи-
+  рованное игровое решение, а не упущение).
 
 ### Запуск
 
