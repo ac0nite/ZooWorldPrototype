@@ -27,6 +27,8 @@ namespace ZooWorld.Systems
                 return;
             }
 
+            // ReSharper disable once PossibleInvalidCastExceptionInForeachLoop
+            // invocation list of Action<T> contains only Action<T> — the cast is safe.
             foreach (Action<T> handler in handlers.GetInvocationList())
             {
                 try

@@ -66,8 +66,8 @@ namespace ZooWorld.Systems
         private bool TryGetCorners()
         {
             if (_cachedFrame != Time.frameCount || _camera.transform.hasChanged ||
-                _cachedOrthoSize != _camera.orthographicSize ||
-                _cachedAspect != _camera.aspect ||
+                !Mathf.Approximately(_cachedOrthoSize, _camera.orthographicSize) ||
+                !Mathf.Approximately(_cachedAspect, _camera.aspect) ||
                 _cachedOrthographic != _camera.orthographic)
             {
                 _cornersValid = TryGetPoint(Vector2.zero, out _bottomLeft) &&
@@ -87,7 +87,7 @@ namespace ZooWorld.Systems
 
         private bool IsOutside(Vector3 position, Vector3 start, Vector3 end)
         {
-            Vector3 normal = Vector3.Cross(end - start, Vector3.up);
+            var normal = Vector3.Cross(end - start, Vector3.up);
             return Vector3.Dot(position - start, normal) * Vector3.Dot(_center - start, normal) < -OutsideEpsilon;
         }
     }

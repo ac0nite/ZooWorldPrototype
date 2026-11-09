@@ -42,7 +42,7 @@ namespace ZooWorld.Definitions
                 totalWeight += definition.SpawnWeight;
                 InteractionProfile profile = definition.InteractionProfile;
                 RegisterCategory(profile.Category, profile.name, categories);
-                foreach (InteractionCategory category in profile.EdibleCategories)
+                foreach (var category in profile.EdibleCategories)
                 {
                     RegisterCategory(category, profile.name, categories);
                 }

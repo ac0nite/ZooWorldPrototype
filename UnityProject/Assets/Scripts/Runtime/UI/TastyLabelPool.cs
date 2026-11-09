@@ -47,7 +47,7 @@ namespace ZooWorld.UI
 
         private void OnDisable()
         {
-            foreach (Entry entry in _entries)
+            foreach (var entry in _entries)
             {
                 if (entry.Routine != null)
                 {

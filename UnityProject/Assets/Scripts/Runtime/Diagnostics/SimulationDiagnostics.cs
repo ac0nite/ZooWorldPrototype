@@ -8,6 +8,7 @@ using VContainer;
 using VContainer.Unity;
 using ZooWorld.Definitions;
 using ZooWorld.Systems;
+using Random = System.Random;
 
 namespace ZooWorld.Diagnostics
 {
@@ -21,7 +22,7 @@ namespace ZooWorld.Diagnostics
         private readonly SimulationSettings _settings;
         private readonly AnimalInteractionResolver _resolver;
         private readonly GameStats _stats;
-        private readonly System.Random _prefillRandom = new System.Random(0x5EED);
+        private readonly Random _prefillRandom = new Random(0x5EED);
 
         private double _windowStart;
         private int _windowFrames;
@@ -95,7 +96,7 @@ namespace ZooWorld.Diagnostics
                 return 0;
             }
 
-            foreach (string argument in arguments)
+            foreach (var argument in arguments)
             {
                 if (argument != null && argument.StartsWith(PrefillArgument, StringComparison.Ordinal) &&
                     int.TryParse(argument.Substring(PrefillArgument.Length), out int target) && target > 0)
@@ -117,11 +118,8 @@ namespace ZooWorld.Diagnostics
                 return 0;
             }
 
-            if (bounds == null)
-            {
-                Debug.LogWarning("[ZooDiag] prefill skipped: no arena bounds registered.");
-                return 0;
-            }
+            Debug.Assert(bounds != null,
+                "Arena bounds are registered whenever simulation diagnostics is wired (arena camera is required).");
 
             IReadOnlyList<AnimalDefinition> definitions = _catalog.Definitions;
             float inset = _settings.SpawnInset;

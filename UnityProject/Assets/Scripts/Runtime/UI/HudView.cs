@@ -9,11 +9,19 @@ namespace ZooWorld.UI
 
         [SerializeField] private TMP_Text _counterText;
 
-        public void SetCounters(int preyDeaths, int predatorDeaths)
+        private void Awake()
         {
             if (_counterText == null)
             {
                 Debug.LogError("HudView has no counter text assigned.", this);
+                enabled = false;
+            }
+        }
+
+        public void SetCounters(int preyDeaths, int predatorDeaths)
+        {
+            if (!isActiveAndEnabled)
+            {
                 return;
             }
 

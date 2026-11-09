@@ -108,13 +108,13 @@ namespace ZooWorld.Systems
             }
 
             _disposed = true;
-            foreach (Animal animal in _active.Keys)
+            foreach (var animal in _active.Keys)
             {
                 DestroyAnimal(animal);
             }
 
             _active.Clear();
-            foreach (ObjectPool<Animal> pool in _pools.Values)
+            foreach (var pool in _pools.Values)
             {
                 pool.Dispose();
             }
@@ -129,7 +129,7 @@ namespace ZooWorld.Systems
         public bool IsPositionFree(Vector3 position, float clearance)
         {
             float sqrClearance = clearance * clearance;
-            foreach (Animal animal in _active.Keys)
+            foreach (var animal in _active.Keys)
             {
                 if (animal == null)
                 {
