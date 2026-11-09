@@ -11,7 +11,6 @@ namespace ZooWorld.Motion
     {
         private Animal _animal;
         private AnimalInteractionResolver _resolver;
-        private bool _warnedMissingResolver;
 
         [Inject]
         public void Construct(AnimalInteractionResolver resolver)
@@ -26,19 +25,8 @@ namespace ZooWorld.Motion
 
         private void OnCollisionEnter(Collision collision)
         {
-            if (_animal == null || !_animal.IsAlive || collision.contactCount == 0)
+            if (!_animal.IsAlive || collision.contactCount == 0)
             {
-                return;
-            }
-
-            if (_resolver == null)
-            {
-                if (!_warnedMissingResolver)
-                {
-                    _warnedMissingResolver = true;
-                    Debug.LogWarning("AnimalContactRelay has no resolver injected; contacts are ignored.", this);
-                }
-
                 return;
             }
 
