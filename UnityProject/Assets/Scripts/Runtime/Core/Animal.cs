@@ -39,7 +39,6 @@ namespace ZooWorld.Core
 
             InteractionData interaction = definition.InteractionProfile.CreateSnapshot();
             IMovementStrategy movement = definition.MovementProfile.CreateStrategy(context);
-            Debug.Assert(movement != null, "Movement profile must return a strategy.");
             if (movement == null)
             {
                 return false;
