@@ -15,7 +15,6 @@ namespace ZooWorld.Diagnostics
     public sealed class SimulationDiagnostics : IStartable, ITickable, IDisposable
     {
         public const string PrefillArgument = "-zooworld-prefill=";
-        private const double ReportIntervalSeconds = 1;
 
         private readonly AnimalFactory _factory;
         private readonly AnimalCatalog _catalog;
@@ -68,7 +67,7 @@ namespace ZooWorld.Diagnostics
 
             double now = Time.realtimeSinceStartupAsDouble;
             double elapsed = now - _windowStart;
-            if (elapsed < ReportIntervalSeconds)
+            if (elapsed < _settings.DiagnosticsReportInterval)
             {
                 return;
             }

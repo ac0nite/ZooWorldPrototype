@@ -7,10 +7,9 @@ namespace ZooWorld.UI
 {
     public sealed class TastyLabelPool : MonoBehaviour, ITastyView
     {
-        private const string LabelText = "Tasty!";
-        private const float FadeSteepness = 2f;
-
         [SerializeField] private TMP_Text _labelTemplate;
+        [SerializeField] private string _labelText = "Tasty!";
+        [SerializeField, Min(0.01f)] private float _fadeSteepness = 2f;
         [SerializeField, Min(1)] private int _poolSize = 4;
         [SerializeField, Min(0.01f)] private float _duration = 1.5f;
         [SerializeField] private Vector3 _belowOffset = new(0f, 0f, -1f);
@@ -31,7 +30,7 @@ namespace ZooWorld.UI
             for (var i = 0; i < _poolSize; i++)
             {
                 var label = Instantiate(_labelTemplate, transform);
-                label.text = LabelText;
+                label.text = _labelText;
                 label.gameObject.SetActive(false);
                 var group = label.GetComponent<CanvasGroup>();
                 if (group == null)
@@ -92,7 +91,7 @@ namespace ZooWorld.UI
                 elapsed += Time.deltaTime;
                 var t = Mathf.Clamp01(elapsed / _duration);
                 entry.Label.transform.position = entry.BasePosition + _drift * t;
-                entry.Group.alpha = Mathf.Clamp01(FadeSteepness * (1f - t));
+                entry.Group.alpha = Mathf.Clamp01(_fadeSteepness * (1f - t));
             }
 
             entry.Label.gameObject.SetActive(false);

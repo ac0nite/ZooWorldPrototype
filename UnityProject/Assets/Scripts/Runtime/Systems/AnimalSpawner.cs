@@ -8,9 +8,6 @@ namespace ZooWorld.Systems
 {
     public sealed class AnimalSpawner : IStartable, ITickable
     {
-        private const int MaxSpawnsPerTick = 3;
-        private const int MaxSpawnPositionAttempts = 4;
-
         private readonly AnimalCatalog _catalog;
         private readonly SimulationSettings _settings;
         private readonly ISpawnTarget _spawnTarget;
@@ -51,7 +48,7 @@ namespace ZooWorld.Systems
                 _elapsed -= _nextInterval;
                 _nextInterval = SampleInterval();
                 TrySpawn();
-                if (++spawns >= MaxSpawnsPerTick)
+                if (++spawns >= _settings.MaxSpawnsPerTick)
                 {
                     _elapsed = 0;
                     break;
@@ -85,7 +82,7 @@ namespace ZooWorld.Systems
                 }
 
                 position.y += _settings.SpawnHeight;
-                if (attempt == MaxSpawnPositionAttempts - 1 ||
+                if (attempt == _settings.MaxSpawnPositionAttempts - 1 ||
                     _spawnTarget.IsPositionFree(position, _settings.SpawnClearance))
                     break;
             }
