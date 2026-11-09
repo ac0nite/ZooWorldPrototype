@@ -138,9 +138,9 @@ No code changes for a species built from existing capabilities:
 3. Create an `AnimalDefinition` (unique ID, role, prefab, profiles,
    spawn weight) and add it to `AnimalCatalog`, then validate.
 
-Shipped species: `Frog`/`Snake` under `Assets/Settings/` +
-`Assets/Prefabs/Animals/`. Demo species `Hare`/`Turtle` under
-`Assets/Tests/PlayMode/Fixtures/` prove the flow — they were added as
+Shipped species: `Frog`/`Snake`/`Hare` under `Assets/Settings/` +
+`Assets/Prefabs/Animals/`. Demo species `Turtle` under
+`Assets/Tests/PlayMode/Fixtures/` proves the flow — it was added as
 assets only, with zero edits to shared systems.
 
 A new movement algorithm = profile subclass + `IMovementStrategy`; a new
@@ -286,9 +286,9 @@ File > Build Profiles > Build собирает standalone-плеер; в Build S
 3. Создать `AnimalDefinition` (уникальный ID, роль, префаб, профили,
    вес) и добавить его в `AnimalCatalog`, затем провалидировать.
 
-Поставляемые виды: `Frog`/`Snake` в `Assets/Settings/` +
-`Assets/Prefabs/Animals/`. Демонстрационные `Hare`/`Turtle` в
-`Assets/Tests/PlayMode/Fixtures/` доказывают сценарий — добавлены
+Поставляемые виды: `Frog`/`Snake`/`Hare` в `Assets/Settings/` +
+`Assets/Prefabs/Animals/`. Демонстрационный `Turtle` в
+`Assets/Tests/PlayMode/Fixtures/` доказывает сценарий — добавлен
 только ассетами, без правок общих систем.
 
 Новый алгоритм движения = наследник профиля + `IMovementStrategy`; новая

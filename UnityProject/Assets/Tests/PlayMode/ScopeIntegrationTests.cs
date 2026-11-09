@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System.Collections;
+using static ZooWorld.Tests.SerializedFields;
 using System.Collections.Generic;
 using NUnit.Framework;
 using TMPro;
@@ -288,12 +289,6 @@ namespace ZooWorld.Tests
             return value;
         }
 
-        private static void SetField(Object target, string field, System.Action<UnityEditor.SerializedProperty> change)
-        {
-            var serialized = new UnityEditor.SerializedObject(target);
-            change(serialized.FindProperty(field));
-            serialized.ApplyModifiedPropertiesWithoutUndo();
-        }
 
         [UnityTest, Description("Скоуп передаёт EffectiveSeed настроек в резолвер")]
         public IEnumerator ScopeWiresTheEffectiveSeedIntoTheResolver()

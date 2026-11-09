@@ -125,8 +125,8 @@ namespace ZooWorld.Tests
 
             Assert.That(ids, Is.EquivalentTo(new[] { "frog", "snake", "hare", "turtle" }));
             var shipped = AssetDatabase.LoadAssetAtPath<AnimalCatalog>("Assets/Settings/AnimalDefinitions/AnimalCatalog.asset");
-            Assert.That(shipped.Definitions.Count, Is.EqualTo(2),
-                "The shipped catalog must keep exactly the two task species; the demo lives in fixture assets.");
+            Assert.That(shipped.Definitions.Count, Is.EqualTo(3),
+                "The shipped catalog ships frog/snake/hare; the turtle demo lives in fixture assets.");
             Assert.That(_hare.Role, Is.EqualTo(AnimalRole.Prey));
             Assert.That(_hare.InteractionProfile, Is.SameAs(_frog.InteractionProfile),
                 "The hare reuses the shipped prey interaction profile asset.");

@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System.Collections;
+using static ZooWorld.Tests.SerializedFields;
 using System.Collections.Generic;
 using NUnit.Framework;
 using TMPro;
@@ -233,12 +234,6 @@ namespace ZooWorld.Tests
             return value;
         }
 
-        private static void SetReference(Object target, string field, Object value)
-        {
-            var serialized = new SerializedObject(target);
-            serialized.FindProperty(field).objectReferenceValue = value;
-            serialized.ApplyModifiedPropertiesWithoutUndo();
-        }
     }
 }
 #endif

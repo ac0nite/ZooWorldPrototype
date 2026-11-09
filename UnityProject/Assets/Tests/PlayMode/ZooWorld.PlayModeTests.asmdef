@@ -1,14 +1,15 @@
 {
-  "name": "ZooWorld.PlayModeTests",
-  "rootNamespace": "ZooWorld.Tests",
-  "references": [
-    "ZooWorld.Runtime",
-    "VContainer",
-    "VContainer.Unity",
-    "Unity.TextMeshPro"
-  ],
-  "optionalUnityReferences": [
-    "TestAssemblies"
-  ],
-  "autoReferenced": false
+    "name": "ZooWorld.PlayModeTests",
+    "rootNamespace": "ZooWorld.Tests",
+    "references": [
+        "ZooWorld.Runtime",
+        "VContainer",
+        "VContainer.Unity",
+        "Unity.TextMeshPro",
+        "ZooWorld.TestShared"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "autoReferenced": false
 }

@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 955c6bae6919243dfa46d90ffdd931c2, type: 3}
+  m_Name: Hare
+  m_EditorClassIdentifier: ZooWorld.Runtime::ZooWorld.Definitions.AnimalDefinition
+  _id: hare
+  _displayName: Hare
+  _role: 0
+  _prefab: {fileID: 903120506283567323, guid: be3c0b4c5428241fba5c4ee6e866bed3, type: 3}
+  _movementProfile: {fileID: 11400000, guid: 520333ba68a0d4c25a575819e25f71d4, type: 2}
+  _interactionProfile: {fileID: 11400000, guid: 8a85f78b6aa994f499887d9366ea4d04, type: 2}
+  _spawnWeight: 2

@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System.Collections;
+using static ZooWorld.Tests.SerializedFields;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -225,12 +226,6 @@ namespace ZooWorld.Tests
             return settings;
         }
 
-        private static void Set(Object target, string field, System.Action<SerializedProperty> apply)
-        {
-            var serialized = new SerializedObject(target);
-            apply(serialized.FindProperty(field));
-            serialized.ApplyModifiedPropertiesWithoutUndo();
-        }
     }
 }
 #endif

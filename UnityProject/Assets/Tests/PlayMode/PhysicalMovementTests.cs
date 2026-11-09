@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System;
+using static ZooWorld.Tests.SerializedFields;
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -344,10 +345,10 @@ namespace ZooWorld.Tests
             var catalog = AssetDatabase.LoadAssetAtPath<AnimalCatalog>("Assets/Settings/AnimalDefinitions/AnimalCatalog.asset");
             Assert.That(catalog, Is.Not.Null);
             catalog.Validate();
-            Assert.That(catalog.Definitions.Count, Is.EqualTo(2));
+            Assert.That(catalog.Definitions.Count, Is.EqualTo(3));
             using IObjectResolver container = BuildInteractionContainer(_bounds);
             var factory = container.Resolve<AnimalFactory>();
-            foreach (string species in new[] { "Snake", "Frog" })
+            foreach (string species in new[] { "Snake", "Frog", "Hare" })
             {
                 var definition = AssetDatabase.LoadAssetAtPath<AnimalDefinition>("Assets/Settings/AnimalDefinitions/" + species + ".asset");
                 Assert.That(definition.Prefab.GetComponent<RigidbodyAnimalMotor>(), Is.Not.Null);
@@ -452,12 +453,6 @@ namespace ZooWorld.Tests
             return value;
         }
 
-        private static void Set(Object target, string field, Action<SerializedProperty> change)
-        {
-            var serialized = new SerializedObject(target);
-            change(serialized.FindProperty(field));
-            serialized.ApplyModifiedPropertiesWithoutUndo();
-        }
 
         private sealed class Vector3ComparerWithTolerance : IEqualityComparer<Vector3>
         {

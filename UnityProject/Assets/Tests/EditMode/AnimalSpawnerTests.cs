@@ -1,4 +1,5 @@
 using System;
+using static ZooWorld.Tests.SerializedFields;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEditor;
@@ -359,26 +360,8 @@ namespace ZooWorld.Tests
             return asset;
         }
 
-        private static void SetString(Object target, string field, string value)
-        {
-            var serialized = new SerializedObject(target);
-            serialized.FindProperty(field).stringValue = value;
-            serialized.ApplyModifiedPropertiesWithoutUndo();
-        }
 
-        private static void SetFloat(Object target, string field, float value)
-        {
-            var serialized = new SerializedObject(target);
-            serialized.FindProperty(field).floatValue = value;
-            serialized.ApplyModifiedPropertiesWithoutUndo();
-        }
 
-        private static void SetInt(Object target, string field, int value)
-        {
-            var serialized = new SerializedObject(target);
-            serialized.FindProperty(field).intValue = value;
-            serialized.ApplyModifiedPropertiesWithoutUndo();
-        }
 
         private sealed class RecordedRent
         {

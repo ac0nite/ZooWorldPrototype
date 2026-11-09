@@ -1,4 +1,5 @@
 using System;
+using static ZooWorld.Tests.SerializedFields;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEditor;
@@ -301,12 +302,6 @@ namespace ZooWorld.Tests
             return profile;
         }
 
-        private static void Set(MovementProfile profile, string field, float value)
-        {
-            var serialized = new SerializedObject(profile);
-            serialized.FindProperty(field).floatValue = value;
-            serialized.ApplyModifiedPropertiesWithoutUndo();
-        }
 
         private static MovementContext Context(Motor motor, Vector3 direction) => new MovementContext(motor, direction, 8);
 

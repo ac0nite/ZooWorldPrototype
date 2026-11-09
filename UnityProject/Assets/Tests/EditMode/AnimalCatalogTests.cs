@@ -1,4 +1,5 @@
 using System;
+using static ZooWorld.Tests.SerializedFields;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEditor;
@@ -302,40 +303,6 @@ namespace ZooWorld.Tests
             asset.name = name;
             _objects.Add(asset);
             return asset;
-        }
-
-        private static void SetReference(Object target, string field, Object value)
-        {
-            var serialized = new SerializedObject(target);
-            serialized.FindProperty(field).objectReferenceValue = value;
-            serialized.ApplyModifiedPropertiesWithoutUndo();
-        }
-
-        private static void SetString(Object target, string field, string value)
-        {
-            var serialized = new SerializedObject(target);
-            serialized.FindProperty(field).stringValue = value;
-            serialized.ApplyModifiedPropertiesWithoutUndo();
-        }
-
-        private static void SetFloat(Object target, string field, float value)
-        {
-            var serialized = new SerializedObject(target);
-            serialized.FindProperty(field).floatValue = value;
-            serialized.ApplyModifiedPropertiesWithoutUndo();
-        }
-
-        private static void SetArray(Object target, string field, params Object[] values)
-        {
-            var serialized = new SerializedObject(target);
-            SerializedProperty array = serialized.FindProperty(field);
-            array.arraySize = values.Length;
-            for (var i = 0; i < values.Length; i++)
-            {
-                array.GetArrayElementAtIndex(i).objectReferenceValue = values[i];
-            }
-
-            serialized.ApplyModifiedPropertiesWithoutUndo();
         }
     }
 }

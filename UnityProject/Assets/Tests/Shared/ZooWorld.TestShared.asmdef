@@ -1,0 +1,12 @@
+{
+    "name": "ZooWorld.TestShared",
+    "rootNamespace": "ZooWorld.Tests",
+    "references": [
+        "ZooWorld.Runtime",
+        "Unity.TextMeshPro"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "autoReferenced": false
+}
