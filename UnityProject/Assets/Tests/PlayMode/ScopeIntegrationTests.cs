@@ -223,7 +223,7 @@ namespace ZooWorld.Tests
             Animal frog = ActivateUiAnimal(_nextUiAnimalId++, UiDefinition("frog", AnimalRole.Prey, "prey",
                 System.Array.Empty<string>()));
             resolver.Resolve(new AnimalContact(snake, snake.ActivationId, frog, frog.ActivationId,
-                Vector3.zero, Vector3.zero));
+                Vector3.zero));
         }
 
         private static int ActiveUiLabels(TastyLabelPool pool)
@@ -293,6 +293,33 @@ namespace ZooWorld.Tests
             var serialized = new UnityEditor.SerializedObject(target);
             change(serialized.FindProperty(field));
             serialized.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        [UnityTest, Description("Скоуп передаёт EffectiveSeed настроек в резолвер")]
+        public IEnumerator ScopeWiresTheEffectiveSeedIntoTheResolver()
+        {
+            var cameraGo = new GameObject("Scope camera");
+            _extraObjects.Add(cameraGo);
+            var camera = cameraGo.AddComponent<Camera>();
+            var settings = UnityEditor.AssetDatabase.LoadAssetAtPath<SimulationSettings>(
+                "Assets/Settings/SimulationSettings.asset");
+            var catalog = UnityEditor.AssetDatabase.LoadAssetAtPath<AnimalCatalog>(
+                "Assets/Settings/AnimalDefinitions/AnimalCatalog.asset");
+            Assert.That(settings, Is.Not.Null);
+            Assert.That(catalog, Is.Not.Null);
+            _root = new GameObject("Test GameLifetimeScope");
+            _root.SetActive(false);
+            var scope = _root.AddComponent<GameLifetimeScope>();
+            var serialized = new UnityEditor.SerializedObject(scope);
+            serialized.FindProperty("_arenaCamera").objectReferenceValue = camera;
+            serialized.FindProperty("_settings").objectReferenceValue = settings;
+            serialized.FindProperty("_catalog").objectReferenceValue = catalog;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            _root.SetActive(true);
+            var resolver = scope.Container.Resolve<ZooWorld.Systems.AnimalInteractionResolver>();
+            Assert.That(resolver.Seed, Is.EqualTo(settings.EffectiveSeed));
+            Assert.That(resolver.Seed, Is.Not.EqualTo(0));
+            yield return null;
         }
 
         private GameLifetimeScope CreateScope(Camera camera = null)

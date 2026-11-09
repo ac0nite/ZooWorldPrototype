@@ -15,7 +15,13 @@ namespace ZooWorld.Motion
         public Vector3 Velocity
         {
             get => Body.linearVelocity;
-            set => Body.linearVelocity = value;
+            set
+            {
+                if (_body != null)
+                {
+                    _body.linearVelocity = value;
+                }
+            }
         }
 
         public bool IsGrounded

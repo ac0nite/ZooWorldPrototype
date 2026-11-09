@@ -386,6 +386,35 @@ namespace ZooWorld.Tests
             yield return null;
         }
 
+        [UnityTest, Description("Пул выдерживает длительные циклы rent/release без дрейфа счётчиков и ID")]
+        public IEnumerator PoolSurvivesExtendedRentReleaseChurn()
+        {
+            var seenIds = new HashSet<long>();
+            for (var i = 0; i < 40; i++)
+            {
+                Animal animal = Rent(Vector3.zero, Vector3.right);
+                Assert.That(animal.IsAlive, Is.True);
+                Assert.That(seenIds.Add(animal.ActivationId), Is.True,
+                    "Activation ids must never repeat across pooled lives.");
+                Assert.That(_factory.ActiveCount, Is.EqualTo(1));
+                Assert.That(_factory.Release(animal, animal.ActivationId), Is.True);
+                Assert.That(_factory.ActiveCount, Is.EqualTo(0));
+            }
+
+            yield return null;
+        }
+
+        [UnityTest, Description("IsPositionFree отслеживает занятость рядом с активными животными")]
+        public IEnumerator IsPositionFreeTracksOccupancyNearActiveAnimals()
+        {
+            Animal animal = Rent(new Vector3(1, 0.5f, 0), Vector3.right);
+            Assert.That(_factory.IsPositionFree(new Vector3(1.5f, 0.5f, 0), 1.1f), Is.False);
+            Assert.That(_factory.IsPositionFree(new Vector3(5, 0.5f, 0), 1.1f), Is.True);
+            Assert.That(_factory.Release(animal, animal.ActivationId), Is.True);
+            Assert.That(_factory.IsPositionFree(new Vector3(1.5f, 0.5f, 0), 1.1f), Is.True);
+            yield return null;
+        }
+
         private Animal Rent(Vector3 position, Vector3 direction)
         {
             Animal animal = _factory.Rent(_definition, position, direction);

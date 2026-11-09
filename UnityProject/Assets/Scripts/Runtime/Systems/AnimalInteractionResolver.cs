@@ -32,25 +32,27 @@ namespace ZooWorld.Systems
             _seed = seed;
         }
 
+        internal uint Seed => _seed;
+
         public void Resolve(AnimalContact contact)
         {
-            if (contact == null) return;
-
             ContactsReceived++;
-            var actor = contact.Actor;
-            var other = contact.Other;
+            Animal actor = contact.Actor;
+            Animal other = contact.Other;
             if (actor == null || other == null || ReferenceEquals(actor, other) ||
                 actor.ActivationId <= 0 || actor.ActivationId != contact.ActorActivationId ||
                 other.ActivationId <= 0 || other.ActivationId != contact.OtherActivationId ||
                 !actor.IsAlive || !other.IsAlive ||
                 actor.Interaction == null || other.Interaction == null ||
                 actor.Definition == null || other.Definition == null)
+            {
                 return;
+            }
 
-            var first = actor.ActivationId < other.ActivationId ? actor : other;
-            var second = ReferenceEquals(first, actor) ? other : actor;
-            var tieBreak = DeriveTieBreak(first.ActivationId, second.ActivationId, _seed);
-            var decision = _policy.Evaluate(first.Interaction, second.Interaction, tieBreak);
+            Animal first = actor.ActivationId < other.ActivationId ? actor : other;
+            Animal second = ReferenceEquals(first, actor) ? other : actor;
+            uint tieBreak = DeriveTieBreak(first.ActivationId, second.ActivationId, _seed);
+            InteractionDecision decision = _policy.Evaluate(first.Interaction, second.Interaction, tieBreak);
             Animal eater;
             Animal victim;
             if (decision == InteractionDecision.AConsumesB)
@@ -68,17 +70,24 @@ namespace ZooWorld.Systems
                 return;
             }
 
-            if (!victim.TryDie()) return;
+            if (!victim.TryDie())
+            {
+                return;
+            }
 
             var definition = victim.Definition;
+            long victimActivationId = victim.ActivationId;
+            long eaterActivationId = eater.ActivationId;
+            var eaterPosition = eater.transform.position;
             try
             {
-                _events.PublishDied(new AnimalDied(victim.ActivationId, definition.Id, definition.Role));
-                _events.PublishConsumed(new AnimalConsumed(eater.ActivationId, eater.transform.position));
+                _events.PublishDied(new AnimalDied(victimActivationId, definition.Id, definition.Role));
+                _events.PublishConsumed(new AnimalConsumed(eaterActivationId, eaterPosition));
             }
             finally
             {
-                if (!_factory.Release(victim, victim.ActivationId) && victim != null)
+                if (!_factory.Release(victim, victimActivationId) &&
+                    victim != null && victim.ActivationId == victimActivationId)
                 {
                     victim.Deactivate();
                     victim.gameObject.SetActive(false);

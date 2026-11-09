@@ -171,8 +171,9 @@ namespace ZooWorld.Tests
             foreach (RecordedRent rent in _target.Rents)
             {
                 Vector3 position = rent.Position;
-                Assert.That(position.x, Is.InRange(-5f, 5f));
-                Assert.That(position.z, Is.InRange(-5f, 5f));
+                Assert.That(position.x, Is.InRange(-4.5f, 4.5f),
+                    "Spawns must respect the configured normalized inset inside the footprint.");
+                Assert.That(position.z, Is.InRange(-4.5f, 4.5f));
                 Assert.That(position.y, Is.EqualTo(1f).Within(0.0001f),
                     "Spawns drop in from the configured spawn height above the ground plane.");
                 Assert.That(_bounds.TryGetInwardDirection(position, out _), Is.False,
@@ -239,6 +240,37 @@ namespace ZooWorld.Tests
             Assert.That(_target.Rents, Has.Count.EqualTo(1));
             Assert.That(waited, Is.LessThanOrEqualTo(2.05f),
                 "After capacity frees, spawning must resume at the next scheduled interval.");
+        }
+
+        [Test, Description("Настройки отклоняют неположительный лимит популяции")]
+        public void SettingsRejectNonPositiveLiveCap()
+        {
+            SimulationSettings broken = Settings(cap: 0);
+            var spawner = new AnimalSpawner(Catalog(Definition("frog", 1)), broken, _target, _bounds);
+            Assert.Throws<InvalidOperationException>(() => spawner.Start());
+        }
+
+        [Test, Description("Спавн пересэмплирует занятые позиции и в конце концов принимает точку")]
+        public void SpawnResamplesOccupiedPositionsAndEventuallyAccepts()
+        {
+            _target.AlwaysBlocked = true;
+            AnimalSpawner spawner = Spawner(Catalog(Definition("frog", 1)));
+            spawner.Advance(3f);
+            Assert.That(_target.PositionChecks, Is.EqualTo(3),
+                "An occupied candidate is resampled; the last attempt is accepted unchecked.");
+            Assert.That(_target.Rents, Has.Count.EqualTo(1),
+                "After the bounded attempts the last candidate is accepted anyway.");
+        }
+
+        [Test, Description("Advance ограничивает догон каденса тремя спавнами за тик")]
+        public void AdvanceCapsCatchUpSpawningAtThreePerTick()
+        {
+            AnimalSpawner spawner = Spawner(Catalog(Definition("frog", 1)), _target, cap: 100);
+            spawner.Advance(10f);
+            Assert.That(_target.Rents, Has.Count.EqualTo(3),
+                "A large frame delta must not emit an unbounded burst of spawns.");
+            spawner.Advance(0f);
+            Assert.That(_target.Rents, Has.Count.EqualTo(3));
         }
 
         [Test, Description("Start отклоняет невалидные настройки и каталог")]
@@ -365,6 +397,8 @@ namespace ZooWorld.Tests
         private sealed class FakeSpawnTarget : ISpawnTarget
         {
             public int ActiveCount { get; set; }
+            public int PositionChecks { get; private set; }
+            public bool AlwaysBlocked { get; set; }
             public List<RecordedRent> Rents { get; } = new List<RecordedRent>();
 
             public Animal Rent(AnimalDefinition definition, Vector3 position, Vector3 direction)
@@ -372,6 +406,27 @@ namespace ZooWorld.Tests
                 Rents.Add(new RecordedRent(definition, position, direction));
                 ActiveCount++;
                 return null;
+            }
+
+            public bool IsPositionFree(Vector3 position, float clearance)
+            {
+                PositionChecks++;
+                if (AlwaysBlocked)
+                {
+                    return false;
+                }
+
+                foreach (RecordedRent rent in Rents)
+                {
+                    float dx = rent.Position.x - position.x;
+                    float dz = rent.Position.z - position.z;
+                    if (dx * dx + dz * dz < clearance * clearance)
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
             }
         }
     }

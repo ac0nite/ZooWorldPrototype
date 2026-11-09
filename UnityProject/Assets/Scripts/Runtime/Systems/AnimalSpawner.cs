@@ -8,6 +8,9 @@ namespace ZooWorld.Systems
 {
     public sealed class AnimalSpawner : IStartable, ITickable
     {
+        private const int MaxSpawnsPerTick = 3;
+        private const int MaxSpawnPositionAttempts = 4;
+
         private readonly AnimalCatalog _catalog;
         private readonly SimulationSettings _settings;
         private readonly ISpawnTarget _spawnTarget;
@@ -23,7 +26,7 @@ namespace ZooWorld.Systems
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _spawnTarget = spawnTarget ?? throw new ArgumentNullException(nameof(spawnTarget));
             _bounds = bounds ?? throw new ArgumentNullException(nameof(bounds));
-            _random = new System.Random(unchecked((int)_settings.Seed));
+            _random = new System.Random(unchecked((int)_settings.EffectiveSeed));
             _nextInterval = SampleInterval();
         }
 
@@ -38,7 +41,7 @@ namespace ZooWorld.Systems
             Advance(Time.deltaTime);
         }
 
-        public void Advance(float deltaTime)
+        internal void Advance(float deltaTime)
         {
             if (float.IsNaN(deltaTime) || float.IsInfinity(deltaTime) || deltaTime < 0)
             {
@@ -46,11 +49,17 @@ namespace ZooWorld.Systems
             }
 
             _elapsed += deltaTime;
+            var spawns = 0;
             while (_nextInterval > 0 && _elapsed >= _nextInterval)
             {
                 _elapsed -= _nextInterval;
                 _nextInterval = SampleInterval();
                 TrySpawn();
+                if (++spawns >= MaxSpawnsPerTick)
+                {
+                    _elapsed = 0;
+                    break;
+                }
             }
         }
 
@@ -64,11 +73,21 @@ namespace ZooWorld.Systems
             AnimalDefinition definition = PickDefinition();
             float inset = _settings.SpawnInset;
             float range = 1 - inset * 2;
-            var normalized = new Vector2(
-                inset + (float)_random.NextDouble() * range,
-                inset + (float)_random.NextDouble() * range);
-            Vector3 position = _bounds.GetPoint(normalized);
-            position.y += _settings.SpawnHeight;
+            Vector3 position = Vector3.zero;
+            for (var attempt = 0; ; attempt++)
+            {
+                var normalized = new Vector2(
+                    inset + (float)_random.NextDouble() * range,
+                    inset + (float)_random.NextDouble() * range);
+                position = _bounds.GetPoint(normalized);
+                position.y += _settings.SpawnHeight;
+                if (attempt == MaxSpawnPositionAttempts - 1 ||
+                    _spawnTarget.IsPositionFree(position, _settings.SpawnClearance))
+                {
+                    break;
+                }
+            }
+
             float angle = (float)(_random.NextDouble() * Math.PI * 2);
             var direction = new Vector3((float)Math.Cos(angle), 0, (float)Math.Sin(angle));
             _spawnTarget.Rent(definition, position, direction);

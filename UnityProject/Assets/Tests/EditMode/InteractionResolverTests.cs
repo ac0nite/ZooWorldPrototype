@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.TestTools;
 using VContainer;
 using ZooWorld.Core;
 using ZooWorld.Definitions;
@@ -79,8 +81,10 @@ namespace ZooWorld.Tests
             Assert.That(_died[0].SpeciesId, Is.EqualTo("frog"));
             Assert.That(_died[0].Role, Is.EqualTo(AnimalRole.Prey));
             Assert.That(_consumed[0].EaterActivationId, Is.EqualTo(3));
-            Assert.That(activeAtDied || activeAtConsumed, Is.True,
-                "The victim must still be active while its death/consumption events are delivered.");
+            Assert.That(activeAtDied, Is.True,
+                "The victim must still be active while its death event is delivered.");
+            Assert.That(activeAtConsumed, Is.True,
+                "The victim must still be active while its consumption event is delivered.");
             Assert.That(frog.ActivationId, Is.EqualTo(0),
                 "After events the victim lifecycle must end: activation cleared.");
             Assert.That(frog.gameObject.activeSelf, Is.False,
@@ -90,19 +94,25 @@ namespace ZooWorld.Tests
             Assert.That(_changes, Is.EqualTo(1));
         }
 
-        [Test, Description("Бросающий подписчик событий не мешает возврату жертвы")]
+        [Test, Description("Бросающий подписчик изолируется: остальные обработчики и события выполняются")]
         public void ThrowingEventSubscriberDoesNotPreventVictimRelease()
         {
             Animal snake = Activate(3, PredatorDefinition("snake"));
             Animal frog = Activate(5, PreyDefinition("frog"));
+            var seenAfterThrower = false;
             _events.Died += _ => throw new InvalidOperationException("subscriber failure");
-            Assert.Throws<InvalidOperationException>(() => _resolver.Resolve(Contact(snake, frog)));
+            _events.Died += _ => seenAfterThrower = true;
+            LogAssert.Expect(LogType.Exception, new Regex("subscriber failure"));
+            Assert.DoesNotThrow(() => _resolver.Resolve(Contact(snake, frog)));
             Assert.That(frog.IsAlive, Is.False);
             Assert.That(frog.ActivationId, Is.EqualTo(0),
                 "A throwing subscriber must not leave a dead animal active.");
             Assert.That(frog.gameObject.activeSelf, Is.False);
             Assert.That(_died.Count, Is.EqualTo(1), "Handlers registered before the throwing one still run.");
-            Assert.That(_consumed, Is.Empty, "A throwing Died handler aborts the remaining chain.");
+            Assert.That(seenAfterThrower, Is.True,
+                "Handlers registered after the throwing one still run.");
+            Assert.That(_consumed.Count, Is.EqualTo(1),
+                "A throwing Died handler must not abort the remaining chain.");
             Assert.That(_stats.PreyDeaths, Is.EqualTo(1));
         }
 
@@ -181,6 +191,31 @@ namespace ZooWorld.Tests
             Assert.That(second, Is.EqualTo(first));
         }
 
+        [Test, Description("Разные seed могут выбирать разную жертву для пары хищников")]
+        public void DifferentSeedsCanSelectDifferentVictimsForAMutualPredatorPair()
+        {
+            Animal firstA = Activate(3, PredatorDefinition("alpha"));
+            Animal secondA = Activate(5, PredatorDefinition("beta"));
+            Resolver(1).Resolve(Contact(firstA, secondA));
+            Assert.That(firstA.IsAlive, Is.True);
+            Assert.That(secondA.IsAlive, Is.False);
+
+            Animal firstB = Activate(3, PredatorDefinition("alpha"));
+            Animal secondB = Activate(5, PredatorDefinition("beta"));
+            Resolver(2).Resolve(Contact(firstB, secondB));
+            Assert.That(firstB.IsAlive, Is.False,
+                "Seed 2 must resolve the mutual pair (3,5) against the lower activation id.");
+            Assert.That(secondB.IsAlive, Is.True);
+        }
+
+        [Test, Description("Неизвестная роль жертвы диагностируется без молчаливого подсчёта")]
+        public void UnknownVictimRoleIsDiagnosedInsteadOfBeingCounted()
+        {
+            LogAssert.Expect(LogType.Exception, new Regex("ArgumentOutOfRangeException"));
+            _events.PublishDied(new AnimalDied(9, "alien", (AnimalRole)999));
+            Assert.That(_stats.PreyDeaths + _stats.PredatorDeaths, Is.EqualTo(0));
+        }
+
         [Test, Description("Несъедобный контакт ничего не публикует")]
         public void NeitherConsumableContactPublishesNothing()
         {
@@ -209,7 +244,7 @@ namespace ZooWorld.Tests
         {
             Animal animal = Activate(3, PredatorDefinition("snake"));
             _resolver.Resolve(new AnimalContact(animal, animal.ActivationId, animal, animal.ActivationId,
-                Vector3.zero, Vector3.zero));
+                Vector3.zero));
             Assert.That(animal.IsAlive, Is.True);
             Assert.That(_died, Is.Empty);
         }
@@ -219,8 +254,8 @@ namespace ZooWorld.Tests
         {
             Animal snake = Activate(3, PredatorDefinition("snake"));
             Animal frog = Activate(5, PreyDefinition("frog"));
-            _resolver.Resolve(new AnimalContact(snake, 999, frog, frog.ActivationId, Vector3.zero, Vector3.zero));
-            _resolver.Resolve(new AnimalContact(snake, snake.ActivationId, frog, 999, Vector3.zero, Vector3.zero));
+            _resolver.Resolve(new AnimalContact(snake, 999, frog, frog.ActivationId, Vector3.zero));
+            _resolver.Resolve(new AnimalContact(snake, snake.ActivationId, frog, 999, Vector3.zero));
             Assert.That(snake.IsAlive && frog.IsAlive, Is.True);
             Assert.That(_died, Is.Empty);
         }
@@ -236,7 +271,7 @@ namespace ZooWorld.Tests
             var fresh = new GameObject("Unactivated");
             _objects.Add(fresh);
             var unactivated = fresh.AddComponent<Animal>();
-            _resolver.Resolve(new AnimalContact(snake, snake.ActivationId, unactivated, 0, Vector3.zero, Vector3.zero));
+            _resolver.Resolve(new AnimalContact(snake, snake.ActivationId, unactivated, 0, Vector3.zero));
             Assert.That(snake.IsAlive, Is.True);
             Assert.That(_died, Is.Empty);
             Animal released = Activate(7, PreyDefinition("released"));
@@ -255,15 +290,15 @@ namespace ZooWorld.Tests
             animal.Activate(3);
             Animal snake = Activate(5, PredatorDefinition("snake"));
             _resolver.Resolve(new AnimalContact(snake, snake.ActivationId, animal, animal.ActivationId,
-                Vector3.zero, Vector3.zero));
+                Vector3.zero));
             Assert.That(animal.IsAlive && snake.IsAlive, Is.True);
             Assert.That(_died, Is.Empty);
         }
 
-        [Test, Description("Резолвер отклоняет null-контакты и невалидные аргументы конструктора")]
+        [Test, Description("Резолвер отклоняет пустые контакты и невалидные аргументы конструктора")]
         public void ResolverRejectsNullContactsAndInvalidConstructorArguments()
         {
-            Assert.DoesNotThrow(() => _resolver.Resolve(null));
+            Assert.DoesNotThrow(() => _resolver.Resolve(default));
             Assert.That(_died, Is.Empty);
             Assert.Throws<ArgumentNullException>(() => new AnimalInteractionResolver(null, _factory, _events));
             Assert.Throws<ArgumentNullException>(() => new AnimalInteractionResolver(
@@ -283,17 +318,18 @@ namespace ZooWorld.Tests
             _resolver.Resolve(Contact(snake, frog));
             Assert.That(_resolver.ContactsReceived, Is.EqualTo(2),
                 "Rejected duplicate reports still count as received load.");
-            _resolver.Resolve(null);
-            Assert.That(_resolver.ContactsReceived, Is.EqualTo(2));
+            _resolver.Resolve(default);
+            Assert.That(_resolver.ContactsReceived, Is.EqualTo(3),
+                "Even an empty contact report counts as received load.");
         }
 
         [Test, Description("Контакт требует обоих участников")]
         public void ContactRequiresBothActors()
         {
             Assert.Throws<ArgumentNullException>(() => new AnimalContact(null, 1, Activate(3, PreyDefinition("frog")), 3,
-                Vector3.zero, Vector3.zero));
+                Vector3.zero));
             Assert.Throws<ArgumentNullException>(() => new AnimalContact(Activate(3, PreyDefinition("frog")), 3, null, 1,
-                Vector3.zero, Vector3.zero));
+                Vector3.zero));
         }
 
         [Test, Description("GameStats отписывается при Dispose")]
@@ -316,7 +352,7 @@ namespace ZooWorld.Tests
         private static AnimalContact Contact(Animal actor, Animal other)
         {
             return new AnimalContact(actor, actor.ActivationId, other, other.ActivationId,
-                Vector3.zero, Vector3.zero);
+                Vector3.zero);
         }
 
         private AnimalDefinition PreyDefinition(string speciesId)

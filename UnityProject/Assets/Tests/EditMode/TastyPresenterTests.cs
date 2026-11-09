@@ -126,7 +126,7 @@ namespace ZooWorld.Tests
         private static AnimalContact Contact(Animal actor, Animal other)
         {
             return new AnimalContact(actor, actor.ActivationId, other, other.ActivationId,
-                Vector3.zero, Vector3.zero);
+                Vector3.zero);
         }
 
         private AnimalDefinition PreyDefinition(string speciesId)

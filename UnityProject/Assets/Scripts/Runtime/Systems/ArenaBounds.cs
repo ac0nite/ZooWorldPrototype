@@ -8,6 +8,16 @@ namespace ZooWorld.Systems
         private const float OutsideEpsilon = 0.00001f;
         private readonly Camera _camera;
         private readonly Plane _ground;
+        private int _cachedFrame = -1;
+        private float _cachedOrthoSize;
+        private float _cachedAspect;
+        private bool _cachedOrthographic;
+        private bool _cornersValid;
+        private Vector3 _bottomLeft;
+        private Vector3 _bottomRight;
+        private Vector3 _topRight;
+        private Vector3 _topLeft;
+        private Vector3 _center;
 
         public ArenaBounds(Camera camera, float groundHeight = 0)
         {
@@ -40,21 +50,39 @@ namespace ZooWorld.Systems
         public bool TryGetInwardDirection(Vector3 position, out Vector3 direction)
         {
             direction = Vector3.zero;
-            if (!TryGetPoint(Vector2.zero, out Vector3 bottomLeft) ||
-                !TryGetPoint(Vector2.right, out Vector3 bottomRight) ||
-                !TryGetPoint(Vector2.one, out Vector3 topRight) ||
-                !TryGetPoint(Vector2.up, out Vector3 topLeft))
+            if (!TryGetCorners())
             {
                 return false;
             }
 
-            Vector3 center = (bottomLeft + bottomRight + topRight + topLeft) * 0.25f;
-            bool outside = IsOutside(position, bottomLeft, bottomRight, center) ||
-                IsOutside(position, bottomRight, topRight, center) ||
-                IsOutside(position, topRight, topLeft, center) ||
-                IsOutside(position, topLeft, bottomLeft, center);
-            direction = outside ? new Vector3(center.x - position.x, 0, center.z - position.z).normalized : Vector3.zero;
+            bool outside = IsOutside(position, _bottomLeft, _bottomRight) ||
+                IsOutside(position, _bottomRight, _topRight) ||
+                IsOutside(position, _topRight, _topLeft) ||
+                IsOutside(position, _topLeft, _bottomLeft);
+            direction = outside ? new Vector3(_center.x - position.x, 0, _center.z - position.z).normalized : Vector3.zero;
             return outside;
+        }
+
+        private bool TryGetCorners()
+        {
+            if (_cachedFrame != Time.frameCount || _camera.transform.hasChanged ||
+                _cachedOrthoSize != _camera.orthographicSize ||
+                _cachedAspect != _camera.aspect ||
+                _cachedOrthographic != _camera.orthographic)
+            {
+                _cornersValid = TryGetPoint(Vector2.zero, out _bottomLeft) &&
+                    TryGetPoint(Vector2.right, out _bottomRight) &&
+                    TryGetPoint(Vector2.one, out _topRight) &&
+                    TryGetPoint(Vector2.up, out _topLeft);
+                _center = (_bottomLeft + _bottomRight + _topRight + _topLeft) * 0.25f;
+                _camera.transform.hasChanged = false;
+                _cachedFrame = Time.frameCount;
+                _cachedOrthoSize = _camera.orthographicSize;
+                _cachedAspect = _camera.aspect;
+                _cachedOrthographic = _camera.orthographic;
+            }
+
+            return _cornersValid;
         }
 
         private bool TryGetPoint(Vector2 normalizedPosition, out Vector3 point)
@@ -70,10 +98,10 @@ namespace ZooWorld.Systems
             return true;
         }
 
-        private static bool IsOutside(Vector3 position, Vector3 start, Vector3 end, Vector3 center)
+        private bool IsOutside(Vector3 position, Vector3 start, Vector3 end)
         {
             Vector3 normal = Vector3.Cross(end - start, Vector3.up);
-            return Vector3.Dot(position - start, normal) * Vector3.Dot(center - start, normal) < -OutsideEpsilon;
+            return Vector3.Dot(position - start, normal) * Vector3.Dot(_center - start, normal) < -OutsideEpsilon;
         }
     }
 }

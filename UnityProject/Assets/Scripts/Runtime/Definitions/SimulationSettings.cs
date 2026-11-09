@@ -9,9 +9,12 @@ namespace ZooWorld.Definitions
         [SerializeField] private float _minSpawnInterval = 1;
         [SerializeField] private float _maxSpawnInterval = 2;
         [SerializeField] private int _liveCap = 100;
-        [SerializeField] private uint _seed;
+        [SerializeField, Tooltip("0 = random per session")] private uint _seed;
         [SerializeField] private float _spawnInset = 0.05f;
         [SerializeField] private float _spawnHeight = 1;
+        [SerializeField] private float _spawnClearance = 1.1f;
+
+        private uint? _resolvedSeed;
 
         public float MinSpawnInterval => _minSpawnInterval;
         public float MaxSpawnInterval => _maxSpawnInterval;
@@ -19,6 +22,10 @@ namespace ZooWorld.Definitions
         public uint Seed => _seed;
         public float SpawnInset => _spawnInset;
         public float SpawnHeight => _spawnHeight;
+        public float SpawnClearance => _spawnClearance;
+
+        public uint EffectiveSeed =>
+            _resolvedSeed ??= _seed != 0 ? _seed : (uint)UnityEngine.Random.Range(1, int.MaxValue);
 
         [ContextMenu("Validate")]
         public void Validate()
@@ -49,6 +56,11 @@ namespace ZooWorld.Definitions
             if (float.IsNaN(_spawnHeight) || float.IsInfinity(_spawnHeight) || _spawnHeight < 0)
             {
                 throw new InvalidOperationException($"Settings '{name}' require a finite non-negative spawn height.");
+            }
+
+            if (float.IsNaN(_spawnClearance) || float.IsInfinity(_spawnClearance) || _spawnClearance < 0)
+            {
+                throw new InvalidOperationException($"Settings '{name}' require a finite non-negative spawn clearance.");
             }
         }
     }

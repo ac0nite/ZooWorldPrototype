@@ -27,13 +27,16 @@ namespace ZooWorld.Systems
 
         private void OnAnimalDied(AnimalDied payload)
         {
-            if (payload.Role == AnimalRole.Prey)
+            switch (payload.Role)
             {
-                PreyDeaths++;
-            }
-            else
-            {
-                PredatorDeaths++;
+                case AnimalRole.Prey:
+                    PreyDeaths++;
+                    break;
+                case AnimalRole.Predator:
+                    PredatorDeaths++;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(payload));
             }
 
             Changed?.Invoke();

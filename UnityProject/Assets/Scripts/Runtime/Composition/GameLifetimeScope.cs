@@ -24,7 +24,7 @@ namespace ZooWorld.Composition
             builder.Register<FoodChainPolicy>(Lifetime.Singleton).As<IAnimalInteractionPolicy>();
             builder.Register<AnimalEventBus>(Lifetime.Singleton);
             builder.Register<GameStats>(Lifetime.Singleton);
-            uint seed = _settings != null ? _settings.Seed : 0;
+            uint seed = _settings != null ? _settings.EffectiveSeed : 0;
             builder.Register(resolver => new AnimalInteractionResolver(
                 resolver.Resolve<IAnimalInteractionPolicy>(),
                 resolver.Resolve<AnimalFactory>(),
@@ -44,6 +44,12 @@ namespace ZooWorld.Composition
                 {
                     throw new InvalidOperationException(
                         "GameLifetimeScope requires both an animal catalog and simulation settings to enable spawning.");
+                }
+
+                if (_arenaCamera == null)
+                {
+                    throw new InvalidOperationException(
+                        "GameLifetimeScope requires an arena camera to enable spawning.");
                 }
 
                 builder.RegisterInstance(_catalog);

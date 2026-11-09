@@ -9,7 +9,10 @@ namespace ZooWorld.Definitions
     {
         [SerializeField] private AnimalDefinition[] _definitions = Array.Empty<AnimalDefinition>();
 
-        public IReadOnlyList<AnimalDefinition> Definitions => Array.AsReadOnly(_definitions);
+        private IReadOnlyList<AnimalDefinition> _definitionsReadOnly;
+
+        public IReadOnlyList<AnimalDefinition> Definitions =>
+            _definitionsReadOnly ??= Array.AsReadOnly(_definitions);
 
         [ContextMenu("Validate")]
         public void Validate()
@@ -67,6 +70,11 @@ namespace ZooWorld.Definitions
             {
                 categories.Add(category.Id, (category, source));
             }
+        }
+
+        private void OnValidate()
+        {
+            _definitionsReadOnly = null;
         }
     }
 }

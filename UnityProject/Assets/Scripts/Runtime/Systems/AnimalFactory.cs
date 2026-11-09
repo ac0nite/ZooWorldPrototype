@@ -36,14 +36,22 @@ namespace ZooWorld.Systems
 
         public Animal Rent(AnimalDefinition definition, Vector3 position, Vector3 direction)
         {
-            if (_disposed) throw new ObjectDisposedException(nameof(AnimalFactory));
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(nameof(AnimalFactory));
+            }
 
-            if (definition == null) throw new ArgumentNullException(nameof(definition));
+            if (definition == null)
+            {
+                throw new ArgumentNullException(nameof(definition));
+            }
 
             definition.Validate();
             direction = MovementContext.NormalizeDirection(direction);
             if (!IsFinite(position.x) || !IsFinite(position.y) || !IsFinite(position.z))
+            {
                 throw new ArgumentException("Spawn position must be finite.", nameof(position));
+            }
 
             var activationId = checked(++_nextActivationId);
             var pool = GetPool(definition.Prefab);
@@ -77,14 +85,22 @@ namespace ZooWorld.Systems
 
         public bool Release(Animal animal, long activationId)
         {
-            if (_disposed || ReferenceEquals(animal, null)) return false;
+            if (_disposed || ReferenceEquals(animal, null))
+            {
+                return false;
+            }
 
             if (!_active.TryGetValue(animal, out var activation) || activation.Id != activationId ||
                 (animal != null && animal.ActivationId != activationId))
+            {
                 return false;
+            }
 
             _active.Remove(animal);
-            if (animal == null) return true;
+            if (animal == null)
+            {
+                return true;
+            }
 
             animal.Deactivate();
             activation.Pool.Release(animal);
@@ -93,21 +109,58 @@ namespace ZooWorld.Systems
 
         public void Dispose()
         {
-            if (_disposed) return;
+            if (_disposed)
+            {
+                return;
+            }
 
             _disposed = true;
-            foreach (var animal in _active.Keys) DestroyAnimal(animal);
+            foreach (Animal animal in _active.Keys)
+            {
+                DestroyAnimal(animal);
+            }
 
             _active.Clear();
-            foreach (var pool in _pools.Values) pool.Dispose();
+            foreach (ObjectPool<Animal> pool in _pools.Values)
+            {
+                pool.Dispose();
+            }
 
             _pools.Clear();
-            if (_poolRoot != null) Object.Destroy(_poolRoot);
+            if (_poolRoot != null)
+            {
+                Object.Destroy(_poolRoot);
+            }
+        }
+
+        public bool IsPositionFree(Vector3 position, float clearance)
+        {
+            float sqrClearance = clearance * clearance;
+            foreach (Animal animal in _active.Keys)
+            {
+                if (animal == null)
+                {
+                    continue;
+                }
+
+                Vector3 other = animal.transform.position;
+                float dx = other.x - position.x;
+                float dz = other.z - position.z;
+                if (dx * dx + dz * dz < sqrClearance)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private ObjectPool<Animal> GetPool(Animal prefab)
         {
-            if (_pools.TryGetValue(prefab, out var pool)) return pool;
+            if (_pools.TryGetValue(prefab, out var pool))
+            {
+                return pool;
+            }
 
             pool = new ObjectPool<Animal>(
                 () => CreateAnimal(prefab),
@@ -145,7 +198,10 @@ namespace ZooWorld.Systems
 
         private static void DestroyAnimal(Animal animal)
         {
-            if (animal == null) return;
+            if (animal == null)
+            {
+                return;
+            }
 
             animal.Deactivate();
             animal.gameObject.SetActive(false);

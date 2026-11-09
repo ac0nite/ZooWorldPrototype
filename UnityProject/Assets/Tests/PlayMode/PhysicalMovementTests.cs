@@ -433,7 +433,7 @@ namespace ZooWorld.Tests
                 {
                     if (animal != null && animal.gameObject.activeSelf)
                     {
-                        animal.SendMessage("FixedUpdate");
+                        animal.FixedUpdate();
                     }
                 }
 

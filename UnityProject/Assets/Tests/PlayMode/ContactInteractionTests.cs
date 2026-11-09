@@ -105,8 +105,10 @@ namespace ZooWorld.Tests
             InteractionData snakeData = snake.Interaction;
             InteractionData frogData = frog.Interaction;
             bool activeAtDied = false;
+            bool activeAtConsumed = false;
             int countAtDied = -1;
             _events.Died += _ => { activeAtDied = frog.gameObject.activeSelf; countAtDied = _factory.ActiveCount; };
+            _events.Consumed += _ => activeAtConsumed = frog.gameObject.activeSelf;
             for (var i = 0; i < 60 && frog.IsAlive; i++)
             {
                 Tick(1);
@@ -124,6 +126,8 @@ namespace ZooWorld.Tests
             Assert.That(_consumed[0].EaterActivationId, Is.EqualTo(snake.ActivationId));
             Assert.That(Vector3.Distance(_consumed[0].Position, snake.transform.position), Is.LessThan(0.5f));
             Assert.That(activeAtDied, Is.True, "The victim is released only after its events are delivered.");
+            Assert.That(activeAtConsumed, Is.True,
+                "The victim must still be active while its consumption event is delivered.");
             Assert.That(countAtDied, Is.EqualTo(2));
             Assert.That(_stats.PreyDeaths, Is.EqualTo(1));
             Assert.That(_stats.PredatorDeaths, Is.EqualTo(0));
@@ -159,13 +163,41 @@ namespace ZooWorld.Tests
             Assert.That(_stats.PredatorDeaths, Is.EqualTo(1));
         }
 
+        [Test, Description("Хищник после первой жертвы остаётся способен есть дальше")]
+        public void PredatorKeepsConsumingPreyAfterTheFirstVictim()
+        {
+            Animal snake = Rent(_snake, new Vector3(-3, 0.5f, 0), Vector3.right);
+            Animal first = Rent(_frog, new Vector3(0, 0.5f, 0), Vector3.right);
+            Animal second = Rent(_frog, new Vector3(2, 0.5f, 0), Vector3.right);
+            for (var i = 0; i < 120 && (first.IsAlive || second.IsAlive); i++)
+            {
+                Tick(1);
+            }
+
+            Assert.That(first.IsAlive, Is.False);
+            Assert.That(second.IsAlive, Is.False);
+            Assert.That(snake.IsAlive, Is.True);
+            Assert.That(_died.Count, Is.EqualTo(2));
+            Assert.That(_consumed.Count, Is.EqualTo(2));
+            Assert.That(_stats.PreyDeaths, Is.EqualTo(2));
+        }
+
         [Test, Description("Контакт двух добыч не даёт смертей и событий")]
         public void PreyPairRealContactProducesNoDeathsOrEvents()
         {
             AnimalDefinition prey = FixturePreyDefinition();
             Animal first = Rent(prey, new Vector3(-1, 0.5f, 0), Vector3.right);
             Animal second = Rent(prey, new Vector3(1, 0.5f, 0), Vector3.left);
-            Tick(60);
+            float minDistance = float.MaxValue;
+            for (var i = 0; i < 60; i++)
+            {
+                Tick(1);
+                minDistance = Mathf.Min(minDistance,
+                    Vector3.Distance(first.transform.position, second.transform.position));
+            }
+
+            Assert.That(minDistance, Is.LessThan(1.1f),
+                "The prey bodies must actually reach contact distance for this test to prove a non-lethal contact.");
             Assert.That(first.IsAlive && second.IsAlive, Is.True);
             Assert.That(_died, Is.Empty);
             Assert.That(_consumed, Is.Empty);
@@ -189,9 +221,9 @@ namespace ZooWorld.Tests
             Animal first = Rent(_snake, new Vector3(-1, 0.5f, 0), Vector3.right);
             Animal second = Rent(_snake, new Vector3(1, 0.5f, 0), Vector3.left);
             var forward = new AnimalContact(first, first.ActivationId, second, second.ActivationId,
-                Vector3.zero, Vector3.zero);
+                Vector3.zero);
             var reverse = new AnimalContact(second, second.ActivationId, first, first.ActivationId,
-                Vector3.zero, Vector3.zero);
+                Vector3.zero);
             _resolver.Resolve(forward);
             Animal victim = first.IsAlive ? second : first;
             Animal survivor = first.IsAlive ? first : second;
@@ -264,7 +296,7 @@ namespace ZooWorld.Tests
                 {
                     if (animal != null && animal.gameObject.activeSelf)
                     {
-                        animal.SendMessage("FixedUpdate");
+                        animal.FixedUpdate();
                     }
                 }
 

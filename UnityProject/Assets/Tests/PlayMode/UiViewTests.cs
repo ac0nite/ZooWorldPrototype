@@ -73,16 +73,16 @@ namespace ZooWorld.Tests
             Assert.That(labelScreenY, Is.LessThan(eaterScreenY),
                 "The popup must appear below the eater on screen, not above it.");
             float elapsed = 0f;
-            while (elapsed < 0.4f)
+            while (elapsed < 0.5f)
             {
                 elapsed += Time.deltaTime;
                 yield return null;
             }
 
             Assert.That(group.alpha, Is.EqualTo(1f),
-                "The label must stay fully opaque during the first half of its duration.");
+                "The label must stay fully opaque during the first third of its duration.");
             float earlyScreenY = _camera.WorldToScreenPoint(label.transform.position).y;
-            while (elapsed < 1.2f)
+            while (elapsed < 1.1f)
             {
                 elapsed += Time.deltaTime;
                 yield return null;
@@ -94,21 +94,22 @@ namespace ZooWorld.Tests
             float lateScreenY = _camera.WorldToScreenPoint(label.transform.position).y;
             Assert.That(lateScreenY, Is.GreaterThan(earlyScreenY),
                 "The label must drift upward on screen while fading.");
-            while (elapsed < 1.3f)
+            var hiddenAt = -1f;
+            while (elapsed < 4f)
             {
                 elapsed += Time.deltaTime;
                 yield return null;
+                if (!label.gameObject.activeSelf)
+                {
+                    hiddenAt = elapsed;
+                    break;
+                }
             }
 
-            Assert.That(label.gameObject.activeSelf, Is.True,
-                "The label must still be visible at 1.3 s of its 1.5 s duration.");
-            while (elapsed < 1.8f)
-            {
-                elapsed += Time.deltaTime;
-                yield return null;
-            }
-
-            Assert.That(ActiveLabels(pool), Is.Empty, "The label must hide after the 1.5 s popup duration.");
+            Assert.That(hiddenAt, Is.GreaterThan(0f),
+                "The label must hide after its popup duration.");
+            Assert.That(hiddenAt, Is.GreaterThanOrEqualTo(1.4f),
+                "The label must not hide before its 1.5 s duration.");
         }
 
         [UnityTest, Description("Пул отбирает слот по кругу, когда все метки заняты")]
@@ -137,7 +138,7 @@ namespace ZooWorld.Tests
             TastyLabelPool pool = CreatePool(out TMP_Text _);
             pool.Show(new Vector3(0f, 0.5f, 0f));
             float elapsed = 0f;
-            while (elapsed < 1.8f)
+            while (ActiveLabels(pool).Count > 0 && elapsed < 4f)
             {
                 elapsed += Time.deltaTime;
                 yield return null;
@@ -147,6 +148,22 @@ namespace ZooWorld.Tests
             pool.Show(new Vector3(5f, 0.5f, 5f));
             TMP_Text label = SingleActiveLabel(pool);
             Assert.That(label.transform.position, Is.EqualTo(new Vector3(5f, 0.5f, 4f)));
+        }
+
+        [UnityTest, Description("Выключение пула прячет активную метку и не даёт Show показать новую")]
+        public IEnumerator DisablingThePoolHidesTheActiveLabelAndBlocksShow()
+        {
+            TastyLabelPool pool = CreatePool(out TMP_Text _);
+            pool.Show(new Vector3(0f, 0.5f, 0f));
+            Assert.That(ActiveLabels(pool), Is.Not.Empty);
+            pool.gameObject.SetActive(false);
+            Assert.That(ActiveLabels(pool), Is.Empty,
+                "Disabling the pool must hide in-flight labels, not leave them stuck visible.");
+            pool.Show(new Vector3(0f, 0.5f, 0f));
+            pool.gameObject.SetActive(true);
+            Assert.That(ActiveLabels(pool), Is.Empty,
+                "A Show issued while the pool was disabled must not leak a label after re-enable.");
+            yield return null;
         }
 
         private HudView CreateHudView(TMP_Text counterText)

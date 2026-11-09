@@ -244,6 +244,28 @@ namespace ZooWorld.Tests
             Assert.That(error.Message, Does.Contain(source));
         }
 
+        [Test, Description("Каталог валидирует тысячу определений без ошибок")]
+        public void CatalogValidatesAThousandSpeciesDefinitions()
+        {
+            var definitions = new AnimalDefinition[1000];
+            for (var i = 0; i < definitions.Length; i++)
+            {
+                definitions[i] = Definition("species-" + i);
+            }
+
+            var catalog = Asset<AnimalCatalog>("Big Catalog");
+            var serialized = new SerializedObject(catalog);
+            SerializedProperty array = serialized.FindProperty("_definitions");
+            array.arraySize = definitions.Length;
+            for (var i = 0; i < definitions.Length; i++)
+            {
+                array.GetArrayElementAtIndex(i).objectReferenceValue = definitions[i];
+            }
+
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            Assert.DoesNotThrow(() => catalog.Validate());
+        }
+
         private AnimalDefinition Definition(string id)
         {
             var definition = Asset<AnimalDefinition>(id);

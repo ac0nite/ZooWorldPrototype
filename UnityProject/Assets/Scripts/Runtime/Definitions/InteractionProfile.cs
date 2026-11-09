@@ -11,8 +11,11 @@ namespace ZooWorld.Definitions
         [SerializeField] private InteractionCategory _category;
         [SerializeField] private InteractionCategory[] _edibleCategories = Array.Empty<InteractionCategory>();
 
+        private IReadOnlyList<InteractionCategory> _edibleReadOnly;
+
         public InteractionCategory Category => _category;
-        public IReadOnlyList<InteractionCategory> EdibleCategories => Array.AsReadOnly(_edibleCategories);
+        public IReadOnlyList<InteractionCategory> EdibleCategories =>
+            _edibleReadOnly ??= Array.AsReadOnly(_edibleCategories);
 
         public void Validate()
         {
@@ -45,6 +48,11 @@ namespace ZooWorld.Definitions
             }
 
             return new InteractionData(_category.Id, ids);
+        }
+
+        private void OnValidate()
+        {
+            _edibleReadOnly = null;
         }
     }
 }

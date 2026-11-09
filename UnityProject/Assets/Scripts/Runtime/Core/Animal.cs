@@ -19,7 +19,7 @@ namespace ZooWorld.Core
         public AnimalDefinition Definition { get; private set; }
         public InteractionData Interaction { get; private set; }
 
-        public void Activate(long activationId)
+        internal void Activate(long activationId)
         {
             ValidateActivation(activationId);
             ActivationId = activationId;
@@ -66,7 +66,7 @@ namespace ZooWorld.Core
             movement?.Dispose();
         }
 
-        private void FixedUpdate()
+        internal void FixedUpdate()
         {
             if (!IsAlive)
             {

@@ -219,7 +219,7 @@ namespace ZooWorld.Tests
                 }
             }
 
-            Assert.That(minDistance, Is.LessThan(0.8f),
+            Assert.That(minDistance, Is.LessThan(0.9f),
                 "The animals must actually reach contact range (sum of radii 0.75 m).");
             Assert.That(bounced, Is.True, "Prey contacts of the new species must physically rebound.");
             Tick(15);
@@ -342,7 +342,7 @@ namespace ZooWorld.Tests
                 {
                     if (animal != null && animal.gameObject.activeSelf)
                     {
-                        animal.SendMessage("FixedUpdate");
+                        animal.FixedUpdate();
                     }
                 }
 

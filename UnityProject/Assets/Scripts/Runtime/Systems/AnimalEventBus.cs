@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 using ZooWorld.Interaction;
 
 namespace ZooWorld.Systems
@@ -11,12 +12,32 @@ namespace ZooWorld.Systems
 
         internal void PublishDied(AnimalDied payload)
         {
-            Died?.Invoke(payload);
+            InvokeSafely(Died, payload);
         }
 
         internal void PublishConsumed(AnimalConsumed payload)
         {
-            Consumed?.Invoke(payload);
+            InvokeSafely(Consumed, payload);
+        }
+
+        private static void InvokeSafely<T>(Action<T> handlers, T payload)
+        {
+            if (handlers == null)
+            {
+                return;
+            }
+
+            foreach (Action<T> handler in handlers.GetInvocationList())
+            {
+                try
+                {
+                    handler(payload);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogException(e);
+                }
+            }
         }
     }
 }

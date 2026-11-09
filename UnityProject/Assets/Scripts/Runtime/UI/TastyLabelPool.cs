@@ -11,8 +11,8 @@ namespace ZooWorld.UI
         private const float FadeSteepness = 2f;
 
         [SerializeField] private TMP_Text _labelTemplate;
-        [SerializeField] private int _poolSize = 4;
-        [SerializeField] private float _duration = 1.5f;
+        [SerializeField, Min(1)] private int _poolSize = 4;
+        [SerializeField, Min(0.01f)] private float _duration = 1.5f;
         [SerializeField] private Vector3 _belowOffset = new(0f, 0f, -1f);
         [SerializeField] private Vector3 _drift = new(0f, 0f, 0.6f);
 
@@ -34,7 +34,10 @@ namespace ZooWorld.UI
                 label.text = LabelText;
                 label.gameObject.SetActive(false);
                 var group = label.GetComponent<CanvasGroup>();
-                if (group == null) group = label.gameObject.AddComponent<CanvasGroup>();
+                if (group == null)
+                {
+                    group = label.gameObject.AddComponent<CanvasGroup>();
+                }
 
                 _entries.Add(new Entry(label, group));
             }
@@ -42,13 +45,36 @@ namespace ZooWorld.UI
             _labelTemplate.gameObject.SetActive(false);
         }
 
+        private void OnDisable()
+        {
+            foreach (Entry entry in _entries)
+            {
+                if (entry.Routine != null)
+                {
+                    StopCoroutine(entry.Routine);
+                    entry.Routine = null;
+                }
+
+                if (entry.Label != null)
+                {
+                    entry.Label.gameObject.SetActive(false);
+                }
+            }
+        }
+
         public void Show(Vector3 worldPosition)
         {
-            if (!isActiveAndEnabled || _entries.Count == 0) return;
+            if (!isActiveAndEnabled || _entries.Count == 0)
+            {
+                return;
+            }
 
             var entry = _entries[_nextIndex];
             _nextIndex = (_nextIndex + 1) % _entries.Count;
-            if (entry.Routine != null) StopCoroutine(entry.Routine);
+            if (entry.Routine != null)
+            {
+                StopCoroutine(entry.Routine);
+            }
 
             entry.BasePosition = worldPosition + _belowOffset;
             entry.Label.transform.position = entry.BasePosition;
