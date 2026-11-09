@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace ZooWorld.Systems
@@ -21,30 +20,31 @@ namespace ZooWorld.Systems
 
         public ArenaBounds(Camera camera, float groundHeight = 0)
         {
-            _camera = camera ?? throw new ArgumentNullException(nameof(camera));
-            if (float.IsNaN(groundHeight) || float.IsInfinity(groundHeight))
-            {
-                throw new ArgumentOutOfRangeException(nameof(groundHeight));
-            }
-
-            _ground = new Plane(Vector3.up, new Vector3(0, groundHeight, 0));
+            Debug.Assert(camera != null,
+                "ArenaBounds requires a camera; callers resolve one (GameLifetimeScope falls back to Camera.main).");
+            _camera = camera;
+            float height = float.IsNaN(groundHeight) || float.IsInfinity(groundHeight) ? 0 : groundHeight;
+            _ground = new Plane(Vector3.up, new Vector3(0, height, 0));
         }
 
-        public Vector3 GetPoint(Vector2 normalizedPosition)
+        public bool TryGetPoint(Vector2 normalizedPosition, out Vector3 point)
         {
+            point = Vector3.zero;
             if (float.IsNaN(normalizedPosition.x) || float.IsNaN(normalizedPosition.y) ||
                 normalizedPosition.x < 0 || normalizedPosition.x > 1 ||
                 normalizedPosition.y < 0 || normalizedPosition.y > 1)
             {
-                throw new ArgumentOutOfRangeException(nameof(normalizedPosition));
+                return false;
             }
 
-            if (!TryGetPoint(normalizedPosition, out Vector3 point))
+            Ray ray = _camera.ViewportPointToRay(new Vector3(normalizedPosition.x, normalizedPosition.y, 0));
+            if (!_ground.Raycast(ray, out float distance))
             {
-                throw new InvalidOperationException("Arena camera must face the ground plane.");
+                return false;
             }
 
-            return point;
+            point = ray.GetPoint(distance);
+            return true;
         }
 
         public bool TryGetInwardDirection(Vector3 position, out Vector3 direction)
@@ -83,19 +83,6 @@ namespace ZooWorld.Systems
             }
 
             return _cornersValid;
-        }
-
-        private bool TryGetPoint(Vector2 normalizedPosition, out Vector3 point)
-        {
-            point = Vector3.zero;
-            Ray ray = _camera.ViewportPointToRay(new Vector3(normalizedPosition.x, normalizedPosition.y, 0));
-            if (!_ground.Raycast(ray, out float distance))
-            {
-                return false;
-            }
-
-            point = ray.GetPoint(distance);
-            return true;
         }
 
         private bool IsOutside(Vector3 position, Vector3 start, Vector3 end)

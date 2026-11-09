@@ -18,6 +18,7 @@ namespace ZooWorld.Systems
         private readonly System.Random _random;
         private float _elapsed;
         private float _nextInterval;
+        private bool _boundsProjectionFailed;
 
         public AnimalSpawner(AnimalCatalog catalog, SimulationSettings settings,
             ISpawnTarget spawnTarget, ArenaBounds bounds)
@@ -79,7 +80,17 @@ namespace ZooWorld.Systems
                 var normalized = new Vector2(
                     inset + (float)_random.NextDouble() * range,
                     inset + (float)_random.NextDouble() * range);
-                position = _bounds.GetPoint(normalized);
+                if (!_bounds.TryGetPoint(normalized, out position))
+                {
+                    if (!_boundsProjectionFailed)
+                    {
+                        _boundsProjectionFailed = true;
+                        Debug.LogError("AnimalSpawner: the arena camera does not project onto the ground plane; spawning is skipped.");
+                    }
+
+                    return;
+                }
+
                 position.y += _settings.SpawnHeight;
                 if (attempt == MaxSpawnPositionAttempts - 1 ||
                     _spawnTarget.IsPositionFree(position, _settings.SpawnClearance))

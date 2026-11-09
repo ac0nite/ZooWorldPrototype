@@ -132,7 +132,12 @@ namespace ZooWorld.Diagnostics
                 var normalized = new Vector2(
                     inset + range * (float)_prefillRandom.NextDouble(),
                     inset + range * (float)_prefillRandom.NextDouble());
-                Vector3 position = bounds.GetPoint(normalized);
+                if (!bounds.TryGetPoint(normalized, out Vector3 position))
+                {
+                    Debug.LogWarning("[ZooDiag] prefill stopped: arena bounds projection failed.");
+                    break;
+                }
+
                 position.y += _settings.SpawnHeight;
                 double angle = _prefillRandom.NextDouble() * Math.PI * 2;
                 _factory.Rent(definition, position,

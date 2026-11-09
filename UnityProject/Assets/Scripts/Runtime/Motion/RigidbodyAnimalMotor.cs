@@ -33,9 +33,9 @@ namespace ZooWorld.Motion
                     return false;
                 }
 
-                Bounds bounds = _collider.bounds;
+                var bounds = _collider.bounds;
                 return gameObject.scene.GetPhysicsScene().Raycast(bounds.center, Vector3.down,
-                    out RaycastHit hit, bounds.extents.y + GroundProbeExtraDistance, Physics.DefaultRaycastLayers,
+                    out var hit, bounds.extents.y + GroundProbeExtraDistance, Physics.DefaultRaycastLayers,
                     QueryTriggerInteraction.Ignore) && hit.normal.y > MinGroundNormalY && hit.rigidbody == null;
             }
         }

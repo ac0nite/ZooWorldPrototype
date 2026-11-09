@@ -322,18 +322,20 @@ namespace ZooWorld.Tests
         {
             Assert.That(_bounds.TryGetInwardDirection(new Vector3(5.5f, 0, 0), out Vector3 direction), Is.True);
             Assert.That(direction.x, Is.LessThan(0));
-            Assert.That(_bounds.GetPoint(Vector2.one), Is.EqualTo(new Vector3(5, 0, 5)).Using(Vector3ComparerWithTolerance.Instance));
+            Assert.That(_bounds.TryGetPoint(Vector2.one, out Vector3 topRight), Is.True);
+            Assert.That(topRight, Is.EqualTo(new Vector3(5, 0, 5)).Using(Vector3ComparerWithTolerance.Instance));
             _camera.orthographicSize = 10;
             _camera.aspect = 2;
             _camera.transform.position = new Vector3(3, 10, 4);
             Assert.That(_bounds.TryGetInwardDirection(new Vector3(5.5f, 0, 0), out _), Is.False);
-            Assert.That(_bounds.GetPoint(Vector2.one), Is.EqualTo(new Vector3(23, 0, 14)).Using(Vector3ComparerWithTolerance.Instance));
+            Assert.That(_bounds.TryGetPoint(Vector2.one, out Vector3 wideTopRight), Is.True);
+            Assert.That(wideTopRight, Is.EqualTo(new Vector3(23, 0, 14)).Using(Vector3ComparerWithTolerance.Instance));
             _camera.transform.rotation = Quaternion.Euler(90, 30, 0);
             for (int x = 1; x < 10; x++)
             {
                 for (int z = 1; z < 10; z++)
                 {
-                    Vector3 point = _bounds.GetPoint(new Vector2(x / 10f, z / 10f));
+                    Assert.That(_bounds.TryGetPoint(new Vector2(x / 10f, z / 10f), out Vector3 point), Is.True);
                     Assert.That(_bounds.TryGetInwardDirection(point, out _), Is.False);
                 }
             }

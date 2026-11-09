@@ -30,7 +30,8 @@ namespace ZooWorld.Composition
                 resolver.Resolve<AnimalFactory>(),
                 resolver.Resolve<AnimalEventBus>(), seed), Lifetime.Singleton);
             builder.RegisterBuildCallback(resolver => resolver.Resolve<GameStats>());
-            ArenaBounds bounds = _arenaCamera != null ? new ArenaBounds(_arenaCamera, _groundHeight) : null;
+            Camera arenaCamera = _arenaCamera != null ? _arenaCamera : Camera.main;
+            ArenaBounds bounds = arenaCamera != null ? new ArenaBounds(arenaCamera, _groundHeight) : null;
             if (bounds != null)
             {
                 builder.RegisterInstance(bounds);
@@ -46,7 +47,7 @@ namespace ZooWorld.Composition
                         "GameLifetimeScope requires both an animal catalog and simulation settings to enable spawning.");
                 }
 
-                if (_arenaCamera == null)
+                if (arenaCamera == null)
                 {
                     throw new InvalidOperationException(
                         "GameLifetimeScope requires an arena camera to enable spawning.");
