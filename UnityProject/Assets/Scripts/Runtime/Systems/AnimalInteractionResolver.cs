@@ -86,8 +86,7 @@ namespace ZooWorld.Systems
             }
             finally
             {
-                if (!_factory.Release(victim, victimActivationId) &&
-                    victim != null && victim.ActivationId == victimActivationId)
+                if (!_factory.Release(victim, victimActivationId))
                 {
                     victim.Deactivate();
                     victim.gameObject.SetActive(false);

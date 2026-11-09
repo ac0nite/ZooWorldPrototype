@@ -89,7 +89,9 @@ the narrow `IAnimalMotor` port; strategies never touch Rigidbody APIs.
   Unity `null` is real runtime state — a destroyed object or an
   unassigned inspector field — so `!= null` checks on
   `UnityEngine.Object` are engine semantics, not defensiveness. Hot
-  paths (movement tick, contact resolve) carry no validation.
+  paths never re-validate configuration; the contact checks in the
+  resolver are domain logic (stale-report rejection is the contract,
+  not a guard).
 - **Why PhysX + an isolation layer, not a custom solver.** The task
   requires physics-based collisions and bouncing, so PhysX is the
   natural backend. Its quirks — duplicate contacts, stale pooled
@@ -271,8 +273,9 @@ service locator. UI построен по MVP: пассивные uGUI-пред�
   release id). В Unity `null` — реальное состояние времени
   выполнения (уничтоженный объект, неназначенное поле в инспекторе),
   поэтому `!= null` на `UnityEngine.Object` — семантика движка, а не
-  дефенсивность. Горячие пути (тик движения, резолв контакта)
-  валидации не содержат.
+  дефенсивность. Горячие пути не перевалидируют конфигурацию;
+  проверки контакта в резолвере — доменная логика (отказ от устаревших
+  репортов — это контракт, а не защита).
 - **Почему PhysX + слой изоляции, а не свой solver.** Задание
   требует столкновений и отскока «с использованием физики» — PhysX
   естественный backend. Его особенности — дубли контактов, устаревшие
