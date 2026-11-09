@@ -234,7 +234,8 @@ namespace ZooWorld.Tests
             Assert.That(_died.Count, Is.EqualTo(1), "Duplicate reports must not kill twice.");
             Assert.That(_stats.PredatorDeaths, Is.EqualTo(1));
             Assert.That(_factory.ActiveCount, Is.EqualTo(1));
-            Animal rerented = _factory.Rent(_snake, new Vector3(0, 0.5f, -20), Vector3.forward);
+            Assert.That(_factory.TryRent(_snake, new Vector3(0, 0.5f, -20), Vector3.forward,
+                out Animal rerented), Is.True);
             _animals.Add(rerented);
             SceneManager.MoveGameObjectToScene(rerented.gameObject, _scene);
             Assert.That(rerented, Is.SameAs(victim));
@@ -283,7 +284,7 @@ namespace ZooWorld.Tests
 
         private Animal Rent(AnimalDefinition definition, Vector3 position, Vector3 direction)
         {
-            Animal animal = _factory.Rent(definition, position, direction);
+            Assert.That(_factory.TryRent(definition, position, direction, out Animal animal), Is.True);
             SceneManager.MoveGameObjectToScene(animal.gameObject, _scene);
             _animals.Add(animal);
             return animal;

@@ -11,17 +11,11 @@ namespace ZooWorld.Motion
         private Rigidbody _body;
         private Collider _collider;
 
-        public Vector3 Position => Body.position;
+        public Vector3 Position => _body.position;
         public Vector3 Velocity
         {
-            get => Body.linearVelocity;
-            set
-            {
-                if (_body != null)
-                {
-                    _body.linearVelocity = value;
-                }
-            }
+            get => _body.linearVelocity;
+            set => _body.linearVelocity = value;
         }
 
         public bool IsGrounded
@@ -40,25 +34,7 @@ namespace ZooWorld.Motion
             }
         }
 
-        private Rigidbody Body
-        {
-            get
-            {
-                if (_body == null)
-                {
-                    CacheComponents();
-                }
-
-                return _body;
-            }
-        }
-
         private void Awake()
-        {
-            CacheComponents();
-        }
-
-        private void CacheComponents()
         {
             _body = GetComponent<Rigidbody>();
             _collider = GetComponent<Collider>();

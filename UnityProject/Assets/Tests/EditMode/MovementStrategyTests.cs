@@ -270,7 +270,7 @@ namespace ZooWorld.Tests
         {
             var profile = Profile<LinearMovementProfile>();
             Set(profile, field, value);
-            Assert.Throws<InvalidOperationException>(() => profile.CreateStrategy(Context(new Motor(), Vector3.right)));
+            Assert.Throws<InvalidOperationException>(() => profile.Validate());
         }
 
         [TestCase("_distance", 0f), TestCase("_height", -1f), TestCase("_waitInterval", 0f)]
@@ -281,18 +281,19 @@ namespace ZooWorld.Tests
         {
             var profile = Profile<JumpMovementProfile>();
             Set(profile, field, value);
-            var error = Assert.Throws<InvalidOperationException>(() => profile.CreateStrategy(Context(new Motor(), Vector3.right)));
+            var error = Assert.Throws<InvalidOperationException>(() => profile.Validate());
             Assert.That(error.Message, Does.Contain(field));
         }
 
         [Test, Description("Контекст отклоняет нулевой мотор, гравитацию и непланарное направление")]
         public void ContextRejectsMissingMotorInvalidGravityAndNonPlanarDirection()
         {
-            Assert.Throws<ArgumentNullException>(() => new MovementContext(null, Vector3.right, 8));
-            Assert.Throws<ArgumentOutOfRangeException>(() => new MovementContext(new Motor(), Vector3.right, 0));
-            Assert.Throws<ArgumentOutOfRangeException>(() => new MovementContext(new Motor(), Vector3.right, float.NaN));
-            Assert.Throws<ArgumentException>(() => Context(new Motor(), Vector3.up));
-            Assert.Throws<ArgumentException>(() => Context(new Motor(), new Vector3(float.NaN, 0, 0)));
+            Assert.That(MovementContext.TryCreate(null, Vector3.right, 8, null, out _), Is.False);
+            Assert.That(MovementContext.TryCreate(new Motor(), Vector3.right, 0, null, out _), Is.False);
+            Assert.That(MovementContext.TryCreate(new Motor(), Vector3.right, float.NaN, null, out _), Is.False);
+            Assert.That(MovementContext.TryCreate(new Motor(), Vector3.up, 8, null, out _), Is.False);
+            Assert.That(MovementContext.TryCreate(new Motor(), new Vector3(float.NaN, 0, 0), 8, null, out _),
+                Is.False);
         }
 
         private T Profile<T>() where T : MovementProfile
@@ -303,7 +304,12 @@ namespace ZooWorld.Tests
         }
 
 
-        private static MovementContext Context(Motor motor, Vector3 direction) => new MovementContext(motor, direction, 8);
+        private static MovementContext Context(Motor motor, Vector3 direction)
+        {
+            Assert.That(MovementContext.TryCreate(motor, direction, 8, null, out MovementContext context),
+                Is.True);
+            return context;
+        }
 
         private static void AssertVector(Vector3 actual, Vector3 expected)
         {

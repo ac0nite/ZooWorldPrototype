@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 using VContainer;
 using ZooWorld.Core;
 using ZooWorld.Interaction;
@@ -16,7 +17,7 @@ namespace ZooWorld.Systems
         [Inject]
         public GameStats(AnimalEventBus events)
         {
-            _events = events ?? throw new ArgumentNullException(nameof(events));
+            _events = events;
             _events.Died += OnAnimalDied;
         }
 
@@ -36,7 +37,8 @@ namespace ZooWorld.Systems
                     PredatorDeaths++;
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(payload));
+                    Debug.LogError($"GameStats: unknown animal role {payload.Role}; death not counted.");
+                    return;
             }
 
             Changed?.Invoke();

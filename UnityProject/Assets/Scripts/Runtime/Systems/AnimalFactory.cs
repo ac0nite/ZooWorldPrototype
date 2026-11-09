@@ -27,60 +27,53 @@ namespace ZooWorld.Systems
 
         public AnimalFactory(IObjectResolver resolver, ArenaBounds bounds)
         {
-            _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
+            _resolver = resolver;
             Bounds = bounds;
         }
 
         public int ActiveCount => _active.Count;
         public ArenaBounds Bounds { get; }
 
-        public Animal Rent(AnimalDefinition definition, Vector3 position, Vector3 direction)
+        public bool TryRent(AnimalDefinition definition, Vector3 position, Vector3 direction, out Animal animal)
         {
-            if (_disposed)
+            animal = null;
+            if (_disposed || definition == null ||
+                !IsFinite(position.x) || !IsFinite(position.y) || !IsFinite(position.z))
             {
-                throw new ObjectDisposedException(nameof(AnimalFactory));
-            }
-
-            if (definition == null)
-            {
-                throw new ArgumentNullException(nameof(definition));
-            }
-
-            definition.Validate();
-            direction = MovementContext.NormalizeDirection(direction);
-            if (!IsFinite(position.x) || !IsFinite(position.y) || !IsFinite(position.z))
-            {
-                throw new ArgumentException("Spawn position must be finite.", nameof(position));
+                return false;
             }
 
             var activationId = checked(++_nextActivationId);
             var pool = GetPool(definition.Prefab);
-            var animal = pool.Get();
-            try
+            var candidate = pool.Get();
+            if (!MovementContext.TryCreate(candidate.GetComponent<IAnimalMotor>(), direction,
+                    -Physics.gravity.y, Bounds, out MovementContext context))
             {
-                var context = new MovementContext(animal.GetComponent<IAnimalMotor>(), direction, -Physics.gravity.y,
-                    Bounds);
-                var transform = animal.transform;
-                transform.SetParent(null);
-                transform.SetPositionAndRotation(position, Quaternion.LookRotation(direction, Vector3.up));
-                transform.localScale = definition.Prefab.transform.localScale;
-                var body = animal.GetComponent<Rigidbody>();
-                body.position = position;
-                body.rotation = transform.rotation;
-                body.linearVelocity = Vector3.zero;
-                body.angularVelocity = Vector3.zero;
-                animal.Activate(activationId, definition, context);
-                _active.Add(animal, (pool, activationId));
-                animal.gameObject.SetActive(true);
-                return animal;
+                pool.Release(candidate);
+                return false;
             }
-            catch
+
+            var transform = candidate.transform;
+            transform.SetParent(null);
+            transform.SetPositionAndRotation(position,
+                Quaternion.LookRotation(context.InitialDirection, Vector3.up));
+            transform.localScale = definition.Prefab.transform.localScale;
+            var body = candidate.GetComponent<Rigidbody>();
+            body.position = position;
+            body.rotation = transform.rotation;
+            body.linearVelocity = Vector3.zero;
+            body.angularVelocity = Vector3.zero;
+            if (!candidate.TryActivate(activationId, definition, context))
             {
-                _active.Remove(animal);
-                animal.Deactivate();
-                pool.Release(animal);
-                throw;
+                candidate.Deactivate();
+                pool.Release(candidate);
+                return false;
             }
+
+            _active.Add(candidate, (pool, activationId));
+            candidate.gameObject.SetActive(true);
+            animal = candidate;
+            return true;
         }
 
         public bool Release(Animal animal, long activationId)

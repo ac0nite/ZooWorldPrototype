@@ -15,7 +15,6 @@ namespace ZooWorld.Definitions
 
         public override IMovementStrategy CreateStrategy(MovementContext context)
         {
-            Validate();
             return new LinearMovementStrategy(context, _speed);
         }
     }

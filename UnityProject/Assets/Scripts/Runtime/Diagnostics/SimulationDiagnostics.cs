@@ -37,11 +37,11 @@ namespace ZooWorld.Diagnostics
         public SimulationDiagnostics(AnimalFactory factory, AnimalCatalog catalog,
             SimulationSettings settings, AnimalInteractionResolver resolver, GameStats stats)
         {
-            _factory = factory ?? throw new ArgumentNullException(nameof(factory));
-            _catalog = catalog ?? throw new ArgumentNullException(nameof(catalog));
-            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
-            _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
-            _stats = stats ?? throw new ArgumentNullException(nameof(stats));
+            _factory = factory;
+            _catalog = catalog;
+            _settings = settings;
+            _resolver = resolver;
+            _stats = stats;
         }
 
         public void Start()
@@ -140,8 +140,13 @@ namespace ZooWorld.Diagnostics
 
                 position.y += _settings.SpawnHeight;
                 double angle = _prefillRandom.NextDouble() * Math.PI * 2;
-                _factory.Rent(definition, position,
-                    new Vector3((float)Math.Cos(angle), 0, (float)Math.Sin(angle)));
+                if (!_factory.TryRent(definition, position,
+                        new Vector3((float)Math.Cos(angle), 0, (float)Math.Sin(angle)), out _))
+                {
+                    Debug.LogWarning("[ZooDiag] prefill stopped: factory rent failed.");
+                    break;
+                }
+
                 prefilled++;
             }
 

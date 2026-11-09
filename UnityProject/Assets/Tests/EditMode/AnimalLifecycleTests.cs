@@ -25,7 +25,7 @@ namespace ZooWorld.Tests
         public void DeathSucceedsOnlyOnceForAnActivation()
         {
             Assert.That(_animal.TryDie(), Is.False);
-            _animal.Activate(41);
+            Assert.That(_animal.TryActivate(41), Is.True);
             Assert.That(_animal.IsAlive, Is.True);
             Assert.That(_animal.TryDie(), Is.True);
             Assert.That(_animal.TryDie(), Is.False);
@@ -36,13 +36,13 @@ namespace ZooWorld.Tests
         [Test, Description("Возврат очищает идентичность, следующая активация жива")]
         public void ReleaseClearsIdentityAndNextActivationIsAlive()
         {
-            _animal.Activate(41);
+            Assert.That(_animal.TryActivate(41), Is.True);
             Assert.That(_animal.TryDie(), Is.True);
             _animal.Deactivate();
             _animal.Deactivate();
             Assert.That(_animal.ActivationId, Is.Zero);
             Assert.That(_animal.TryDie(), Is.False);
-            _animal.Activate(42);
+            Assert.That(_animal.TryActivate(42), Is.True);
             Assert.That(_animal.ActivationId, Is.EqualTo(42));
             Assert.That(_animal.IsAlive, Is.True);
             Assert.That(_animal.TryDie(), Is.True);
@@ -51,7 +51,7 @@ namespace ZooWorld.Tests
         [Test, Description("Очистка — не переход в смерть")]
         public void CleanupIsNotADeathTransition()
         {
-            _animal.Activate(41);
+            Assert.That(_animal.TryActivate(41), Is.True);
             _animal.Deactivate();
             Assert.That(_animal.IsAlive, Is.False);
             Assert.That(_animal.TryDie(), Is.False);
@@ -61,7 +61,7 @@ namespace ZooWorld.Tests
         [Description("Неположительные ID активаций отклоняются")]
         public void NonPositiveActivationIdsAreRejected(long id)
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => _animal.Activate(id));
+            Assert.That(_animal.TryActivate(id), Is.False);
             Assert.That(_animal.IsAlive, Is.False);
             Assert.That(_animal.ActivationId, Is.Zero);
         }
@@ -69,10 +69,10 @@ namespace ZooWorld.Tests
         [Test, Description("Живая или мёртвая активация не перезаписывается до возврата")]
         public void LiveOrDeadActivationCannotBeOverwrittenBeforeRelease()
         {
-            _animal.Activate(41);
-            Assert.Throws<InvalidOperationException>(() => _animal.Activate(42));
+            Assert.That(_animal.TryActivate(41), Is.True);
+            Assert.That(_animal.TryActivate(42), Is.False);
             Assert.That(_animal.TryDie(), Is.True);
-            Assert.Throws<InvalidOperationException>(() => _animal.Activate(42));
+            Assert.That(_animal.TryActivate(42), Is.False);
             Assert.That(_animal.ActivationId, Is.EqualTo(41));
         }
     }

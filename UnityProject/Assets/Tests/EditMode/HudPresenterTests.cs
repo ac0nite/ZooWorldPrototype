@@ -174,7 +174,9 @@ namespace ZooWorld.Tests
             root.SetActive(false);
             var motor = root.AddComponent<CatalogTestMotor>();
             var animal = root.AddComponent<Animal>();
-            animal.Activate(_nextActivationId++, definition, new MovementContext(motor, Vector3.right, 8));
+            Assert.That(MovementContext.TryCreate(motor, Vector3.right, 8, null,
+                out MovementContext context), Is.True);
+            Assert.That(animal.TryActivate(_nextActivationId++, definition, context), Is.True);
             root.SetActive(true);
             return animal;
         }

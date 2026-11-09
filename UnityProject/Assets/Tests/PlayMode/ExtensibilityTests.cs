@@ -321,7 +321,7 @@ namespace ZooWorld.Tests
 
         private Animal Rent(AnimalDefinition definition, Vector3 position, Vector3 direction)
         {
-            Animal animal = _factory.Rent(definition, position, direction);
+            Assert.That(_factory.TryRent(definition, position, direction, out Animal animal), Is.True);
             SceneManager.MoveGameObjectToScene(animal.gameObject, _scene);
             _animals.Add(animal);
             return animal;

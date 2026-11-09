@@ -13,8 +13,8 @@ namespace ZooWorld.UI
 
         public TastyPresenter(AnimalEventBus events, ITastyView view)
         {
-            _events = events ?? throw new ArgumentNullException(nameof(events));
-            _view = view ?? throw new ArgumentNullException(nameof(view));
+            _events = events;
+            _view = view;
         }
 
         public void Start()

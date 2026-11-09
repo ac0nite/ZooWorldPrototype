@@ -265,8 +265,10 @@ namespace ZooWorld.Tests
             Assert.That(material.frictionCombine, Is.EqualTo(PhysicsMaterialCombine.Minimum));
             using IObjectResolver container = BuildInteractionContainer(null);
             var factory = container.Resolve<AnimalFactory>();
-            Animal a = factory.Rent(definition, new Vector3(-1, 0.5f, 0), Vector3.right);
-            Animal b = factory.Rent(definition, new Vector3(1, 0.5f, 0), Vector3.left);
+            Assert.That(factory.TryRent(definition, new Vector3(-1, 0.5f, 0), Vector3.right, out Animal a),
+                Is.True);
+            Assert.That(factory.TryRent(definition, new Vector3(1, 0.5f, 0), Vector3.left, out Animal b),
+                Is.True);
             SceneManager.MoveGameObjectToScene(a.gameObject, _scene);
             SceneManager.MoveGameObjectToScene(b.gameObject, _scene);
             _animals.Add(a);
@@ -354,7 +356,8 @@ namespace ZooWorld.Tests
             {
                 var definition = AssetDatabase.LoadAssetAtPath<AnimalDefinition>("Assets/Settings/AnimalDefinitions/" + species + ".asset");
                 Assert.That(definition.Prefab.GetComponent<RigidbodyAnimalMotor>(), Is.Not.Null);
-                Animal animal = factory.Rent(definition, new Vector3(5.5f, 0.5f, 0), Vector3.right);
+                Assert.That(factory.TryRent(definition, new Vector3(5.5f, 0.5f, 0), Vector3.right,
+                    out Animal animal), Is.True);
                 SceneManager.MoveGameObjectToScene(animal.gameObject, _scene);
                 _animals.Add(animal);
                 Tick(species == "Snake" ? 50 : 125);
@@ -370,7 +373,8 @@ namespace ZooWorld.Tests
             var definition = AssetDatabase.LoadAssetAtPath<AnimalDefinition>("Assets/Settings/AnimalDefinitions/Frog.asset");
             using IObjectResolver container = BuildInteractionContainer(null);
             var factory = container.Resolve<AnimalFactory>();
-            Animal animal = factory.Rent(definition, new Vector3(0, 0.5f, 0), Vector3.right);
+            Assert.That(factory.TryRent(definition, new Vector3(0, 0.5f, 0), Vector3.right,
+                out Animal animal), Is.True);
             SceneManager.MoveGameObjectToScene(animal.gameObject, _scene);
             _animals.Add(animal);
             Tick(105);
@@ -421,7 +425,9 @@ namespace ZooWorld.Tests
             var definition = Track(ScriptableObject.CreateInstance<AnimalDefinition>());
             Set(definition, "_movementProfile", property => property.objectReferenceValue = profile);
             Set(definition, "_interactionProfile", property => property.objectReferenceValue = interaction);
-            animal.Activate(_animals.Count + 1, definition, new MovementContext(motor, direction, 8, bounds));
+            Assert.That(MovementContext.TryCreate(motor, direction, 8, bounds,
+                out MovementContext context), Is.True);
+            Assert.That(animal.TryActivate(_animals.Count + 1, definition, context), Is.True);
             _animals.Add(animal);
             root.SetActive(true);
             Physics.SyncTransforms();

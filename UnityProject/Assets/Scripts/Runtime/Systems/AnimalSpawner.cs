@@ -23,10 +23,10 @@ namespace ZooWorld.Systems
         public AnimalSpawner(AnimalCatalog catalog, SimulationSettings settings,
             ISpawnTarget spawnTarget, ArenaBounds bounds)
         {
-            _catalog = catalog ?? throw new ArgumentNullException(nameof(catalog));
-            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
-            _spawnTarget = spawnTarget ?? throw new ArgumentNullException(nameof(spawnTarget));
-            _bounds = bounds ?? throw new ArgumentNullException(nameof(bounds));
+            _catalog = catalog;
+            _settings = settings;
+            _spawnTarget = spawnTarget;
+            _bounds = bounds;
             _random = new System.Random(unchecked((int)_settings.EffectiveSeed));
             _nextInterval = SampleInterval();
         }
@@ -44,11 +44,6 @@ namespace ZooWorld.Systems
 
         internal void Advance(float deltaTime)
         {
-            if (float.IsNaN(deltaTime) || float.IsInfinity(deltaTime) || deltaTime < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(deltaTime));
-            }
-
             _elapsed += deltaTime;
             var spawns = 0;
             while (_nextInterval > 0 && _elapsed >= _nextInterval)
@@ -101,7 +96,7 @@ namespace ZooWorld.Systems
 
             float angle = (float)(_random.NextDouble() * Math.PI * 2);
             var direction = new Vector3((float)Math.Cos(angle), 0, (float)Math.Sin(angle));
-            _spawnTarget.Rent(definition, position, direction);
+            _spawnTarget.TryRent(definition, position, direction, out _);
         }
 
         private AnimalDefinition PickDefinition()

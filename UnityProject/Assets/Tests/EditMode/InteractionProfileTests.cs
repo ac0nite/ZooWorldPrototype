@@ -76,7 +76,7 @@ namespace ZooWorld.Tests
         public void MissingCategoryReportsProfileName()
         {
             InteractionProfile profile = Profile(null);
-            var error = Assert.Throws<InvalidOperationException>(() => profile.CreateSnapshot());
+            var error = Assert.Throws<InvalidOperationException>(() => profile.Validate());
             Assert.That(error.Message, Does.Contain("Fixture Profile"));
         }
 
@@ -85,7 +85,7 @@ namespace ZooWorld.Tests
         public void EmptyCategoryIdsAreDiagnosed(string id)
         {
             InteractionProfile profile = Profile(Category(id));
-            Assert.Throws<InvalidOperationException>(() => profile.CreateSnapshot());
+            Assert.Throws<InvalidOperationException>(() => profile.Validate());
         }
 
         [Test, Description("Null/невалидная съедобная запись диагностируется с индексом")]
@@ -93,10 +93,10 @@ namespace ZooWorld.Tests
         {
             InteractionCategory category = Category("valid");
             InteractionProfile nullEntry = Profile(category, new InteractionCategory[] { null });
-            Assert.That(Assert.Throws<InvalidOperationException>(() => nullEntry.CreateSnapshot()).Message,
+            Assert.That(Assert.Throws<InvalidOperationException>(() => nullEntry.Validate()).Message,
                 Does.Contain("index 0"));
             InteractionProfile emptyId = Profile(category, Category(" "));
-            Assert.Throws<InvalidOperationException>(() => emptyId.CreateSnapshot());
+            Assert.Throws<InvalidOperationException>(() => emptyId.Validate());
         }
 
         private InteractionCategory Category(string id)

@@ -122,7 +122,9 @@ namespace ZooWorld.Tests
             for (var i = 0; i < 100; i++)
             {
                 var position = new Vector3(i % 10 * 2f, 0.5f, 100 + i / 10 * 2f);
-                rented.Add(_factory.Rent(_fixture, position, Vector3.forward));
+                Assert.That(_factory.TryRent(_fixture, position, Vector3.forward, out Animal rentedAnimal),
+                    Is.True);
+                rented.Add(rentedAnimal);
             }
 
             Assert.That(_factory.ActiveCount, Is.EqualTo(100));

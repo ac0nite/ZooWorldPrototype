@@ -212,7 +212,7 @@ namespace ZooWorld.Tests
         [Test, Description("Неизвестная роль жертвы диагностируется без молчаливого подсчёта")]
         public void UnknownVictimRoleIsDiagnosedInsteadOfBeingCounted()
         {
-            LogAssert.Expect(LogType.Exception, new Regex("ArgumentOutOfRangeException"));
+            LogAssert.Expect(LogType.Error, new Regex("unknown animal role"));
             _events.PublishDied(new AnimalDied(9, "alien", (AnimalRole)999));
             Assert.That(_stats.PreyDeaths + _stats.PredatorDeaths, Is.EqualTo(0));
         }
@@ -288,7 +288,7 @@ namespace ZooWorld.Tests
             var root = new GameObject("No interaction");
             _objects.Add(root);
             var animal = root.AddComponent<Animal>();
-            animal.Activate(3);
+            Assert.That(animal.TryActivate(3), Is.True);
             Animal snake = Activate(5, PredatorDefinition("snake"));
             _resolver.Resolve(new AnimalContact(snake, snake.ActivationId, animal, animal.ActivationId,
                 Vector3.zero));
@@ -296,16 +296,11 @@ namespace ZooWorld.Tests
             Assert.That(_died, Is.Empty);
         }
 
-        [Test, Description("Резолвер отклоняет пустые контакты и невалидные аргументы конструктора")]
-        public void ResolverRejectsNullContactsAndInvalidConstructorArguments()
+        [Test, Description("Резолвер игнорирует пустые контакты")]
+        public void ResolverIgnoresDefaultContactReports()
         {
             Assert.DoesNotThrow(() => _resolver.Resolve(default));
             Assert.That(_died, Is.Empty);
-            Assert.Throws<ArgumentNullException>(() => new AnimalInteractionResolver(null, _factory, _events));
-            Assert.Throws<ArgumentNullException>(() => new AnimalInteractionResolver(
-                _container.Resolve<IAnimalInteractionPolicy>(), null, _events));
-            Assert.Throws<ArgumentNullException>(() => new AnimalInteractionResolver(
-                _container.Resolve<IAnimalInteractionPolicy>(), _factory, null));
         }
 
         [Test, Description("Resolve считает каждый не-null репорт контакта")]
@@ -324,13 +319,14 @@ namespace ZooWorld.Tests
                 "Even an empty contact report counts as received load.");
         }
 
-        [Test, Description("Контакт требует обоих участников")]
-        public void ContactRequiresBothActors()
+        [Test, Description("Контакт с отсутствующим участником игнорируется резолвером")]
+        public void ContactWithMissingActorIsIgnoredByResolver()
         {
-            Assert.Throws<ArgumentNullException>(() => new AnimalContact(null, 1, Activate(3, PreyDefinition("frog")), 3,
-                Vector3.zero));
-            Assert.Throws<ArgumentNullException>(() => new AnimalContact(Activate(3, PreyDefinition("frog")), 3, null, 1,
-                Vector3.zero));
+            Animal frog = Activate(3, PreyDefinition("frog"));
+            _resolver.Resolve(new AnimalContact(null, 1, frog, frog.ActivationId, Vector3.zero));
+            _resolver.Resolve(new AnimalContact(frog, frog.ActivationId, null, 1, Vector3.zero));
+            Assert.That(frog.IsAlive, Is.True);
+            Assert.That(_died, Is.Empty);
         }
 
         [Test, Description("GameStats отписывается при Dispose")]
@@ -393,7 +389,9 @@ namespace ZooWorld.Tests
             root.SetActive(false);
             var motor = root.AddComponent<CatalogTestMotor>();
             var animal = root.AddComponent<Animal>();
-            animal.Activate(id, definition, new MovementContext(motor, Vector3.right, 8));
+            Assert.That(MovementContext.TryCreate(motor, Vector3.right, 8, null, out MovementContext context),
+                Is.True);
+            Assert.That(animal.TryActivate(id, definition, context), Is.True);
             root.SetActive(true);
             return animal;
         }

@@ -1,4 +1,3 @@
-using System;
 using VContainer;
 using ZooWorld.Core;
 using ZooWorld.Interaction;
@@ -26,9 +25,9 @@ namespace ZooWorld.Systems
         public AnimalInteractionResolver(IAnimalInteractionPolicy policy, AnimalFactory factory,
             AnimalEventBus events, uint seed)
         {
-            _policy = policy ?? throw new ArgumentNullException(nameof(policy));
-            _factory = factory ?? throw new ArgumentNullException(nameof(factory));
-            _events = events ?? throw new ArgumentNullException(nameof(events));
+            _policy = policy;
+            _factory = factory;
+            _events = events;
             _seed = seed;
         }
 

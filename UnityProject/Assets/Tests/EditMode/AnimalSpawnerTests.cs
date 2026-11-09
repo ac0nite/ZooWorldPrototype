@@ -294,22 +294,6 @@ namespace ZooWorld.Tests
             Assert.That(_target.Rents, Is.Empty);
         }
 
-        [Test, Description("Невалидный advance и null-зависимости отклоняются")]
-        public void InvalidAdvanceAndNullDependenciesAreRejected()
-        {
-            AnimalSpawner spawner = Spawner(Catalog(Definition("frog", 1)));
-            Assert.Throws<ArgumentOutOfRangeException>(() => spawner.Advance(-0.1f));
-            Assert.Throws<ArgumentOutOfRangeException>(() => spawner.Advance(float.NaN));
-            Assert.Throws<ArgumentNullException>(() => new AnimalSpawner(
-                null, Settings(), _target, _bounds));
-            Assert.Throws<ArgumentNullException>(() => new AnimalSpawner(
-                Catalog(Definition("frog", 1)), null, _target, _bounds));
-            Assert.Throws<ArgumentNullException>(() => new AnimalSpawner(
-                Catalog(Definition("frog", 1)), Settings(), null, _bounds));
-            Assert.Throws<ArgumentNullException>(() => new AnimalSpawner(
-                Catalog(Definition("frog", 1)), Settings(), _target, null));
-        }
-
         private AnimalSpawner Spawner(AnimalCatalog catalog, FakeSpawnTarget target = null,
             float min = 1, float max = 2, int cap = 10, uint seed = 7)
         {
@@ -384,11 +368,13 @@ namespace ZooWorld.Tests
             public bool AlwaysBlocked { get; set; }
             public List<RecordedRent> Rents { get; } = new List<RecordedRent>();
 
-            public Animal Rent(AnimalDefinition definition, Vector3 position, Vector3 direction)
+            public bool TryRent(AnimalDefinition definition, Vector3 position, Vector3 direction,
+                out Animal animal)
             {
                 Rents.Add(new RecordedRent(definition, position, direction));
                 ActiveCount++;
-                return null;
+                animal = null;
+                return true;
             }
 
             public bool IsPositionFree(Vector3 position, float clearance)

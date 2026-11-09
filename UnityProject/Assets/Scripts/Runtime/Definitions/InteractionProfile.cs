@@ -40,7 +40,6 @@ namespace ZooWorld.Definitions
 
         public InteractionData CreateSnapshot()
         {
-            Validate();
             var ids = new string[_edibleCategories.Length];
             for (var i = 0; i < _edibleCategories.Length; i++)
             {

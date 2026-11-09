@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using ZooWorld.Motion;
 using ZooWorld.Systems;
@@ -13,29 +12,41 @@ namespace ZooWorld.Core
         public float Gravity { get; }
         public ArenaBounds Bounds { get; }
 
-        public MovementContext(IAnimalMotor motor, Vector3 initialDirection, float gravity, ArenaBounds bounds = null)
+        private MovementContext(IAnimalMotor motor, Vector3 initialDirection, float gravity, ArenaBounds bounds)
         {
-            Motor = motor ?? throw new ArgumentNullException(nameof(motor));
-            InitialDirection = NormalizeDirection(initialDirection);
-            if (float.IsNaN(gravity) || float.IsInfinity(gravity) || gravity <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(gravity));
-            }
-
+            Motor = motor;
+            InitialDirection = initialDirection;
             Gravity = gravity;
             Bounds = bounds;
         }
 
-        internal static Vector3 NormalizeDirection(Vector3 direction)
+        public static bool TryCreate(IAnimalMotor motor, Vector3 initialDirection, float gravity,
+            ArenaBounds bounds, out MovementContext context)
         {
-            direction.y = 0;
-            if (float.IsNaN(direction.x) || float.IsInfinity(direction.x) ||
-                float.IsNaN(direction.z) || float.IsInfinity(direction.z) || direction.sqrMagnitude < MinDirectionSqrMagnitude)
+            context = null;
+            if (motor == null || float.IsNaN(gravity) || float.IsInfinity(gravity) || gravity <= 0 ||
+                !TryNormalizeDirection(initialDirection, out Vector3 normalized))
             {
-                throw new ArgumentException("Movement requires a finite non-zero planar direction.", nameof(direction));
+                return false;
             }
 
-            return direction.normalized;
+            context = new MovementContext(motor, normalized, gravity, bounds);
+            return true;
+        }
+
+        internal static bool TryNormalizeDirection(Vector3 direction, out Vector3 normalized)
+        {
+            direction.y = 0;
+            normalized = Vector3.zero;
+            if (float.IsNaN(direction.x) || float.IsInfinity(direction.x) ||
+                float.IsNaN(direction.z) || float.IsInfinity(direction.z) ||
+                direction.sqrMagnitude < MinDirectionSqrMagnitude)
+            {
+                return false;
+            }
+
+            normalized = direction.normalized;
+            return true;
         }
     }
 }

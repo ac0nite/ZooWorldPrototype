@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using ZooWorld.Definitions;
 using ZooWorld.Interaction;
@@ -19,27 +18,40 @@ namespace ZooWorld.Core
         public AnimalDefinition Definition { get; private set; }
         public InteractionData Interaction { get; private set; }
 
-        internal void Activate(long activationId)
+        internal bool TryActivate(long activationId)
         {
-            ValidateActivation(activationId);
+            if (activationId <= 0 || ActivationId != 0)
+            {
+                return false;
+            }
+
             ActivationId = activationId;
             IsAlive = true;
+            return true;
         }
 
-        public void Activate(long activationId, AnimalDefinition definition, MovementContext context)
+        public bool TryActivate(long activationId, AnimalDefinition definition, MovementContext context)
         {
-            ValidateActivation(activationId);
-            InteractionData interaction = (definition ?? throw new ArgumentNullException(nameof(definition)))
-                .InteractionProfile.CreateSnapshot();
-            IMovementStrategy movement = definition.MovementProfile.CreateStrategy(
-                context ?? throw new ArgumentNullException(nameof(context)));
-            _movement = movement ?? throw new InvalidOperationException("Movement profile returned no strategy.");
+            if (activationId <= 0 || ActivationId != 0 || definition == null || context == null)
+            {
+                return false;
+            }
+
+            InteractionData interaction = definition.InteractionProfile.CreateSnapshot();
+            IMovementStrategy movement = definition.MovementProfile.CreateStrategy(context);
+            if (movement == null)
+            {
+                return false;
+            }
+
+            _movement = movement;
             _motor = context.Motor;
             _bounds = context.Bounds;
             Definition = definition;
             Interaction = interaction;
             ActivationId = activationId;
             IsAlive = true;
+            return true;
         }
 
         public bool TryDie()
@@ -85,19 +97,6 @@ namespace ZooWorld.Core
         private void OnDestroy()
         {
             Deactivate();
-        }
-
-        private void ValidateActivation(long activationId)
-        {
-            if (activationId <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(activationId));
-            }
-
-            if (ActivationId != 0)
-            {
-                throw new InvalidOperationException("Release the previous activation before reuse.");
-            }
         }
     }
 }

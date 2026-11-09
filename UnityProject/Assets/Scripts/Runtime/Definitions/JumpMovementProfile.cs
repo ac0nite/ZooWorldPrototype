@@ -24,7 +24,6 @@ namespace ZooWorld.Definitions
 
         public override IMovementStrategy CreateStrategy(MovementContext context)
         {
-            Validate();
             return new JumpMovementStrategy(context, _distance, _height, _waitInterval);
         }
     }

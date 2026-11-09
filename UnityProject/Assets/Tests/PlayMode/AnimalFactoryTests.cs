@@ -138,7 +138,8 @@ namespace ZooWorld.Tests
             Set(replacement, "_prefab", property => property.objectReferenceValue = _definition.Prefab);
             Set(replacement, "_movementProfile", property => property.objectReferenceValue = jump);
             Set(replacement, "_interactionProfile", property => property.objectReferenceValue = _definition.InteractionProfile);
-            Animal reused = _factory.Rent(replacement, Vector3.zero, Vector3.forward);
+            Assert.That(_factory.TryRent(replacement, Vector3.zero, Vector3.forward, out Animal reused),
+                Is.True);
             Assert.That(reused, Is.SameAs(animal));
             yield return new WaitForFixedUpdate();
             Assert.That(reused.GetComponent<PoolTestMotor>().Velocity, Is.EqualTo(Vector3.zero));
@@ -146,7 +147,8 @@ namespace ZooWorld.Tests
             var linear = Asset<LinearMovementProfile>();
             _factory.Release(reused, reused.ActivationId);
             Set(replacement, "_movementProfile", property => property.objectReferenceValue = linear);
-            Animal final = _factory.Rent(replacement, Vector3.zero, Vector3.forward);
+            Assert.That(_factory.TryRent(replacement, Vector3.zero, Vector3.forward, out Animal final),
+                Is.True);
             Assert.That(final, Is.SameAs(animal));
             Assert.That(final.TryDie(), Is.True);
             yield return new WaitForFixedUpdate();
@@ -166,7 +168,7 @@ namespace ZooWorld.Tests
             Assert.That(active == null, Is.True);
             Assert.That(inactive == null, Is.True);
             Assert.That(_factory.ActiveCount, Is.Zero);
-            Assert.Throws<ObjectDisposedException>(() => _factory.Rent(_definition, Vector3.zero, Vector3.right));
+            Assert.That(_factory.TryRent(_definition, Vector3.zero, Vector3.right, out _), Is.False);
         }
 
         [UnityTest, Description("Пауза прыжка при повторной выдаче стартует с полного интервала")]
@@ -249,7 +251,7 @@ namespace ZooWorld.Tests
             Assert.That(active == null, Is.True);
             Assert.That(inactive == null, Is.True);
             Assert.That(_factory.ActiveCount, Is.Zero);
-            Assert.Throws<ObjectDisposedException>(() => _factory.Rent(_definition, Vector3.zero, Vector3.right));
+            Assert.That(_factory.TryRent(_definition, Vector3.zero, Vector3.right, out _), Is.False);
         }
 
         [UnityTest, Description("Выданное животное смотрит по начальному направлению")]
@@ -281,7 +283,8 @@ namespace ZooWorld.Tests
                 property => property.objectReferenceValue = _definition.InteractionProfile);
             Animal first = Rent(Vector3.zero, Vector3.right);
             _factory.Release(first, first.ActivationId);
-            Animal second = _factory.Rent(secondDefinition, Vector3.zero, Vector3.forward);
+            Assert.That(_factory.TryRent(secondDefinition, Vector3.zero, Vector3.forward, out Animal second),
+                Is.True);
             Assert.That(second, Is.Not.SameAs(first));
             Assert.That(_factory.ActiveCount, Is.EqualTo(1));
             _factory.Release(second, second.ActivationId);
@@ -322,10 +325,10 @@ namespace ZooWorld.Tests
         [UnityTest, Description("Невалидная выдача не течёт счётчиком, чужие фабрики не возвращают животных")]
         public IEnumerator InvalidRentDoesNotLeakActiveCountAndOtherFactoriesCannotReleaseAnimals()
         {
-            Assert.Throws<ArgumentException>(() => _factory.Rent(_definition, Vector3.zero, Vector3.zero));
-            Assert.Throws<ArgumentException>(() => _factory.Rent(_definition, Vector3.zero, Vector3.up));
-            Assert.Throws<ArgumentException>(
-                () => _factory.Rent(_definition, new Vector3(float.NaN, 0, 0), Vector3.right));
+            Assert.That(_factory.TryRent(_definition, Vector3.zero, Vector3.zero, out _), Is.False);
+            Assert.That(_factory.TryRent(_definition, Vector3.zero, Vector3.up, out _), Is.False);
+            Assert.That(_factory.TryRent(_definition, new Vector3(float.NaN, 0, 0), Vector3.right, out _),
+                Is.False);
             Assert.That(_factory.ActiveCount, Is.Zero);
             Animal animal = Rent(Vector3.zero, Vector3.right);
             using (var other = new AnimalFactory(_container))
@@ -353,8 +356,10 @@ namespace ZooWorld.Tests
             }
 
             var factory = scope.Container.Resolve<AnimalFactory>();
-            Animal active = factory.Rent(_definition, Vector3.zero, Vector3.right);
-            Animal inactive = factory.Rent(_definition, Vector3.forward * 10, Vector3.forward);
+            Assert.That(factory.TryRent(_definition, Vector3.zero, Vector3.right, out Animal active),
+                Is.True);
+            Assert.That(factory.TryRent(_definition, Vector3.forward * 10, Vector3.forward,
+                out Animal inactive), Is.True);
             factory.Release(inactive, inactive.ActivationId);
             Object.Destroy(root);
             yield return null;
@@ -362,7 +367,7 @@ namespace ZooWorld.Tests
             Assert.That(active == null, Is.True);
             Assert.That(inactive == null, Is.True);
             Assert.That(factory.ActiveCount, Is.Zero);
-            Assert.Throws<ObjectDisposedException>(() => factory.Rent(_definition, Vector3.zero, Vector3.right));
+            Assert.That(factory.TryRent(_definition, Vector3.zero, Vector3.right, out _), Is.False);
         }
 
         [UnityTest, Description("Неудачная активация возвращает экземпляр без утечки счётчика")]
@@ -372,7 +377,7 @@ namespace ZooWorld.Tests
             try
             {
                 Physics.gravity = Vector3.zero;
-                Assert.Throws<ArgumentOutOfRangeException>(() => _factory.Rent(_definition, Vector3.zero, Vector3.right));
+                Assert.That(_factory.TryRent(_definition, Vector3.zero, Vector3.right, out _), Is.False);
                 Assert.That(_factory.ActiveCount, Is.Zero);
             }
             finally
@@ -418,8 +423,8 @@ namespace ZooWorld.Tests
 
         private Animal Rent(Vector3 position, Vector3 direction)
         {
-            Animal animal = _factory.Rent(_definition, position, direction);
-            Assert.That(animal, Is.Not.Null, "Factory must return an initialized instance.");
+            Assert.That(_factory.TryRent(_definition, position, direction, out Animal animal), Is.True,
+                "Factory must return an initialized instance.");
             return animal;
         }
 

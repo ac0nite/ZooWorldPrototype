@@ -12,8 +12,8 @@ namespace ZooWorld.UI
 
         public HudPresenter(GameStats stats, IHudView view)
         {
-            _stats = stats ?? throw new ArgumentNullException(nameof(stats));
-            _view = view ?? throw new ArgumentNullException(nameof(view));
+            _stats = stats;
+            _view = view;
         }
 
         public void Start()

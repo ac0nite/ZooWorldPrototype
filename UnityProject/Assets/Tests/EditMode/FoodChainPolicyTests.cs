@@ -72,12 +72,5 @@ namespace ZooWorld.Tests
             Assert.That(predator.CanConsume(new InteractionData("predator", Array.Empty<string>())), Is.False);
         }
 
-        [TestCase(null), TestCase(""), TestCase(" ")]
-        [Description("Пустые ID категорий отклоняются")]
-        public void EmptyCategoryIdsAreRejected(string id)
-        {
-            Assert.Throws<ArgumentException>(() => new InteractionData(id, Array.Empty<string>()));
-            Assert.Throws<ArgumentException>(() => new InteractionData("valid", new[] { id }));
-        }
     }
 }

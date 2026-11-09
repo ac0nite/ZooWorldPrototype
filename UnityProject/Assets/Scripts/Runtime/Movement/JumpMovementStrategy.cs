@@ -82,7 +82,12 @@ namespace ZooWorld.Movement
                 return;
             }
 
-            _direction = MovementContext.NormalizeDirection(direction);
+            if (!MovementContext.TryNormalizeDirection(direction, out Vector3 normalized))
+            {
+                return;
+            }
+
+            _direction = normalized;
             if (!_launched)
             {
                 return;
